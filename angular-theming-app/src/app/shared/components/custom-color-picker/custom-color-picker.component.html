@@ -1,15 +1,16 @@
 <div class="custom-picker">
   <header class="custom-picker__header">
     <h3>Custom theme colors</h3>
-    <button mat-button (click)="resetToSuggested()">
-      <mat-icon>refresh</mat-icon>
-      Reset to suggested
+    <!-- Reset to default -->
+    <button mat-button (click)="resetToDefault()">
+      <mat-icon>restart_alt</mat-icon>
+      Reset to default
     </button>
   </header>
 
+  <!-- Descriptive text -->
   <p class="custom-picker__note">
-    Each color sets the <strong>hue and intensity</strong> for that role. Light/dark contrast is
-    always computed for you, so backgrounds and text stay readable no matter which colors you pick.
+    Pick a primary color. Other colors automatically adapt to maintain perfect contrast, or switch them to custom to lock in your own choices.
   </p>
 
   <!-- Primary: required -->
@@ -19,7 +20,7 @@
         type="color"
         class="color-swatch-input"
         [value]="primaryDraft()"
-        (input)="onPrimaryPickerChange($any($event.target).value)"
+        (input)="onPrimaryChange($any($event.target).value)"
         aria-label="Pick primary color" />
     </div>
     <div class="role-row__fields">
@@ -31,7 +32,7 @@
         spellcheck="false"
         [class.hex-input--invalid]="primaryInvalid()"
         [ngModel]="primaryDraft()"
-        (ngModelChange)="onPrimaryTextChange($event)"
+        (ngModelChange)="onPrimaryChange($event)"
         placeholder="#3b6fd6" />
       @if (primaryInvalid()) {
         <span class="role-row__error">Enter a valid hex color (e.g. #3b6fd6).</span>
@@ -39,7 +40,7 @@
     </div>
   </section>
 
-  <!-- Secondary / Tertiary / Error: optional, Auto/Custom toggle -->
+  <!-- Secondary / Tertiary / Error -->
   @for (field of roleFields; track field.role) {
     <section class="role-row">
       <div class="role-row__swatch-input">
@@ -48,8 +49,8 @@
           class="color-swatch-input"
           [class.color-swatch-input--disabled]="!isRoleCustom(field.role)"
           [disabled]="!isRoleCustom(field.role)"
-          [value]="roleDrafts()[field.role]"
-          (input)="onRolePickerChange(field.role, $any($event.target).value)"
+          [value]="getRoleDisplayValue(field.role)"
+          (input)="onRoleChange(field.role, $any($event.target).value)"
           [attr.aria-label]="'Pick ' + field.label + ' color'" />
       </div>
       <div class="role-row__fields">
@@ -69,8 +70,8 @@
           spellcheck="false"
           [disabled]="!isRoleCustom(field.role)"
           [class.hex-input--invalid]="roleDraftInvalid(field.role)"
-          [ngModel]="roleDrafts()[field.role]"
-          (ngModelChange)="onRoleTextChange(field.role, $event)"
+          [ngModel]="getRoleDisplayValue(field.role)"
+          (ngModelChange)="onRoleChange(field.role, $event)"
           placeholder="Auto from primary" />
         @if (roleDraftInvalid(field.role)) {
           <span class="role-row__error">Enter a valid hex color.</span>

@@ -15,19 +15,6 @@ interface RoleField {
   hint: string;
 }
 
-/**
- * Panel for picking the 4 role colors behind the 'custom' theme scheme.
- *
- * Primary is the only required input — secondary/tertiary/error each have
- * an Auto/Custom toggle. "Auto" means ColorEngine derives that role from
- * primary's hue (same formula Material's own presets use); flipping a role
- * to "Custom" reveals a picker for that role specifically.
- *
- * Every color feeds ONLY hue + chroma into the theme — never tone/lightness
- * and never the neutral/surface palette — so no input here can make text
- * unreadable or surfaces low-contrast. See ColorEngine for the full
- * rationale.
- */
 @Component({
   selector: 'app-custom-color-picker',
   standalone: true,
@@ -46,72 +33,79 @@ export class CustomColorPickerComponent {
     { role: 'error', label: 'Error', hint: 'Validation messages, destructive actions.' }
   ];
 
-  /** Local draft for the primary hex text input, so typos don't immediately wipe the live theme. */
   readonly primaryDraft = signal(this.customColors().primary);
-  /** One local draft per optional role, keyed by role name. */
   readonly roleDrafts = signal<Record<OptionalRole, string>>(this.buildInitialDrafts());
 
   readonly suggested = computed(() => this.themeService.suggestedCustomDefaults());
-
   readonly primaryInvalid = computed(() => !isValidHexColor(this.primaryDraft()));
+
+  /** 
+   * Dynamically returns the text/color to show in the UI. 
+   * If Custom: shows what the user is typing/has picked.
+   * If Auto: bypasses drafts and shows the live calculated fallback.
+   */
+  getRoleDisplayValue(role: OptionalRole): string {
+    return this.isRoleCustom(role) ? this.roleDrafts()[role] : this.suggested()[role];
+  }
 
   isRoleCustom(role: OptionalRole): boolean {
     return !!this.customColors()[role];
   }
 
   roleDraftInvalid(role: OptionalRole): boolean {
+    if (!this.isRoleCustom(role)) return false;
     const draft = this.roleDrafts()[role];
     return !!draft && !isValidHexColor(draft);
   }
 
-  onPrimaryTextChange(value: string): void {
+  onPrimaryChange(value: string): void {
     this.primaryDraft.set(value);
     if (isValidHexColor(value)) {
       this.themeService.setCustomColors({ primary: value });
     }
   }
 
-  onPrimaryPickerChange(value: string): void {
-    this.primaryDraft.set(value);
-    this.themeService.setCustomColors({ primary: value });
-  }
-
   onRoleToggle(role: OptionalRole, useCustom: boolean): void {
     if (useCustom) {
-      const fallback = this.suggested()[role];
-      this.roleDrafts.update((drafts) => ({ ...drafts, [role]: fallback }));
-      this.themeService.setCustomColors({ [role]: fallback });
+      // Lock the current live suggested color into the custom system
+      const lockedColor = this.suggested()[role];
+      this.roleDrafts.update((drafts) => ({ ...drafts, [role]: lockedColor }));
+      this.themeService.setCustomColors({ [role]: lockedColor });
     } else {
+      // Release it back to auto-updating
       this.themeService.clearCustomColorRole(role);
     }
   }
 
-  onRoleTextChange(role: OptionalRole, value: string): void {
+  onRoleChange(role: OptionalRole, value: string): void {
     this.roleDrafts.update((drafts) => ({ ...drafts, [role]: value }));
     if (isValidHexColor(value)) {
       this.themeService.setCustomColors({ [role]: value });
     }
   }
 
-  onRolePickerChange(role: OptionalRole, value: string): void {
-    this.roleDrafts.update((drafts) => ({ ...drafts, [role]: value }));
-    this.themeService.setCustomColors({ [role]: value });
-  }
-
-  resetToSuggested(): void {
-    const defaults = this.suggested();
-    this.primaryDraft.set(defaults.primary);
-    this.roleDrafts.set({ secondary: defaults.secondary, tertiary: defaults.tertiary, error: defaults.error });
-    this.themeService.setCustomColors(defaults);
+  /**
+   * Complete reset to initial app state (Blue scheme). 
+   * Reverts all toggles back to 'Auto'.
+   */
+  resetToDefault(): void {
+    const defaultPrimary = '#3b6fd6'; // Standard Default Blue
+    
+    this.primaryDraft.set(defaultPrimary);
+    this.themeService.setCustomColors({ primary: defaultPrimary });
+    
+    // Clear out secondary, tertiary, and error to force them back to Auto
+    this.themeService.clearCustomColorRole('secondary');
+    this.themeService.clearCustomColorRole('tertiary');
+    this.themeService.clearCustomColorRole('error');
   }
 
   private buildInitialDrafts(): Record<OptionalRole, string> {
     const current = this.customColors();
-    const suggested = this.themeService.suggestedCustomDefaults();
     return {
-      secondary: current.secondary ?? suggested.secondary,
-      tertiary: current.tertiary ?? suggested.tertiary,
-      error: current.error ?? suggested.error
+      secondary: current.secondary ?? '',
+      tertiary: current.tertiary ?? '',
+      error: current.error ?? ''
     };
   }
 }

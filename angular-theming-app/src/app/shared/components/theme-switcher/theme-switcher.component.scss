@@ -94,3 +94,16 @@
   color: #fff;
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 }
+
+// =============================================================================
+// CDK Overlay Overrides
+// =============================================================================
+// mat-menu renders outside the component tree. ::ng-deep is required to reach 
+// it. We remove Material's default max-width so the color picker isn't squished.
+::ng-deep .custom-menu-panel {
+  max-width: none !important;
+  
+  // Optional: Material adds 8px padding to menus by default. Removing it 
+  // makes your custom picker's 16px padding look perfectly flush.
+  padding: 0 !important; 
+}
