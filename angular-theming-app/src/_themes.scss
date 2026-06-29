@@ -1,21 +1,10 @@
 // =============================================================================
 // Theme definitions
 // =============================================================================
-// Generates one Angular Material 3 theme per [color scheme] x [mode] pair.
-// Each block is scoped under html[data-theme-scheme="..."][data-theme-mode="..."],
-// matching the attributes that ThemeService writes onto <html> at runtime.
-//
-// Because every combination's CSS custom properties already live in the
-// compiled stylesheet, switching the two data-attributes is enough for the
-// browser to repaint instantly — no rebuild, no reload.
-// =============================================================================
 
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-// Tertiary accents kept distinct per scheme so cards/badges/links still read
-// clearly against each primary palette. Keys are quoted strings — unquoted
-// "green"/"purple" collide with CSS color keywords during interpolation.
 $schemes: (
   'blue': (
     primary: mat.$blue-palette,
@@ -49,8 +38,7 @@ $modes: ('light', 'dark');
   }
 }
 
-// Sensible default so there's no flash-of-unstyled-content before
-// ThemeService's effect runs and sets the real data-attributes.
+// Sensible default
 html {
   @include mat.theme((
     color: (

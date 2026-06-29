@@ -89,17 +89,20 @@ export interface MatSysColorTokens {
 export class ColorEngine {
   /**
    * Builds a complete light AND dark token set from a CustomColors input.
-   * Both are computed up-front so toggling mode later is instant.
    */
-  static buildTokenPair(colors: CustomColors): { light: MatSysColorTokens; dark: MatSysColorTokens } {
+  static buildTokenPair(colors: CustomColors, contrastLevel = 0): { light: MatSysColorTokens; dark: MatSysColorTokens } {
     return {
-      light: ColorEngine.buildTokens(colors, 'light'),
-      dark: ColorEngine.buildTokens(colors, 'dark')
+      light: ColorEngine.buildTokens(colors, 'light', contrastLevel),
+      dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel)
     };
   }
 
-  static buildTokens(colors: CustomColors, mode: ThemeMode): MatSysColorTokens {
-    const scheme = ColorEngine.buildScheme(colors, mode === 'dark');
+  /**
+   * Builds a single mode's token set.
+   */
+  static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): MatSysColorTokens {
+    // Pass contrastLevel straight into your existing buildScheme method
+    const scheme = ColorEngine.buildScheme(colors, mode === 'dark', contrastLevel);
     const argb = (value: number) => hexFromArgb(value);
 
     return {
@@ -168,7 +171,7 @@ export class ColorEngine {
    * (relative to primary's hue) otherwise. Neutral palettes always follow
    * primary's hue at fixed low chroma — see class doc for why.
    */
-  private static buildScheme(colors: CustomColors, isDark: boolean): DynamicScheme {
+  private static buildScheme(colors: CustomColors, isDark: boolean, contrastLevel = 0): DynamicScheme {
     const primaryHct = Hct.fromInt(argbFromHex(colors.primary));
 
     const primaryPalette = TonalPalette.fromHueAndChroma(primaryHct.hue, Math.max(primaryHct.chroma, 36));
@@ -187,7 +190,7 @@ export class ColorEngine {
     const scheme = new DynamicScheme({
       sourceColorArgb: primaryHct.toInt(),
       variant: VARIANT_TONAL_SPOT,
-      contrastLevel: 0,
+      contrastLevel,
       isDark,
       primaryPalette,
       secondaryPalette,

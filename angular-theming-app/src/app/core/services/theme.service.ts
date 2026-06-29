@@ -12,6 +12,13 @@ import {
 } from '../models/theme.model';
 import { ColorEngine, MatSysColorTokens } from '../utils/color-engine';
 
+/** Base hex colors used to dynamically compute High Contrast for preset schemes. */
+const PRESET_BASE_COLORS: Record<Exclude<ColorScheme, 'custom'>, CustomColors> = {
+  blue: { primary: '#3b6fd6' },
+  green: { primary: '#006e1c' },
+  purple: { primary: '#6750a4' }
+};
+
 /**
  * ThemeService
  * -------------
@@ -35,19 +42,28 @@ import { ColorEngine, MatSysColorTokens } from '../utils/color-engine';
  *    stylesheet rule (inline styles win the cascade) and repaints instantly
  *    — no rebuild, no reload.
  *
+ * 3. HIGH CONTRAST — an independent boolean flag that, when true, overrides
+ *    both mode and scheme with a pure black-and-white M3 theme compiled in
+ *    _themes.scss (scoped to html[data-theme-contrast='high']). The user's
+ *    original mode/scheme are preserved in the signals so toggling HC off
+ *    restores exactly what they had. When HC is active and the scheme is
+ *    'custom', the HC inline tokens are written directly to <html> so they
+ *    beat any existing custom-scheme inline properties.
+ *
  * Mode (light/dark) is always a hard binary in both mechanisms, by design:
  * tone/lightness is never user-controlled, only hue/chroma are. This is
  * what keeps custom themes from ever producing low-contrast or "blurry"
  * surfaces, no matter which color the user picks.
  *
- * Everything (mode, scheme, and the custom color inputs) persists to
- * localStorage so the choice survives a refresh.
+ * Everything (mode, scheme, custom color inputs, and highContrast) persists
+ * to localStorage so the choice survives a refresh.
  */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly modeSignal = signal<ThemeMode>(DEFAULT_THEME_STATE.mode);
   private readonly schemeSignal = signal<ColorScheme>(DEFAULT_THEME_STATE.scheme);
   private readonly customColorsSignal = signal<CustomColors>(DEFAULT_THEME_STATE.customColors);
+  private readonly highContrastSignal = signal<boolean>(DEFAULT_THEME_STATE.highContrast);
 
   /** Current mode as a read-only signal. */
   readonly mode = this.modeSignal.asReadonly();
@@ -55,12 +71,15 @@ export class ThemeService {
   readonly scheme = this.schemeSignal.asReadonly();
   /** Current custom color hex inputs as a read-only signal. */
   readonly customColors = this.customColorsSignal.asReadonly();
+  /** Whether High Contrast mode is active as a read-only signal. */
+  readonly highContrast = this.highContrastSignal.asReadonly();
 
-  /** Convenience computed signal bundling all three values together. */
+  /** Convenience computed signal bundling all values together. */
   readonly theme = computed<ThemeState>(() => ({
     mode: this.modeSignal(),
     scheme: this.schemeSignal(),
-    customColors: this.customColorsSignal()
+    customColors: this.customColorsSignal(),
+    highContrast: this.highContrastSignal()
   }));
 
   /**
@@ -76,7 +95,8 @@ export class ThemeService {
   constructor() {
     this.restoreFromStorage();
 
-    // Reacts to every change of mode/scheme/customColors: updates the DOM + persists it.
+    // Reacts to every change of mode/scheme/customColors/highContrast:
+    // updates the DOM + persists it.
     effect(() => {
       const state = this.theme();
       this.applyToDocument(state);
@@ -100,6 +120,7 @@ export class ThemeService {
     this.modeSignal.set(state.mode);
     this.schemeSignal.set(state.scheme);
     this.customColorsSignal.set(state.customColors);
+    this.highContrastSignal.set(state.highContrast);
   }
 
   /**
@@ -137,24 +158,56 @@ export class ThemeService {
     return ColorEngine.suggestDefaults(this.customColorsSignal().primary);
   }
 
-  /** Applies the current theme as data attributes (+ inline color tokens for custom) on <html>. */
-  private applyToDocument(state: ThemeState): void {
+  /** Toggles High Contrast mode on/off. */
+  toggleHighContrast(): void {
+    this.highContrastSignal.update((current) => !current);
+  }
+
+  /** Explicitly sets High Contrast mode. */
+  setHighContrast(value: boolean): void {
+    this.highContrastSignal.set(value);
+  }
+
+  /** Applies the current theme as data attributes (+ inline color tokens for custom/HC) on <html>. */
+ private applyToDocument(state: ThemeState): void {
     const root = document.documentElement;
     root.setAttribute('data-theme-mode', state.mode);
     root.setAttribute('data-theme-scheme', state.scheme);
-
-    // Helps native form controls / scrollbars pick light or dark UI chrome.
     root.style.colorScheme = state.mode;
 
-    if (state.scheme === 'custom') {
-      this.applyCustomTokens(root, state.mode);
+    if (state.highContrast) {
+      root.setAttribute('data-theme-contrast', 'high');
+      
+      // 1. Figure out what base color we are currently using
+      const baseColors = state.scheme === 'custom' 
+        ? state.customColors 
+        : PRESET_BASE_COLORS[state.scheme];
+        
+      // 2. Compute dynamic HIGH CONTRAST tokens for that specific hue
+      const hcTokens = ColorEngine.buildTokens(baseColors, state.mode, 1);
+      
+      // 3. Apply them as inline styles (which overrides the SCSS instantly)
+      this.applyTokens(root, hcTokens);
+      
     } else {
-      this.clearCustomTokens(root);
+      root.removeAttribute('data-theme-contrast');
+
+      // Normal behavior when High Contrast is off
+      if (state.scheme === 'custom') {
+        this.applyCustomTokens(root, state.mode);
+      } else {
+        // Clear inline tokens so the normal SCSS presets can take over
+        this.clearCustomTokens(root);
+      }
     }
   }
 
   private applyCustomTokens(root: HTMLElement, mode: ThemeMode): void {
     const tokens: MatSysColorTokens = this.customTokenPair()[mode];
+    this.applyTokens(root, tokens);
+  }
+
+  private applyTokens(root: HTMLElement, tokens: MatSysColorTokens): void {
     for (const [token, value] of Object.entries(tokens)) {
       root.style.setProperty(`--mat-sys-${token}`, value);
     }
@@ -202,6 +255,9 @@ export class ThemeService {
           }
         }
         this.customColorsSignal.set(restored);
+      }
+      if (typeof parsed.highContrast === 'boolean') {
+        this.highContrastSignal.set(parsed.highContrast);
       }
     } catch {
       // Corrupt or inaccessible storage — fall back to defaults silently.

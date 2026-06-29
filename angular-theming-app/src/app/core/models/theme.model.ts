@@ -7,6 +7,14 @@
 export type ThemeMode = 'light' | 'dark';
 
 /**
+ * High-contrast flag — when true, overrides the active mode and color
+ * scheme with a pure black-and-white M3 theme (contrastLevel: 1) to
+ * maximise legibility. The user's original mode/scheme are preserved so
+ * toggling high-contrast off restores exactly what they had before.
+ */
+export type HighContrast = boolean;
+
+/**
  * Color scheme — either one of the 3 hard-coded M3 presets (compiled ahead
  * of time in _themes.scss) or 'custom', meaning the active colors come from
  * CustomColors instead and are computed live in the browser.
@@ -39,6 +47,7 @@ export interface ThemeState {
   mode: ThemeMode;
   scheme: ColorScheme;
   customColors: CustomColors;
+  highContrast: boolean;
 }
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = {
@@ -48,7 +57,8 @@ export const DEFAULT_CUSTOM_COLORS: CustomColors = {
 export const DEFAULT_THEME_STATE: ThemeState = {
   mode: 'light',
   scheme: 'blue',
-  customColors: DEFAULT_CUSTOM_COLORS
+  customColors: DEFAULT_CUSTOM_COLORS,
+  highContrast: false
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'dark'];

@@ -1,0 +1,17 @@
+[33m❯[39m Building...
+[32m✔[39m Building...
+Application bundle generation failed. [6.423 seconds]
+
+[1m[31m[31mX [41;31m[[41;97mERROR[41;31m][0m [1mUndefined variable.
+   ╷
+88 │       primary: mat.$neutral-palette,
+   │                ^^^^^^^^^^^^^^^^^^^^
+   ╵
+  src\_themes.scss 88:16  @use
+  src\styles.scss 4:1     root stylesheet[0m [1m[35m[plugin angular-sass][0m
+
+    angular:styles/global:styles:1:8:
+[37m      1 │ @import [32m'src/styles.scss'[37m;
+        ╵         [32m~~~~~~~~~~~~~~~~~[0m
+
+[39m[22m

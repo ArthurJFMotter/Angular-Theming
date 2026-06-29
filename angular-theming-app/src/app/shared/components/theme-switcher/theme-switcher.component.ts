@@ -3,6 +3,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { ThemeService } from '../../../core/services/theme.service';
 import { ColorScheme, PRESET_COLOR_SCHEMES, ThemeMode } from '../../../core/models/theme.model';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
@@ -17,7 +18,7 @@ interface SchemeOption {
 @Component({
   selector: 'app-theme-switcher',
   standalone: true,
-  imports: [MatButtonToggleModule, MatIconModule, MatTooltipModule, MatMenuModule, CustomColorPickerComponent],
+  imports: [MatButtonToggleModule, MatIconModule, MatTooltipModule, MatMenuModule, MatButtonModule, CustomColorPickerComponent],
   templateUrl: './theme-switcher.component.html',
   styleUrl: './theme-switcher.component.scss'
 })
@@ -27,6 +28,7 @@ export class ThemeSwitcherComponent {
   readonly mode = this.themeService.mode;
   readonly scheme = this.themeService.scheme;
   readonly customColors = this.themeService.customColors;
+  readonly highContrast = this.themeService.highContrast;
 
   readonly presetSchemes = PRESET_COLOR_SCHEMES;
 
@@ -42,6 +44,10 @@ export class ThemeSwitcherComponent {
 
   onSchemeSelect(scheme: Exclude<ColorScheme, 'custom'>): void {
     this.themeService.setScheme(scheme);
+  }
+
+  onHighContrastToggle(): void {
+    this.themeService.toggleHighContrast();
   }
 
   /** Switches the active scheme to 'custom' as soon as the menu opens, so the live preview matches the panel immediately. */

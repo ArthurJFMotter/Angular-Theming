@@ -12,6 +12,19 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 
+  <!-- High Contrast toggle — independent of mode and color scheme -->
+  <button
+    type="button"
+    mat-icon-button
+    class="high-contrast-toggle"
+    [class.high-contrast-toggle--active]="highContrast()"
+    matTooltip="High contrast mode"
+    [attr.aria-pressed]="highContrast()"
+    aria-label="Toggle high contrast mode"
+    (click)="onHighContrastToggle()">
+    <mat-icon>contrast</mat-icon>
+  </button>
+
   <div class="scheme-picker" role="group" aria-label="Color scheme">
     @for (option of schemeOptions; track option.value) {
       <button
