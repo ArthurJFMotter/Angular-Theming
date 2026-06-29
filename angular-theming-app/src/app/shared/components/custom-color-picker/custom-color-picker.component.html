@@ -1,0 +1,82 @@
+<div class="custom-picker">
+  <header class="custom-picker__header">
+    <h3>Custom theme colors</h3>
+    <button mat-button (click)="resetToSuggested()">
+      <mat-icon>refresh</mat-icon>
+      Reset to suggested
+    </button>
+  </header>
+
+  <p class="custom-picker__note">
+    Each color sets the <strong>hue and intensity</strong> for that role. Light/dark contrast is
+    always computed for you, so backgrounds and text stay readable no matter which colors you pick.
+  </p>
+
+  <!-- Primary: required -->
+  <section class="role-row role-row--required">
+    <div class="role-row__swatch-input">
+      <input
+        type="color"
+        class="color-swatch-input"
+        [value]="primaryDraft()"
+        (input)="onPrimaryPickerChange($any($event.target).value)"
+        aria-label="Pick primary color" />
+    </div>
+    <div class="role-row__fields">
+      <label class="role-row__label" for="primary-hex">Primary <span class="required-tag">required</span></label>
+      <input
+        id="primary-hex"
+        class="hex-input"
+        type="text"
+        spellcheck="false"
+        [class.hex-input--invalid]="primaryInvalid()"
+        [ngModel]="primaryDraft()"
+        (ngModelChange)="onPrimaryTextChange($event)"
+        placeholder="#3b6fd6" />
+      @if (primaryInvalid()) {
+        <span class="role-row__error">Enter a valid hex color (e.g. #3b6fd6).</span>
+      }
+    </div>
+  </section>
+
+  <!-- Secondary / Tertiary / Error: optional, Auto/Custom toggle -->
+  @for (field of roleFields; track field.role) {
+    <section class="role-row">
+      <div class="role-row__swatch-input">
+        <input
+          type="color"
+          class="color-swatch-input"
+          [class.color-swatch-input--disabled]="!isRoleCustom(field.role)"
+          [disabled]="!isRoleCustom(field.role)"
+          [value]="roleDrafts()[field.role]"
+          (input)="onRolePickerChange(field.role, $any($event.target).value)"
+          [attr.aria-label]="'Pick ' + field.label + ' color'" />
+      </div>
+      <div class="role-row__fields">
+        <div class="role-row__label-line">
+          <label class="role-row__label" [for]="field.role + '-hex'">{{ field.label }}</label>
+          <mat-slide-toggle
+            [checked]="isRoleCustom(field.role)"
+            (change)="onRoleToggle(field.role, $event.checked)"
+            [matTooltip]="field.hint">
+            {{ isRoleCustom(field.role) ? 'Custom' : 'Auto' }}
+          </mat-slide-toggle>
+        </div>
+        <input
+          [id]="field.role + '-hex'"
+          class="hex-input"
+          type="text"
+          spellcheck="false"
+          [disabled]="!isRoleCustom(field.role)"
+          [class.hex-input--invalid]="roleDraftInvalid(field.role)"
+          [ngModel]="roleDrafts()[field.role]"
+          (ngModelChange)="onRoleTextChange(field.role, $event)"
+          placeholder="Auto from primary" />
+        @if (roleDraftInvalid(field.role)) {
+          <span class="role-row__error">Enter a valid hex color.</span>
+        }
+        <span class="role-row__hint">{{ field.hint }}</span>
+      </div>
+    </section>
+  }
+</div>

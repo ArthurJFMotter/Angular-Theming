@@ -1,0 +1,148 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--mat-sys-surface-container-lowest);
+}
+
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-toolbar__logo {
+  margin-right: 4px;
+}
+
+.app-toolbar__title {
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.app-toolbar__spacer {
+  flex: 1 1 auto;
+}
+
+.home {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.home__intro {
+  margin-bottom: 32px;
+
+  h1 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    color: var(--mat-sys-on-surface);
+  }
+
+  p {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+    max-width: 640px;
+    line-height: 1.5;
+  }
+}
+
+.home__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.showcase-card {
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface);
+}
+
+.button-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// Angular Material 19's M3 button/FAB components ignore the `color` input
+// entirely (it's a legacy M2-only API) — color variants must be set by
+// overriding each component's own CSS custom properties instead. Both
+// overrides below point at --mat-sys-* tokens, so they keep updating live
+// with every theme change, the same as everything else on this page.
+.tertiary-fab {
+  --mdc-fab-container-color: var(--mat-sys-tertiary-container);
+  --mat-fab-foreground-color: var(--mat-sys-on-tertiary-container);
+}
+
+.secondary-button {
+  --mdc-filled-button-container-color: var(--mat-sys-secondary-container);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-secondary-container);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-divider {
+  margin: 16px 0;
+}
+
+.tab-copy {
+  padding: 16px 4px;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 0;
+}
+
+.home__palette {
+  h2 {
+    margin: 0 0 16px;
+    font-size: 1.3rem;
+    color: var(--mat-sys-on-surface);
+  }
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.palette-swatch {
+  height: 88px;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &--primary {
+    background: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+  }
+
+  &--secondary {
+    background: var(--mat-sys-secondary);
+    color: var(--mat-sys-on-secondary);
+  }
+
+  &--tertiary {
+    background: var(--mat-sys-tertiary);
+    color: var(--mat-sys-on-tertiary);
+  }
+
+  &--surface {
+    background: var(--mat-sys-surface-container-highest);
+    color: var(--mat-sys-on-surface);
+    border: 1px solid var(--mat-sys-outline-variant);
+  }
+
+  &--error {
+    background: var(--mat-sys-error);
+    color: var(--mat-sys-on-error);
+  }
+}

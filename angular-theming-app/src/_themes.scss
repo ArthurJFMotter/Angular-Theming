@@ -1,0 +1,64 @@
+// =============================================================================
+// Theme definitions
+// =============================================================================
+// Generates one Angular Material 3 theme per [color scheme] x [mode] pair.
+// Each block is scoped under html[data-theme-scheme="..."][data-theme-mode="..."],
+// matching the attributes that ThemeService writes onto <html> at runtime.
+//
+// Because every combination's CSS custom properties already live in the
+// compiled stylesheet, switching the two data-attributes is enough for the
+// browser to repaint instantly — no rebuild, no reload.
+// =============================================================================
+
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+// Tertiary accents kept distinct per scheme so cards/badges/links still read
+// clearly against each primary palette. Keys are quoted strings — unquoted
+// "green"/"purple" collide with CSS color keywords during interpolation.
+$schemes: (
+  'blue': (
+    primary: mat.$blue-palette,
+    tertiary: mat.$azure-palette,
+  ),
+  'green': (
+    primary: mat.$green-palette,
+    tertiary: mat.$chartreuse-palette,
+  ),
+  'purple': (
+    primary: mat.$violet-palette,
+    tertiary: mat.$magenta-palette,
+  ),
+);
+
+$modes: ('light', 'dark');
+
+@each $scheme-name, $palettes in $schemes {
+  @each $mode in $modes {
+    html[data-theme-scheme='#{$scheme-name}'][data-theme-mode='#{$mode}'] {
+      @include mat.theme((
+        color: (
+          theme-type: $mode,
+          primary: map.get($palettes, primary),
+          tertiary: map.get($palettes, tertiary),
+        ),
+        typography: Roboto,
+        density: 0,
+      ));
+    }
+  }
+}
+
+// Sensible default so there's no flash-of-unstyled-content before
+// ThemeService's effect runs and sets the real data-attributes.
+html {
+  @include mat.theme((
+    color: (
+      theme-type: light,
+      primary: mat.$blue-palette,
+      tertiary: mat.$azure-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}

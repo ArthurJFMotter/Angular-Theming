@@ -1,0 +1,56 @@
+<div class="theme-switcher">
+  <mat-button-toggle-group
+    class="mode-toggle"
+    [value]="mode()"
+    (change)="onModeChange($event.value)"
+    aria-label="Theme mode">
+    <mat-button-toggle value="light" matTooltip="Light mode" aria-label="Light mode">
+      <mat-icon>light_mode</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="dark" matTooltip="Dark mode" aria-label="Dark mode">
+      <mat-icon>dark_mode</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <div class="scheme-picker" role="group" aria-label="Color scheme">
+    @for (option of schemeOptions; track option.value) {
+      <button
+        type="button"
+        class="swatch"
+        [class.swatch--active]="scheme() === option.value"
+        [style.--swatch-color]="option.swatch"
+        [matTooltip]="option.label"
+        [attr.aria-pressed]="scheme() === option.value"
+        [attr.aria-label]="option.label + ' color scheme'"
+        (click)="onSchemeSelect(option.value)">
+        @if (scheme() === option.value) {
+          <mat-icon class="swatch__check">check</mat-icon>
+        }
+      </button>
+    }
+
+    <!-- Custom scheme: opens a menu with the color pickers instead of applying directly. -->
+    <button
+      type="button"
+      class="swatch swatch--custom"
+      [class.swatch--active]="scheme() === 'custom'"
+      [style.--swatch-color]="customColors().primary"
+      matTooltip="Custom colors"
+      [attr.aria-pressed]="scheme() === 'custom'"
+      aria-label="Custom color scheme"
+      [matMenuTriggerFor]="customMenu"
+      (menuOpened)="onCustomMenuOpened()">
+      @if (scheme() === 'custom') {
+        <mat-icon class="swatch__check">check</mat-icon>
+      } @else {
+        <mat-icon class="swatch__custom-icon">tune</mat-icon>
+      }
+    </button>
+
+    <mat-menu #customMenu="matMenu" class="custom-menu-panel">
+      <div (click)="$event.stopPropagation()">
+        <app-custom-color-picker />
+      </div>
+    </mat-menu>
+  </div>
+</div>

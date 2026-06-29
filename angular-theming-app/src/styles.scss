@@ -1,0 +1,31 @@
+// Global styles
+// Theme palettes (blue/green/purple x light/dark) live in _themes.scss,
+// applied via [data-theme-scheme]/[data-theme-mode] attributes on <html>.
+@use './themes';
+@use '@angular/material' as mat;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+// Smooth, non-jarring crossfade whenever the theme attributes change.
+* {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+// The custom-color-picker panel supplies its own padding/width; strip
+// Material's default menu content padding so it isn't doubled up.
+// (mat-menu renders its overlay outside component view encapsulation, so
+// this has to live in a global stylesheet to reach it.)
+.custom-menu-panel .mat-mdc-menu-content {
+  padding: 0;
+}

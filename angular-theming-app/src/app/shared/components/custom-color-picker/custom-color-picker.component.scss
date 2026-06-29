@@ -1,0 +1,144 @@
+.custom-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  width: 360px;
+  max-width: 90vw;
+  color: var(--mat-sys-on-surface);
+}
+
+.custom-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  button {
+    font-size: 0.8rem;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  }
+}
+
+.custom-picker__note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.role-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.role-row__swatch-input {
+  flex: 0 0 auto;
+  padding-top: 2px;
+}
+
+.color-swatch-input {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  padding: 0;
+  cursor: pointer;
+  background: none;
+
+  &--disabled,
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.role-row__fields {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.role-row__label-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.role-row__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.required-tag {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--mat-sys-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hex-input {
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+    outline-offset: 1px;
+  }
+
+  &--invalid {
+    border-color: var(--mat-sys-error);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.role-row__error {
+  font-size: 0.72rem;
+  color: var(--mat-sys-error);
+}
+
+.role-row__hint {
+  font-size: 0.72rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// mat-slide-toggle's default label sits to the right; shrink its footprint
+// so it reads as a compact "Auto / Custom" pill next to the role label.
+.role-row__label-line mat-slide-toggle {
+  font-size: 0.72rem;
+}

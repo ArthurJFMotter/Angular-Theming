@@ -1,0 +1,111 @@
+<mat-toolbar class="app-toolbar" color="primary">
+  <mat-icon class="app-toolbar__logo">palette</mat-icon>
+  <span class="app-toolbar__title">Angular Theming App</span>
+  <span class="app-toolbar__spacer"></span>
+  <app-theme-switcher />
+</mat-toolbar>
+
+<main class="home">
+  <section class="home__intro">
+    <h1>Live Material 3 theming</h1>
+    <p>
+      Pick a mode and a color scheme above — every component on this page
+      restyles instantly and your choice is remembered on this device. Want
+      your own colors? Click the dashed swatch to pick custom primary,
+      secondary, tertiary, and error colors — contrast is always kept safe
+      for you.
+    </p>
+  </section>
+
+  <section class="home__grid">
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Buttons</mat-card-title>
+        <mat-card-subtitle>Primary, secondary &amp; tertiary roles, side by side</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="button-row">
+        <button mat-button>Text</button>
+        <button mat-flat-button color="primary">Primary</button>
+        <button mat-flat-button class="secondary-button">Secondary</button>
+        <button mat-stroked-button color="primary">Stroked</button>
+        <button mat-raised-button color="primary">Raised</button>
+        <button mat-icon-button matBadge="3" matBadgeColor="warn" aria-label="Notifications">
+          <mat-icon>notifications</mat-icon>
+        </button>
+        <button mat-fab class="tertiary-fab" aria-label="Add">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Form field</mat-card-title>
+        <mat-card-subtitle>Inputs follow the active scheme</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Project name</mat-label>
+          <input matInput placeholder="Angular Theming App" />
+          <mat-icon matSuffix>edit</mat-icon>
+        </mat-form-field>
+
+        <mat-slide-toggle checked>Enable notifications</mat-slide-toggle>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Chips</mat-card-title>
+        <mat-card-subtitle>Selected chips use the secondary color</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-chip-listbox aria-label="Tech stack">
+          @for (chip of chips; track chip; let i = $index) {
+            <mat-chip-option [selected]="i === 0">{{ chip }}</mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Progress &amp; tabs</mat-card-title>
+        <mat-card-subtitle>Surfaces, dividers and motion</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-progress-bar mode="determinate" value="64"></mat-progress-bar>
+        <mat-divider class="section-divider"></mat-divider>
+        <mat-tab-group>
+          <mat-tab label="Overview">
+            <p class="tab-copy">Surface colors update across every nested panel.</p>
+          </mat-tab>
+          <mat-tab label="Details">
+            <p class="tab-copy">Tab indicators use the primary color token.</p>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="home__palette">
+    <h2>Surface &amp; role tokens</h2>
+    <div class="palette-grid">
+      <div class="palette-swatch palette-swatch--primary">
+        <span>Primary</span>
+      </div>
+      <div class="palette-swatch palette-swatch--secondary">
+        <span>Secondary</span>
+      </div>
+      <div class="palette-swatch palette-swatch--tertiary">
+        <span>Tertiary</span>
+      </div>
+      <div class="palette-swatch palette-swatch--surface">
+        <span>Surface</span>
+      </div>
+      <div class="palette-swatch palette-swatch--error">
+        <span>Error</span>
+      </div>
+    </div>
+  </section>
+</main>

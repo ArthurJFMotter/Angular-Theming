@@ -1,0 +1,75 @@
+.theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mode-toggle {
+  height: 36px;
+}
+
+.scheme-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  --swatch-color: #999;
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: var(--swatch-color);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline-offset: 2px;
+  transition: transform 150ms ease, border-color 150ms ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mat-sys-primary);
+  }
+
+  &--active {
+    border-color: var(--mat-sys-on-surface);
+  }
+}
+
+.swatch__check {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #fff;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
+
+.swatch--custom {
+  // A conic gradient hints "pick any color" when no custom primary differs
+  // visibly from a preset, instead of just rendering as a flat dot.
+  position: relative;
+  margin-left: 4px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px dashed var(--mat-sys-outline-variant);
+  }
+}
+
+.swatch__custom-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: #fff;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
+}
