@@ -26,6 +26,23 @@
     </mat-button-toggle>
   </mat-button-toggle-group>
 
+  <!-- 3. CVD Simulator Toggle -->
+  <button mat-icon-button [matMenuTriggerFor]="visionMenu" matTooltip="Simulate color vision">
+    <!-- Change icon color if simulation is active -->
+    <mat-icon [style.color]="cvd() !== 'none' ? 'var(--mat-sys-primary)' : 'inherit'">
+      visibility
+    </mat-icon>
+  </button>
+  <mat-menu #visionMenu="matMenu">
+    <div class="menu-header">Color Vision Simulator</div>
+    @for (option of cvdOptions; track option.value) {
+      <button mat-menu-item (click)="onCvdChange(option.value)">
+        <mat-icon>{{ cvd() === option.value ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        <span>{{ option.label }}</span>
+      </button>
+    }
+  </mat-menu>
+
   <div class="scheme-picker" role="group" aria-label="Color scheme">
     
     <!-- 1. Presets -->

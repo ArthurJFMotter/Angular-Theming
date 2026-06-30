@@ -8,6 +8,15 @@
   height: 36px;
 }
 
+.menu-header {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--mat-sys-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .scheme-picker {
   display: flex;
   align-items: center;

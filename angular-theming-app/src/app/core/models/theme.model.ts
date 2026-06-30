@@ -1,3 +1,13 @@
+export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+
+export const CVD_MODES: { value: CvdMode; label: string }[] = [
+  { value: 'none', label: 'Normal Vision' },
+  { value: 'protanopia', label: 'Protanopia (Red-blind)' },
+  { value: 'deuteranopia', label: 'Deuteranopia (Green-blind)' },
+  { value: 'tritanopia', label: 'Tritanopia (Blue-blind)' },
+  { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' }
+];
+
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
 
@@ -26,16 +36,18 @@ export interface ThemeState {
   scheme: ColorScheme;
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
+  cvd: CvdMode; // <-- Add this
 }
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_THEME_STATE: ThemeState = {
-  mode: 'auto',       // Default to OS preference
-  contrast: 'auto',   // Default to OS preference
+  mode: 'auto',
+  contrast: 'auto',
   scheme: 'blue',
   customColors: DEFAULT_CUSTOM_COLORS,
-  savedProfiles: []
+  savedProfiles: [],
+  cvd: 'none' // <-- Add this
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
