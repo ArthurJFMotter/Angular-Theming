@@ -117,23 +117,34 @@ export class ColorEngine {
   /**
    * Builds a single mode's token set.
    */
-  static buildTokens(
-    colors: CustomColors,
-    mode: ThemeMode,
-    contrastLevel = 0,
-  ): MatSysColorTokens {
+static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): MatSysColorTokens {
     const isDark = mode === 'dark';
     const scheme = ColorEngine.buildScheme(colors, isDark, contrastLevel);
     const argb = (value: number) => hexFromArgb(value);
 
-    // Helper: Material 3 spec for generating a custom semantic color
+    // Helper: Build semantic tokens with High Contrast awareness
     const buildSemanticTokens = (hex: string, name: string) => {
       const palette = TonalPalette.fromInt(argbFromHex(hex));
+      
+      // Standard M3 Tones
+      let tBase = isDark ? 80 : 40;
+      let tOnBase = isDark ? 20 : 100;
+      let tContainer = isDark ? 30 : 90;
+      let tOnContainer = isDark ? 90 : 10;
+      
+      // High Contrast Tone shifts (Maximize contrast against backgrounds)
+      if (contrastLevel > 0) {
+        tBase = isDark ? 90 : 30;
+        tOnBase = isDark ? 0 : 100;
+        tContainer = isDark ? 20 : 85;
+        tOnContainer = isDark ? 100 : 0;
+      }
+
       return {
-        [`${name}`]: argb(palette.tone(isDark ? 80 : 40)),
-        [`on-${name}`]: argb(palette.tone(isDark ? 20 : 100)),
-        [`${name}-container`]: argb(palette.tone(isDark ? 30 : 90)),
-        [`on-${name}-container`]: argb(palette.tone(isDark ? 90 : 10)),
+        [`${name}`]: argb(palette.tone(tBase)),
+        [`on-${name}`]: argb(palette.tone(tOnBase)),
+        [`${name}-container`]: argb(palette.tone(tContainer)),
+        [`on-${name}-container`]: argb(palette.tone(tOnContainer))
       };
     };
 
@@ -175,12 +186,12 @@ export class ColorEngine {
       'surface-tint': argb(scheme.primary),
       shadow: argb(scheme.shadow),
       scrim: argb(scheme.scrim),
-
-      // Merge the new semantic tokens in!
+      
+      // Inject the semantic tokens
       ...buildSemanticTokens(colors.success || '#188038', 'success'),
       ...buildSemanticTokens(colors.warning || '#f29900', 'warning'),
-      ...buildSemanticTokens(colors.info || '#1967d2', 'info'),
-    } as MatSysColorTokens; // Cast ensures all keys match the interface
+      ...buildSemanticTokens(colors.info || '#1967d2', 'info')
+    } as MatSysColorTokens;
   }
 
   /**

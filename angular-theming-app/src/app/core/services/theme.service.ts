@@ -170,35 +170,46 @@ export class ThemeService {
   }
 
   /** Applies the current theme as data attributes (+ inline color tokens for custom/HC) on <html>. */
- private applyToDocument(state: ThemeState): void {
+private applyToDocument(state: ThemeState): void {
     const root = document.documentElement;
     root.setAttribute('data-theme-mode', state.mode);
     root.setAttribute('data-theme-scheme', state.scheme);
     root.style.colorScheme = state.mode;
 
+    const baseColors = state.scheme === 'custom' 
+      ? state.customColors 
+      : PRESET_BASE_COLORS[state.scheme];
+
     if (state.highContrast) {
       root.setAttribute('data-theme-contrast', 'high');
-      
-      // 1. Figure out what base color we are currently using
-      const baseColors = state.scheme === 'custom' 
-        ? state.customColors 
-        : PRESET_BASE_COLORS[state.scheme];
-        
-      // 2. Compute dynamic HIGH CONTRAST tokens for that specific hue
       const hcTokens = ColorEngine.buildTokens(baseColors, state.mode, 1);
-      
-      // 3. Apply them as inline styles (which overrides the SCSS instantly)
       this.applyTokens(root, hcTokens);
-      
     } else {
       root.removeAttribute('data-theme-contrast');
 
-      // Normal behavior when High Contrast is off
       if (state.scheme === 'custom') {
         this.applyCustomTokens(root, state.mode);
       } else {
-        // Clear inline tokens so the normal SCSS presets can take over
+        // 1. Let the SCSS presets take over primary/surface/etc.
         this.clearCustomTokens(root);
+        
+        // 2. FIX: Since SCSS doesn't know about our custom semantic roles, 
+        // we must manually generate and inject them for preset themes!
+        const presetTokens = ColorEngine.buildTokens(baseColors, state.mode, 0);
+        this.applyTokens(root, {
+          'success': presetTokens.success,
+          'on-success': presetTokens['on-success'],
+          'success-container': presetTokens['success-container'],
+          'on-success-container': presetTokens['on-success-container'],
+          'warning': presetTokens.warning,
+          'on-warning': presetTokens['on-warning'],
+          'warning-container': presetTokens['warning-container'],
+          'on-warning-container': presetTokens['on-warning-container'],
+          'info': presetTokens.info,
+          'on-info': presetTokens['on-info'],
+          'info-container': presetTokens['info-container'],
+          'on-info-container': presetTokens['on-info-container'],
+        });
       }
     }
   }
@@ -208,9 +219,11 @@ export class ThemeService {
     this.applyTokens(root, tokens);
   }
 
-  private applyTokens(root: HTMLElement, tokens: MatSysColorTokens): void {
+  private applyTokens(root: HTMLElement, tokens: Partial<MatSysColorTokens>): void {
     for (const [token, value] of Object.entries(tokens)) {
-      root.style.setProperty(`--mat-sys-${token}`, value);
+      if (value) {
+        root.style.setProperty(`--mat-sys-${token}`, value);
+      }
     }
   }
 
