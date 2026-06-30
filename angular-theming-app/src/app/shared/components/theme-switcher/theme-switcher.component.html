@@ -26,9 +26,10 @@
   </button>
 
   <div class="scheme-picker" role="group" aria-label="Color scheme">
+    
     <!-- 1. Presets -->
     @for (option of schemeOptions; track option.value) {
-      <button class="swatch"
+      <button type="button" class="swatch"
         [class.swatch--active]="scheme() === option.value"
         [style.--swatch-color]="option.swatch"
         [matTooltip]="option.label"
@@ -39,25 +40,29 @@
 
     <!-- 2. Dynamic Saved Profiles -->
     @for (profile of savedProfiles(); track profile.id) {
-      <button class="swatch"
+      <button type="button" class="swatch"
         [class.swatch--active]="scheme() === profile.id"
         [style.--swatch-color]="profile.colors.primary"
-        [matTooltip]="profile.name" 
+        
+        [matTooltip]="scheme() === profile.id ? 'Edit ' + profile.name : profile.name"
         (click)="onSchemeSelect(profile.id)"
-        [matMenuTriggerFor]="customMenu"
+        [matMenuTriggerFor]="scheme() === profile.id ? customMenu : null"
         (menuOpened)="onCustomMenuOpened(profile.id)">
+        
         @if (scheme() === profile.id) { <mat-icon class="swatch__check">check</mat-icon> }
       </button>
     }
 
     <!-- 3. The Scratchpad (Custom mode) -->
-    <button class="swatch swatch--custom"
+    <button type="button" class="swatch swatch--custom"
       [class.swatch--active]="scheme() === 'custom'"
       [style.--swatch-color]="customColors().primary"
-      matTooltip="Custom colors"
+      
+      [matTooltip]="scheme() === 'custom' ? 'Edit custom colors' : 'Custom colors'"
       (click)="onSchemeSelect('custom')"
-      [matMenuTriggerFor]="customMenu"
+      [matMenuTriggerFor]="scheme() === 'custom' ? customMenu : null"
       (menuOpened)="onCustomMenuOpened('custom')">
+      
       @if (scheme() === 'custom') {
         <mat-icon class="swatch__check">check</mat-icon>
       } @else {
@@ -67,7 +72,6 @@
 
     <!-- Menu overlay wrapper -->
     <mat-menu #customMenu="matMenu" class="custom-menu-panel">
-      <!-- ng-template ensures the picker initializes fresh depending on which profile opened it -->
       <ng-template matMenuContent>
         <div (click)="$event.stopPropagation()">
           <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
