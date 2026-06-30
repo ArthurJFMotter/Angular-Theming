@@ -68,6 +68,43 @@
   flex-wrap: wrap;
 }
 
+.alerts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.status-alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  
+  mat-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  &--success {
+    background: var(--mat-sys-success-container);
+    color: var(--mat-sys-on-success-container);
+  }
+
+  &--warning {
+    background: var(--mat-sys-warning-container);
+    color: var(--mat-sys-on-warning-container);
+  }
+
+  &--info {
+    background: var(--mat-sys-info-container);
+    color: var(--mat-sys-on-info-container);
+  }
+}
+
 // Angular Material 19's M3 button/FAB components ignore the `color` input
 // entirely (it's a legacy M2-only API) — color variants must be set by
 // overriding each component's own CSS custom properties instead. Both
@@ -144,5 +181,18 @@
   &--error {
     background: var(--mat-sys-error);
     color: var(--mat-sys-on-error);
+  }
+
+  &--success {
+    background: var(--mat-sys-success);
+    color: var(--mat-sys-on-success);
+  }
+  &--warning {
+    background: var(--mat-sys-warning);
+    color: var(--mat-sys-on-warning);
+  }
+  &--info {
+    background: var(--mat-sys-info);
+    color: var(--mat-sys-on-info);
   }
 }

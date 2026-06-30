@@ -131,11 +131,12 @@ export class ThemeService {
    */
   setCustomColors(colors: Partial<CustomColors>): void {
     const next: CustomColors = { ...this.customColorsSignal() };
+    const ROLES = ['secondary', 'tertiary', 'error', 'success', 'warning', 'info'] as const;
 
     if (colors.primary !== undefined && isValidHexColor(colors.primary)) {
       next.primary = colors.primary;
     }
-    for (const role of ['secondary', 'tertiary', 'error'] as const) {
+    for (const role of ROLES) {
       if (colors[role] !== undefined) {
         const value = colors[role];
         next[role] = value && isValidHexColor(value) ? value : undefined;
@@ -146,8 +147,8 @@ export class ThemeService {
     this.schemeSignal.set('custom');
   }
 
-  /** Clears an optional role back to "derive from primary automatically". */
-  clearCustomColorRole(role: 'secondary' | 'tertiary' | 'error'): void {
+/** Clears an optional role back to "derive from primary automatically". */
+  clearCustomColorRole(role: 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info'): void {
     const next = { ...this.customColorsSignal() };
     delete next[role];
     this.customColorsSignal.set(next);
@@ -232,6 +233,8 @@ export class ThemeService {
   }
 
   private restoreFromStorage(): void {
+    const ROLES = ['secondary', 'tertiary', 'error', 'success', 'warning', 'info'] as const;
+
     try {
       const raw = localStorage.getItem(THEME_STORAGE_KEY);
       if (!raw) {
@@ -248,7 +251,7 @@ export class ThemeService {
       }
       if (parsed.customColors && isValidHexColor(parsed.customColors.primary)) {
         const restored: CustomColors = { primary: parsed.customColors.primary };
-        for (const role of ['secondary', 'tertiary', 'error'] as const) {
+        for (const role of ROLES) {
           const value = parsed.customColors[role];
           if (isValidHexColor(value)) {
             restored[role] = value;

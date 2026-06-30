@@ -10,10 +10,9 @@
     <h1>Live Material 3 theming</h1>
     <p>
       Pick a mode and a color scheme above — every component on this page
-      restyles instantly and your choice is remembered on this device. Want
-      your own colors? Click the dashed swatch to pick custom primary,
-      secondary, tertiary, and error colors — contrast is always kept safe
-      for you.
+      restyles instantly and your choice is remembered on this device. Want your
+      own colors? Click the dashed swatch to pick custom primary, secondary,
+      tertiary, and error colors — contrast is always kept safe for you.
     </p>
   </section>
 
@@ -21,7 +20,10 @@
     <mat-card class="showcase-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>Buttons</mat-card-title>
-        <mat-card-subtitle>Primary, secondary &amp; tertiary roles, side by side</mat-card-subtitle>
+        <mat-card-subtitle
+          >Primary, secondary &amp; tertiary roles, side by
+          side</mat-card-subtitle
+        >
       </mat-card-header>
       <mat-card-content class="button-row">
         <button mat-button>Text</button>
@@ -29,7 +31,12 @@
         <button mat-flat-button class="secondary-button">Secondary</button>
         <button mat-stroked-button color="primary">Stroked</button>
         <button mat-raised-button color="primary">Raised</button>
-        <button mat-icon-button matBadge="3" matBadgeColor="warn" aria-label="Notifications">
+        <button
+          mat-icon-button
+          matBadge="3"
+          matBadgeColor="warn"
+          aria-label="Notifications"
+        >
           <mat-icon>notifications</mat-icon>
         </button>
         <button mat-fab class="tertiary-fab" aria-label="Add">
@@ -57,7 +64,9 @@
     <mat-card class="showcase-card" appearance="outlined">
       <mat-card-header>
         <mat-card-title>Chips</mat-card-title>
-        <mat-card-subtitle>Selected chips use the secondary color</mat-card-subtitle>
+        <mat-card-subtitle
+          >Selected chips use the secondary color</mat-card-subtitle
+        >
       </mat-card-header>
       <mat-card-content>
         <mat-chip-listbox aria-label="Tech stack">
@@ -78,12 +87,37 @@
         <mat-divider class="section-divider"></mat-divider>
         <mat-tab-group>
           <mat-tab label="Overview">
-            <p class="tab-copy">Surface colors update across every nested panel.</p>
+            <p class="tab-copy">
+              Surface colors update across every nested panel.
+            </p>
           </mat-tab>
           <mat-tab label="Details">
             <p class="tab-copy">Tab indicators use the primary color token.</p>
           </mat-tab>
         </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Status & Alerts</mat-card-title>
+        <mat-card-subtitle
+          >Semantic colors utilizing container tokens</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content class="alerts-container">
+        <div class="status-alert status-alert--success">
+          <mat-icon>check_circle</mat-icon>
+          <span>Changes saved successfully.</span>
+        </div>
+        <div class="status-alert status-alert--warning">
+          <mat-icon>warning</mat-icon>
+          <span>Your subscription expires in 3 days.</span>
+        </div>
+        <div class="status-alert status-alert--info">
+          <mat-icon>info</mat-icon>
+          <span>New features are available in settings.</span>
+        </div>
       </mat-card-content>
     </mat-card>
   </section>
@@ -105,6 +139,15 @@
       </div>
       <div class="palette-swatch palette-swatch--error">
         <span>Error</span>
+      </div>
+      <div class="palette-swatch palette-swatch--success">
+        <span>Success</span>
+      </div>
+      <div class="palette-swatch palette-swatch--warning">
+        <span>Warning</span>
+      </div>
+      <div class="palette-swatch palette-swatch--info">
+        <span>Info</span>
       </div>
     </div>
   </section>

@@ -37,10 +37,15 @@ export type ColorScheme = 'blue' | 'green' | 'purple' | 'custom';
  * with arbitrary user chroma.
  */
 export interface CustomColors {
+  // Native Options
   primary: string;
   secondary?: string;
   tertiary?: string;
   error?: string;
+  // Custom Options
+  success?: string; 
+  warning?: string; 
+  info?: string;    
 }
 
 export interface ThemeState {

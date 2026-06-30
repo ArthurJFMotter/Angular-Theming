@@ -7,7 +7,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ThemeService } from '../../../core/services/theme.service';
 import { isValidHexColor } from '../../../core/models/theme.model';
 
-type OptionalRole = 'secondary' | 'tertiary' | 'error';
+type OptionalRole = 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info';
 
 interface RoleField {
   role: OptionalRole;
@@ -28,9 +28,12 @@ export class CustomColorPickerComponent {
   readonly customColors = this.themeService.customColors;
 
   readonly roleFields: RoleField[] = [
-    { role: 'secondary', label: 'Secondary', hint: 'Supporting accents — chips, toggles, less prominent actions.' },
-    { role: 'tertiary', label: 'Tertiary', hint: 'Contrasting highlights — badges, special call-outs.' },
-    { role: 'error', label: 'Error', hint: 'Validation messages, destructive actions.' }
+    { role: 'secondary', label: 'Secondary', hint: 'Supporting accents.' },
+    { role: 'tertiary', label: 'Tertiary', hint: 'Contrasting highlights.' },
+    { role: 'error', label: 'Error', hint: 'Validation messages, destructive actions.' },
+    { role: 'success', label: 'Success', hint: 'Completion messages, positive trends.' },
+    { role: 'warning', label: 'Warning', hint: 'Cautionary messages, non-blocking issues.' },
+    { role: 'info', label: 'Info', hint: 'Neutral tips, informational banners.' }
   ];
 
   readonly primaryDraft = signal(this.customColors().primary);
@@ -94,10 +97,11 @@ export class CustomColorPickerComponent {
     this.primaryDraft.set(defaultPrimary);
     this.themeService.setCustomColors({ primary: defaultPrimary });
     
-    // Clear out secondary, tertiary, and error to force them back to Auto
-    this.themeService.clearCustomColorRole('secondary');
-    this.themeService.clearCustomColorRole('tertiary');
-    this.themeService.clearCustomColorRole('error');
+    // Clear out ALL optional roles to force them back to Auto
+    const roles: OptionalRole[] = ['secondary', 'tertiary', 'error', 'success', 'warning', 'info'];
+    for (const role of roles) {
+      this.themeService.clearCustomColorRole(role);
+    }
   }
 
   private buildInitialDrafts(): Record<OptionalRole, string> {
@@ -105,7 +109,10 @@ export class CustomColorPickerComponent {
     return {
       secondary: current.secondary ?? '',
       tertiary: current.tertiary ?? '',
-      error: current.error ?? ''
+      error: current.error ?? '',
+      success: current.success ?? '',
+      warning: current.warning ?? '',
+      info: current.info ?? ''
     };
   }
 }

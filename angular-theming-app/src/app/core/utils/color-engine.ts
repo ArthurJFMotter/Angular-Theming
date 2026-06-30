@@ -3,7 +3,7 @@ import {
   hexFromArgb,
   Hct,
   TonalPalette,
-  DynamicScheme
+  DynamicScheme,
 } from '@material/material-color-utilities';
 import { CustomColors, ThemeMode } from '../models/theme.model';
 
@@ -25,6 +25,7 @@ const VARIANT_TONAL_SPOT = 2;
  * responsible for adding the `--mat-sys-` prefix when writing to the DOM.
  */
 export interface MatSysColorTokens {
+  // Native Angular Material vars
   primary: string;
   'on-primary': string;
   'primary-container': string;
@@ -62,6 +63,19 @@ export interface MatSysColorTokens {
   'surface-tint': string;
   shadow: string;
   scrim: string;
+  // Custom vars
+  success: string;
+  'on-success': string;
+  'success-container': string;
+  'on-success-container': string;
+  warning: string;
+  'on-warning': string;
+  'warning-container': string;
+  'on-warning-container': string;
+  info: string;
+  'on-info': string;
+  'info-container': string;
+  'on-info-container': string;
 }
 
 /**
@@ -90,20 +104,38 @@ export class ColorEngine {
   /**
    * Builds a complete light AND dark token set from a CustomColors input.
    */
-  static buildTokenPair(colors: CustomColors, contrastLevel = 0): { light: MatSysColorTokens; dark: MatSysColorTokens } {
+  static buildTokenPair(
+    colors: CustomColors,
+    contrastLevel = 0,
+  ): { light: MatSysColorTokens; dark: MatSysColorTokens } {
     return {
       light: ColorEngine.buildTokens(colors, 'light', contrastLevel),
-      dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel)
+      dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel),
     };
   }
 
   /**
    * Builds a single mode's token set.
    */
-  static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): MatSysColorTokens {
-    // Pass contrastLevel straight into your existing buildScheme method
-    const scheme = ColorEngine.buildScheme(colors, mode === 'dark', contrastLevel);
+  static buildTokens(
+    colors: CustomColors,
+    mode: ThemeMode,
+    contrastLevel = 0,
+  ): MatSysColorTokens {
+    const isDark = mode === 'dark';
+    const scheme = ColorEngine.buildScheme(colors, isDark, contrastLevel);
     const argb = (value: number) => hexFromArgb(value);
+
+    // Helper: Material 3 spec for generating a custom semantic color
+    const buildSemanticTokens = (hex: string, name: string) => {
+      const palette = TonalPalette.fromInt(argbFromHex(hex));
+      return {
+        [`${name}`]: argb(palette.tone(isDark ? 80 : 40)),
+        [`on-${name}`]: argb(palette.tone(isDark ? 20 : 100)),
+        [`${name}-container`]: argb(palette.tone(isDark ? 30 : 90)),
+        [`on-${name}-container`]: argb(palette.tone(isDark ? 90 : 10)),
+      };
+    };
 
     return {
       primary: argb(scheme.primary),
@@ -142,8 +174,13 @@ export class ColorEngine {
       'inverse-primary': argb(scheme.inversePrimary),
       'surface-tint': argb(scheme.primary),
       shadow: argb(scheme.shadow),
-      scrim: argb(scheme.scrim)
-    };
+      scrim: argb(scheme.scrim),
+
+      // Merge the new semantic tokens in!
+      ...buildSemanticTokens(colors.success || '#188038', 'success'),
+      ...buildSemanticTokens(colors.warning || '#f29900', 'warning'),
+      ...buildSemanticTokens(colors.info || '#1967d2', 'info'),
+    } as MatSysColorTokens; // Cast ensures all keys match the interface
   }
 
   /**
@@ -154,14 +191,21 @@ export class ColorEngine {
    */
   static suggestDefaults(primaryHex: string): Required<CustomColors> {
     const primaryHct = Hct.fromInt(argbFromHex(primaryHex));
-    const secondaryHue = primaryHct.hue;
-    const tertiaryHue = sanitizeDegrees(primaryHct.hue + 60);
-
     return {
       primary: primaryHex,
-      secondary: hexFromArgb(TonalPalette.fromHueAndChroma(secondaryHue, 16).tone(40)),
-      tertiary: hexFromArgb(TonalPalette.fromHueAndChroma(tertiaryHue, 24).tone(40)),
-      error: hexFromArgb(TonalPalette.fromHueAndChroma(25, 84).tone(40))
+      secondary: hexFromArgb(
+        TonalPalette.fromHueAndChroma(primaryHct.hue, 16).tone(40),
+      ),
+      tertiary: hexFromArgb(
+        TonalPalette.fromHueAndChroma(
+          sanitizeDegrees(primaryHct.hue + 60),
+          24,
+        ).tone(40),
+      ),
+      error: hexFromArgb(TonalPalette.fromHueAndChroma(25, 84).tone(40)),
+      success: '#188038', // Green
+      warning: '#f29900', // Amber/Orange
+      info: '#1967d2', // Blue
     };
   }
 
@@ -171,10 +215,17 @@ export class ColorEngine {
    * (relative to primary's hue) otherwise. Neutral palettes always follow
    * primary's hue at fixed low chroma — see class doc for why.
    */
-  private static buildScheme(colors: CustomColors, isDark: boolean, contrastLevel = 0): DynamicScheme {
+  private static buildScheme(
+    colors: CustomColors,
+    isDark: boolean,
+    contrastLevel = 0,
+  ): DynamicScheme {
     const primaryHct = Hct.fromInt(argbFromHex(colors.primary));
 
-    const primaryPalette = TonalPalette.fromHueAndChroma(primaryHct.hue, Math.max(primaryHct.chroma, 36));
+    const primaryPalette = TonalPalette.fromHueAndChroma(
+      primaryHct.hue,
+      Math.max(primaryHct.chroma, 36),
+    );
 
     const secondaryPalette = colors.secondary
       ? TonalPalette.fromInt(argbFromHex(colors.secondary))
@@ -185,7 +236,10 @@ export class ColorEngine {
       : TonalPalette.fromHueAndChroma(sanitizeDegrees(primaryHct.hue + 60), 24);
 
     const neutralPalette = TonalPalette.fromHueAndChroma(primaryHct.hue, 6);
-    const neutralVariantPalette = TonalPalette.fromHueAndChroma(primaryHct.hue, 8);
+    const neutralVariantPalette = TonalPalette.fromHueAndChroma(
+      primaryHct.hue,
+      8,
+    );
 
     const scheme = new DynamicScheme({
       sourceColorArgb: primaryHct.toInt(),
@@ -196,7 +250,7 @@ export class ColorEngine {
       secondaryPalette,
       tertiaryPalette,
       neutralPalette,
-      neutralVariantPalette
+      neutralVariantPalette,
     });
 
     if (colors.error) {
