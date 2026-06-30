@@ -205,10 +205,15 @@ export class ThemeService {
 
   private applyToDocument(state: ThemeState): void {
     const root = document.documentElement;
-    // FIX: Apply the 'resolved' mode directly to the DOM
-    // Apply CVD Simulation Filter
-    if (state.cvd !== 'none') {
-      root.style.filter = `url(#cvd-${state.cvd})`;
+    // Apply Vision/Accessibility Simulation Filter
+    if (state.cvd === 'blur') {
+      root.style.filter = 'blur(1.5px) contrast(0.95)';
+    } else if (state.cvd === 'glare') {
+      root.style.filter = 'contrast(0.75) brightness(1.15) sepia(0.1)';
+    } else if (state.cvd === 'nightshift') {
+      root.style.filter = 'sepia(0.35) hue-rotate(-15deg) contrast(0.9)';
+    } else if (state.cvd !== 'none') {
+      root.style.filter = `url(#cvd-${state.cvd})`; 
     } else {
       root.style.filter = '';
     }

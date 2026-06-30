@@ -1,11 +1,14 @@
-export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' | 'blur' | 'glare' | 'nightshift';
 
 export const CVD_MODES: { value: CvdMode; label: string }[] = [
   { value: 'none', label: 'Normal Vision' },
   { value: 'protanopia', label: 'Protanopia (Red-blind)' },
   { value: 'deuteranopia', label: 'Deuteranopia (Green-blind)' },
   { value: 'tritanopia', label: 'Tritanopia (Blue-blind)' },
-  { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' }
+  { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' },
+  { value: 'blur', label: 'Low Vision (Blur)' },
+  { value: 'glare', label: 'Sunlight Glare' },
+  { value: 'nightshift', label: 'Night Shift (Warm)' }
 ];
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
