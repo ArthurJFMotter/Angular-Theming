@@ -52,7 +52,7 @@
   padding-bottom: 14px;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
 
-  &:last-child {
+  &:last-of-type {
     border-bottom: none;
     padding-bottom: 0;
   }
@@ -146,4 +146,48 @@
 // so it reads as a compact "Auto / Custom" pill next to the role label.
 .role-row__label-line mat-slide-toggle {
   font-size: 0.72rem;
+}
+
+.custom-picker__footer {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.custom-picker__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  .full-width { flex: 1; }
+}
+
+.confirm-delete-box {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.confirm-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.profile-name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
 }

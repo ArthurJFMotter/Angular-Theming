@@ -1,11 +1,11 @@
 <div class="custom-picker">
   <header class="custom-picker__header">
-    <h3>Custom theme colors</h3>
-    <!-- Reset to default -->
-    <button mat-button (click)="resetToDefault()">
-      <mat-icon>restart_alt</mat-icon>
-      Reset to default
-    </button>
+    <h3>{{ isProfileMode() ? 'Edit profile' : 'Custom theme colors' }}</h3>
+    @if (!isProfileMode()) {
+      <button mat-button (click)="resetToDefault()">
+        <mat-icon>restart_alt</mat-icon> Reset to default
+      </button>
+    }
   </header>
 
   <!-- Descriptive text -->
@@ -80,4 +80,38 @@
       </div>
     </section>
   }
+   <!-- Profile Interactions -->
+  <div class="custom-picker__footer">
+    @if (confirmDelete()) {
+      <div class="confirm-delete-box">
+        <p>Are you sure you want to delete <strong>{{ activeProfile()?.name }}</strong>?</p>
+        <div class="confirm-delete-actions">
+          <button mat-button (click)="confirmDelete.set(false)">Cancel</button>
+          <button mat-flat-button color="warn" (click)="onDeleteProfileConfirm()">Delete</button>
+        </div>
+      </div>
+    } @else {
+      <!-- New Profile Name Input -->
+      <div class="profile-name-field">
+        <label class="role-row__label" for="profile-name">Profile name</label>
+        <input
+          id="profile-name"
+          class="hex-input"
+          type="text"
+          spellcheck="false"
+          [ngModel]="profileNameDraft()"
+          (ngModelChange)="profileNameDraft.set($event)"
+          placeholder="e.g. Midnight Blue" />
+      </div>
+
+      <div class="custom-picker__actions">
+        @if (isProfileMode()) {
+          <button mat-stroked-button color="warn" (click)="confirmDelete.set(true)">Delete</button>
+          <button mat-flat-button color="primary" (click)="onSaveProfile()">Save changes</button>
+        } @else {
+          <button mat-flat-button color="primary" class="full-width" (click)="onSaveProfile()">Save as profile</button>
+        }
+      </div>
+    }
+  </div>
 </div>

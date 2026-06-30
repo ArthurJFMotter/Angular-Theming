@@ -26,33 +26,38 @@
   </button>
 
   <div class="scheme-picker" role="group" aria-label="Color scheme">
+    <!-- 1. Presets -->
     @for (option of schemeOptions; track option.value) {
-      <button
-        type="button"
-        class="swatch"
+      <button class="swatch"
         [class.swatch--active]="scheme() === option.value"
         [style.--swatch-color]="option.swatch"
         [matTooltip]="option.label"
-        [attr.aria-pressed]="scheme() === option.value"
-        [attr.aria-label]="option.label + ' color scheme'"
         (click)="onSchemeSelect(option.value)">
-        @if (scheme() === option.value) {
-          <mat-icon class="swatch__check">check</mat-icon>
-        }
+        @if (scheme() === option.value) { <mat-icon class="swatch__check">check</mat-icon> }
       </button>
     }
 
-    <!-- Custom scheme: opens a menu with the color pickers instead of applying directly. -->
-    <button
-      type="button"
-      class="swatch swatch--custom"
+    <!-- 2. Dynamic Saved Profiles -->
+    @for (profile of savedProfiles(); track profile.id) {
+      <button class="swatch"
+        [class.swatch--active]="scheme() === profile.id"
+        [style.--swatch-color]="profile.colors.primary"
+        [matTooltip]="profile.name" 
+        (click)="onSchemeSelect(profile.id)"
+        [matMenuTriggerFor]="customMenu"
+        (menuOpened)="onCustomMenuOpened(profile.id)">
+        @if (scheme() === profile.id) { <mat-icon class="swatch__check">check</mat-icon> }
+      </button>
+    }
+
+    <!-- 3. The Scratchpad (Custom mode) -->
+    <button class="swatch swatch--custom"
       [class.swatch--active]="scheme() === 'custom'"
       [style.--swatch-color]="customColors().primary"
       matTooltip="Custom colors"
-      [attr.aria-pressed]="scheme() === 'custom'"
-      aria-label="Custom color scheme"
+      (click)="onSchemeSelect('custom')"
       [matMenuTriggerFor]="customMenu"
-      (menuOpened)="onCustomMenuOpened()">
+      (menuOpened)="onCustomMenuOpened('custom')">
       @if (scheme() === 'custom') {
         <mat-icon class="swatch__check">check</mat-icon>
       } @else {
@@ -60,10 +65,14 @@
       }
     </button>
 
+    <!-- Menu overlay wrapper -->
     <mat-menu #customMenu="matMenu" class="custom-menu-panel">
-      <div (click)="$event.stopPropagation()">
-        <app-custom-color-picker />
-      </div>
+      <!-- ng-template ensures the picker initializes fresh depending on which profile opened it -->
+      <ng-template matMenuContent>
+        <div (click)="$event.stopPropagation()">
+          <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
+        </div>
+      </ng-template>
     </mat-menu>
   </div>
 </div>
