@@ -1,29 +1,30 @@
 <div class="theme-switcher">
-  <mat-button-toggle-group
-    class="mode-toggle"
-    [value]="mode()"
-    (change)="onModeChange($event.value)"
-    aria-label="Theme mode">
-    <mat-button-toggle value="light" matTooltip="Light mode" aria-label="Light mode">
+  
+  <!-- 1. Mode Toggle (Light/Auto/Dark) -->
+  <mat-button-toggle-group class="mode-toggle" [value]="mode()" (change)="onModeChange($event.value)" aria-label="Theme mode">
+    <mat-button-toggle value="light" matTooltip="Light mode">
       <mat-icon>light_mode</mat-icon>
     </mat-button-toggle>
-    <mat-button-toggle value="dark" matTooltip="Dark mode" aria-label="Dark mode">
+    <mat-button-toggle value="auto" matTooltip="System mode">
+      <mat-icon>brightness_auto</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="dark" matTooltip="Dark mode">
       <mat-icon>dark_mode</mat-icon>
     </mat-button-toggle>
   </mat-button-toggle-group>
 
-  <!-- High Contrast toggle — independent of mode and color scheme -->
-  <button
-    type="button"
-    mat-icon-button
-    class="high-contrast-toggle"
-    [class.high-contrast-toggle--active]="highContrast()"
-    matTooltip="High contrast mode"
-    [attr.aria-pressed]="highContrast()"
-    aria-label="Toggle high contrast mode"
-    (click)="onHighContrastToggle()">
-    <mat-icon>contrast</mat-icon>
-  </button>
+  <!-- 2. Contrast Toggle (Standard/Auto/High) -->
+  <mat-button-toggle-group class="mode-toggle" [value]="contrast()" (change)="onContrastChange($event.value)" aria-label="Contrast mode">
+    <mat-button-toggle value="normal" matTooltip="Standard contrast">
+      <mat-icon>tonality</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="auto" matTooltip="System contrast">
+      <mat-icon>brightness_auto</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle value="high" matTooltip="High contrast">
+      <mat-icon>contrast</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 
   <div class="scheme-picker" role="group" aria-label="Color scheme">
     

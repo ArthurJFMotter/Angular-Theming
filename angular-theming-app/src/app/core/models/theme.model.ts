@@ -1,7 +1,6 @@
-export type ThemeMode = 'light' | 'dark';
-export type HighContrast = boolean;
+export type ThemeMode = 'light' | 'dark' | 'auto';
+export type ContrastMode = 'normal' | 'high' | 'auto';
 
-// ColorScheme is now a generic string so it can store unique profile IDs
 export type ColorScheme = string;
 export type PresetColorScheme = 'blue' | 'green' | 'purple';
 
@@ -23,23 +22,24 @@ export interface CustomProfile {
 
 export interface ThemeState {
   mode: ThemeMode;
+  contrast: ContrastMode;
   scheme: ColorScheme;
   customColors: CustomColors;
-  highContrast: boolean;
   savedProfiles: CustomProfile[];
 }
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_THEME_STATE: ThemeState = {
-  mode: 'light',
+  mode: 'auto',       // Default to OS preference
+  contrast: 'auto',   // Default to OS preference
   scheme: 'blue',
   customColors: DEFAULT_CUSTOM_COLORS,
-  highContrast: false,
   savedProfiles: []
 };
 
-export const THEME_MODES: ThemeMode[] = ['light', 'dark'];
+export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
+export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
 export const PRESET_COLOR_SCHEMES: PresetColorScheme[] = ['blue', 'green', 'purple'];
 
 /** localStorage key — centralized so service + any future SSR bootstrap code agree. */

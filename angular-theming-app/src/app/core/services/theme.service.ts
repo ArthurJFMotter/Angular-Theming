@@ -1,31 +1,46 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import {
   ColorScheme, PresetColorScheme, PRESET_COLOR_SCHEMES, CustomColors, CustomProfile,
-  DEFAULT_THEME_STATE, isValidHexColor, ThemeMode, THEME_MODES, ThemeState, THEME_STORAGE_KEY
+  DEFAULT_THEME_STATE, isValidHexColor, ThemeMode, THEME_MODES, ThemeState, THEME_STORAGE_KEY, ContrastMode
 } from '../models/theme.model';
 import { ColorEngine, MatSysColorTokens } from '../utils/color-engine';
 
 const PRESET_BASE_COLORS: Record<PresetColorScheme, CustomColors> = {
-  blue: { primary: '#3b6fd6' },
-  green: { primary: '#006e1c' },
-  purple: { primary: '#6750a4' }
+  blue: { primary: '#3b6fd6' }, green: { primary: '#006e1c' }, purple: { primary: '#6750a4' }
 };
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly modeSignal = signal<ThemeMode>(DEFAULT_THEME_STATE.mode);
+  private readonly contrastSignal = signal<ContrastMode>(DEFAULT_THEME_STATE.contrast);
   private readonly schemeSignal = signal<ColorScheme>(DEFAULT_THEME_STATE.scheme);
   private readonly customColorsSignal = signal<CustomColors>(DEFAULT_THEME_STATE.customColors);
-  private readonly highContrastSignal = signal<boolean>(DEFAULT_THEME_STATE.highContrast);
   private readonly savedProfilesSignal = signal<CustomProfile[]>(DEFAULT_THEME_STATE.savedProfiles);
 
+  // OS Media Query listeners
+  private readonly prefersDark = signal<boolean>(false);
+  private readonly prefersHighContrast = signal<boolean>(false);
+
   readonly mode = this.modeSignal.asReadonly();
+  readonly contrast = this.contrastSignal.asReadonly();
   readonly scheme = this.schemeSignal.asReadonly();
   readonly customColors = this.customColorsSignal.asReadonly();
-  readonly highContrast = this.highContrastSignal.asReadonly();
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
 
-  /** Determines whether the active scheme is the scratchpad or a saved profile, and serves the correct colors. */
+  /** Resolves 'auto' mode into actual 'light' or 'dark' based on OS */
+  readonly resolvedMode = computed<'light' | 'dark'>(() => {
+    return this.modeSignal() === 'auto' 
+      ? (this.prefersDark() ? 'dark' : 'light') 
+      : (this.modeSignal() as 'light' | 'dark');
+  });
+
+  /** Resolves 'auto' contrast into true/false based on OS */
+  readonly resolvedHighContrast = computed<boolean>(() => {
+    return this.contrastSignal() === 'auto' 
+      ? this.prefersHighContrast() 
+      : this.contrastSignal() === 'high';
+  });
+
   readonly activeCustomColors = computed<CustomColors>(() => {
     const scheme = this.schemeSignal();
     if (scheme === 'custom') return this.customColorsSignal();
@@ -33,27 +48,24 @@ export class ThemeService {
     return profile ? profile.colors : this.customColorsSignal();
   });
 
-  /** Grabs the full profile object (including its name) if a profile is active. */
   readonly activeProfile = computed<CustomProfile | undefined>(() => {
     return this.savedProfilesSignal().find(p => p.id === this.schemeSignal());
   });
 
   readonly theme = computed<ThemeState>(() => ({
     mode: this.modeSignal(),
+    contrast: this.contrastSignal(),
     scheme: this.schemeSignal(),
     customColors: this.customColorsSignal(),
-    highContrast: this.highContrastSignal(),
     savedProfiles: this.savedProfilesSignal()
   }));
 
-  /** Tracks the currently active custom/profile token pair for instant mode switching. */
   private readonly activeTokenPair = computed(() => ColorEngine.buildTokenPair(this.activeCustomColors()));
 
-  readonly availableModes = THEME_MODES;
-  readonly availableSchemes = PRESET_COLOR_SCHEMES;
-
   constructor() {
+    this.initMediaListeners();
     this.restoreFromStorage();
+
     effect(() => {
       const state = this.theme();
       this.applyToDocument(state);
@@ -62,33 +74,22 @@ export class ThemeService {
   }
 
   setMode(mode: ThemeMode): void { this.modeSignal.set(mode); }
+  setContrast(contrast: ContrastMode): void { this.contrastSignal.set(contrast); }
   setScheme(scheme: ColorScheme): void { this.schemeSignal.set(scheme); }
-  toggleMode(): void { this.modeSignal.update(c => c === 'light' ? 'dark' : 'light'); }
-  toggleHighContrast(): void { this.highContrastSignal.update(c => !c); }
-  
-  /** Saves the current scratchpad state as a permanent profile. */
+
   saveCurrentAsProfile(name: string): void {
     const newId = 'profile-' + Date.now();
-    const newProfile: CustomProfile = {
-      id: newId,
-      name,
-      colors: { ...this.activeCustomColors() }
-    };
-    this.savedProfilesSignal.update(p => [...p, newProfile]);
+    this.savedProfilesSignal.update(p => [...p, { id: newId, name, colors: { ...this.activeCustomColors() } }]);
     this.schemeSignal.set(newId);
   }
 
-  /** Updates the active profile's name */
   updateActiveProfileName(name: string): void {
     const current = this.schemeSignal();
     if (current.startsWith('profile-')) {
-       this.savedProfilesSignal.update(profiles => {
-         return profiles.map(p => p.id === current ? { ...p, name } : p);
-       });
+       this.savedProfilesSignal.update(profiles => profiles.map(p => p.id === current ? { ...p, name } : p));
     }
   }
 
-  /** Deletes the active profile and falls back to the custom scratchpad. */
   deleteActiveProfile(): void {
     const current = this.schemeSignal();
     if (current.startsWith('profile-')) {
@@ -99,11 +100,7 @@ export class ThemeService {
 
   setCustomColors(colors: Partial<CustomColors>): void {
     const currentScheme = this.schemeSignal();
-    
-    // Jump to the custom scratchpad if a user edits while on a preset
-    if (currentScheme !== 'custom' && !currentScheme.startsWith('profile-')) {
-      this.schemeSignal.set('custom');
-    }
+    if (currentScheme !== 'custom' && !currentScheme.startsWith('profile-')) this.schemeSignal.set('custom');
 
     const nextColors = { ...this.activeCustomColors() };
     if (colors.primary !== undefined && isValidHexColor(colors.primary)) nextColors.primary = colors.primary;
@@ -119,15 +116,7 @@ export class ThemeService {
     if (this.schemeSignal() === 'custom') {
       this.customColorsSignal.set(nextColors);
     } else {
-      this.savedProfilesSignal.update(profiles => {
-        const idx = profiles.findIndex(p => p.id === this.schemeSignal());
-        if (idx > -1) {
-          const updated = [...profiles];
-          updated[idx] = { ...updated[idx], colors: nextColors };
-          return updated;
-        }
-        return profiles;
-      });
+      this.savedProfilesSignal.update(profiles => profiles.map(p => p.id === this.schemeSignal() ? { ...p, colors: nextColors } : p));
     }
   }
 
@@ -138,47 +127,37 @@ export class ThemeService {
     if (this.schemeSignal() === 'custom') {
       this.customColorsSignal.set(nextColors);
     } else {
-      this.savedProfilesSignal.update(profiles => {
-        const idx = profiles.findIndex(p => p.id === this.schemeSignal());
-        if (idx > -1) {
-          const updated = [...profiles];
-          updated[idx] = { ...updated[idx], colors: nextColors };
-          return updated;
-        }
-        return profiles;
-      });
+      this.savedProfilesSignal.update(profiles => profiles.map(p => p.id === this.schemeSignal() ? { ...p, colors: nextColors } : p));
     }
   }
 
-  suggestedCustomDefaults() {
-    return ColorEngine.suggestDefaults(this.activeCustomColors().primary);
-  }
+  suggestedCustomDefaults() { return ColorEngine.suggestDefaults(this.activeCustomColors().primary); }
 
   private applyToDocument(state: ThemeState): void {
     const root = document.documentElement;
-    root.setAttribute('data-theme-mode', state.mode);
+    // FIX: Apply the 'resolved' mode directly to the DOM
+    const activeMode = this.resolvedMode();
+    const isHighContrast = this.resolvedHighContrast();
+
+    root.setAttribute('data-theme-mode', activeMode);
     root.setAttribute('data-theme-scheme', state.scheme);
-    root.style.colorScheme = state.mode;
+    root.style.colorScheme = activeMode;
 
     const isPreset = PRESET_COLOR_SCHEMES.includes(state.scheme as PresetColorScheme);
-    const activeColors = state.scheme === 'custom' 
-      ? state.customColors 
-      : (state.savedProfiles.find(p => p.id === state.scheme)?.colors || state.customColors);
-
+    const activeColors = state.scheme === 'custom' ? state.customColors : (state.savedProfiles.find(p => p.id === state.scheme)?.colors || state.customColors);
     const baseColors = isPreset ? PRESET_BASE_COLORS[state.scheme as PresetColorScheme] : activeColors;
 
-    if (state.highContrast) {
+    if (isHighContrast) {
       root.setAttribute('data-theme-contrast', 'high');
-      const hcTokens = ColorEngine.buildTokens(baseColors, state.mode, 1);
+      const hcTokens = ColorEngine.buildTokens(baseColors, activeMode, 1);
       this.applyTokens(root, hcTokens);
     } else {
       root.removeAttribute('data-theme-contrast');
-
       if (!isPreset) {
-        this.applyTokens(root, this.activeTokenPair()[state.mode]);
+        this.applyTokens(root, this.activeTokenPair()[activeMode]);
       } else {
         this.clearCustomTokens(root);
-        const presetTokens = ColorEngine.buildTokens(baseColors, state.mode, 0);
+        const presetTokens = ColorEngine.buildTokens(baseColors, activeMode, 0);
         this.applyTokens(root, {
           'success': presetTokens.success, 'on-success': presetTokens['on-success'],
           'success-container': presetTokens['success-container'], 'on-success-container': presetTokens['on-success-container'],
@@ -192,35 +171,46 @@ export class ThemeService {
   }
 
   private applyTokens(root: HTMLElement, tokens: Partial<MatSysColorTokens>): void {
-    for (const [token, value] of Object.entries(tokens)) {
-      if (value) root.style.setProperty(`--mat-sys-${token}`, value);
-    }
+    for (const [token, value] of Object.entries(tokens)) if (value) root.style.setProperty(`--mat-sys-${token}`, value);
   }
 
   private clearCustomTokens(root: HTMLElement): void {
     const sampleTokens = this.activeTokenPair().light;
-    for (const token of Object.keys(sampleTokens)) {
-      root.style.removeProperty(`--mat-sys-${token}`);
-    }
+    for (const token of Object.keys(sampleTokens)) root.style.removeProperty(`--mat-sys-${token}`);
   }
 
   private persist(state: ThemeState): void {
     try { localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(state)); } catch {}
   }
 
+  private initMediaListeners(): void {
+    if (typeof window !== 'undefined') {
+      const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      this.prefersDark.set(darkQuery.matches);
+      darkQuery.addEventListener('change', e => this.prefersDark.set(e.matches));
+
+      const contrastQuery = window.matchMedia('(prefers-contrast: more)');
+      this.prefersHighContrast.set(contrastQuery.matches);
+      contrastQuery.addEventListener('change', e => this.prefersHighContrast.set(e.matches));
+    }
+  }
+
   private restoreFromStorage(): void {
     try {
       const raw = localStorage.getItem(THEME_STORAGE_KEY);
       if (!raw) return;
-      const parsed = JSON.parse(raw) as Partial<ThemeState>;
+      const parsed = JSON.parse(raw) as Partial<ThemeState> & { highContrast?: boolean }; // Account for legacy boolean
 
       if (parsed.mode) this.modeSignal.set(parsed.mode);
       if (parsed.scheme) this.schemeSignal.set(parsed.scheme);
-      if (parsed.savedProfiles) {
-        const profiles = parsed.savedProfiles.map(p => ({ ...p, name: p.name || 'Saved Profile' }));
-        this.savedProfilesSignal.set(profiles);
+      if (parsed.savedProfiles) this.savedProfilesSignal.set(parsed.savedProfiles.map(p => ({ ...p, name: p.name || 'Saved Profile' })));
+      
+      // Legacy support for your previous HighContrast boolean data!
+      if (typeof parsed.highContrast === 'boolean') {
+        this.contrastSignal.set(parsed.highContrast ? 'high' : 'normal');
+      } else if (parsed.contrast) {
+        this.contrastSignal.set(parsed.contrast);
       }
-      if (typeof parsed.highContrast === 'boolean') this.highContrastSignal.set(parsed.highContrast);
       
       if (parsed.customColors && isValidHexColor(parsed.customColors.primary)) {
         const restored: CustomColors = { primary: parsed.customColors.primary };

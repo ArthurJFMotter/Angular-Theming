@@ -5,14 +5,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { ThemeService } from '../../../core/services/theme.service';
-import { PresetColorScheme, PRESET_COLOR_SCHEMES, ThemeMode } from '../../../core/models/theme.model';
+import { PresetColorScheme, ThemeMode, ContrastMode } from '../../../core/models/theme.model';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 
-interface SchemeOption {
-  value: PresetColorScheme;
-  label: string;
-  swatch: string;
-}
+interface SchemeOption { value: PresetColorScheme; label: string; swatch: string; }
 
 @Component({
   selector: 'app-theme-switcher',
@@ -26,10 +22,10 @@ export class ThemeSwitcherComponent {
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
   readonly mode = this.themeService.mode;
+  readonly contrast = this.themeService.contrast; // Grab the contrast signal
   readonly scheme = this.themeService.scheme;
   readonly customColors = this.themeService.customColors;
   readonly savedProfiles = this.themeService.savedProfiles;
-  readonly highContrast = this.themeService.highContrast;
 
   readonly schemeOptions: SchemeOption[] = [
     { value: 'blue', label: 'Blue', swatch: '#3b6fd6' },
@@ -38,8 +34,8 @@ export class ThemeSwitcherComponent {
   ];
 
   onModeChange(mode: ThemeMode): void { this.themeService.setMode(mode); }
+  onContrastChange(contrast: ContrastMode): void { this.themeService.setContrast(contrast); }
   onSchemeSelect(scheme: string): void { this.themeService.setScheme(scheme); }
-  onHighContrastToggle(): void { this.themeService.toggleHighContrast(); }
   onCustomMenuOpened(scheme: string): void { this.themeService.setScheme(scheme); }
 
   closeCustomMenu(): void {

@@ -4,27 +4,6 @@
   gap: 16px;
 }
 
-// High Contrast toggle button
-.high-contrast-toggle {
-  // Neutral appearance by default — blends with the toolbar.
-  color: inherit;
-  opacity: 0.7;
-  transition: opacity 150ms ease, color 150ms ease, background-color 150ms ease;
-
-  &:hover {
-    opacity: 1;
-  }
-
-  // When active: filled circle background using on-surface color so it
-  // stands out clearly against any theme, including the HC theme itself.
-  &--active {
-    opacity: 1;
-    background-color: var(--mat-sys-on-surface);
-    color: var(--mat-sys-surface);
-    border-radius: 50%;
-  }
-}
-
 .mode-toggle {
   height: 36px;
 }
