@@ -11,8 +11,13 @@ import {
   ContrastMode,
   CVD_MODES,
   CvdMode,
+  FONT_OPTIONS,
 } from '../../../core/models/theme.model';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSliderModule } from '@angular/material/slider';
+import { PercentPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface SchemeOption {
   value: PresetColorScheme;
@@ -24,11 +29,15 @@ interface SchemeOption {
   selector: 'app-theme-switcher',
   standalone: true,
   imports: [
+    FormsModule,
+    PercentPipe,
     MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
     MatMenuModule,
     MatButtonModule,
+    MatDividerModule,
+    MatSliderModule,
     CustomColorPickerComponent,
   ],
   templateUrl: './theme-switcher.component.html',
@@ -45,6 +54,9 @@ export class ThemeSwitcherComponent {
   readonly savedProfiles = this.themeService.savedProfiles;
   readonly cvd = this.themeService.cvd;
   readonly cvdOptions = CVD_MODES;
+  readonly fontFamily = this.themeService.fontFamily;
+  readonly fontScale = this.themeService.fontScale;
+  readonly fontOptions = FONT_OPTIONS;
 
   readonly schemeOptions: SchemeOption[] = [
     { value: 'blue', label: 'Blue', swatch: '#3b6fd6' },
@@ -55,12 +67,15 @@ export class ThemeSwitcherComponent {
   onModeChange(mode: ThemeMode): void {
     this.themeService.setMode(mode);
   }
+
   onContrastChange(contrast: ContrastMode): void {
     this.themeService.setContrast(contrast);
   }
+
   onSchemeSelect(scheme: string): void {
     this.themeService.setScheme(scheme);
   }
+
   onCustomMenuOpened(scheme: string): void {
     this.themeService.setScheme(scheme);
   }
@@ -71,5 +86,30 @@ export class ThemeSwitcherComponent {
 
   onCvdChange(mode: CvdMode): void {
     this.themeService.setCvdMode(mode);
+  }
+
+  setFontFamily(f: string): void {
+    this.themeService.setFontFamily(f);
+  }
+
+  setFontScale(s: number): void {
+    this.themeService.setFontScale(s);
+  }
+
+  scaleUp(): void {
+    const current = this.fontScale();
+    if (current < 1.3)
+      this.setFontScale(Math.round((current + 0.05) * 100) / 100);
+  }
+
+  scaleDown(): void {
+    const current = this.fontScale();
+    if (current > 0.8)
+      this.setFontScale(Math.round((current - 0.05) * 100) / 100);
+  }
+
+  resetTypography(): void {
+    this.setFontFamily('Roboto');
+    this.setFontScale(1);
   }
 }

@@ -83,6 +83,29 @@
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.6));
 }
 
+// Expand the menu slightly so the slider isn't squished
+::ng-deep .typography-menu-panel {
+  min-width: 280px !important;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  padding: 0 16px 8px;
+  gap: 8px;
+  
+  mat-slider {
+    flex: 1;
+    margin: 0 -8px; // Compensate for internal slider padding to fit nicely
+  }
+}
+
+.typography-actions {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
 // =============================================================================
 // CDK Overlay Overrides
 // =============================================================================

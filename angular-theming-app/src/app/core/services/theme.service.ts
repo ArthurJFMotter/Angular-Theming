@@ -42,6 +42,16 @@ export class ThemeService {
   private readonly prefersDark = signal<boolean>(false);
   private readonly prefersHighContrast = signal<boolean>(false);
 
+  private readonly fontFamilySignal = signal<string>(
+    DEFAULT_THEME_STATE.fontFamily,
+  );
+  private readonly fontScaleSignal = signal<number>(
+    DEFAULT_THEME_STATE.fontScale,
+  );
+
+  readonly fontFamily = this.fontFamilySignal.asReadonly();
+  readonly fontScale = this.fontScaleSignal.asReadonly();
+
   readonly mode = this.modeSignal.asReadonly();
   readonly contrast = this.contrastSignal.asReadonly();
   readonly scheme = this.schemeSignal.asReadonly();
@@ -75,29 +85,35 @@ export class ThemeService {
     return this.savedProfilesSignal().find((p) => p.id === this.schemeSignal());
   });
 
-  // 1. Add the CVD signal near your other signals
   private readonly cvdSignal = signal<CvdMode>(DEFAULT_THEME_STATE.cvd);
   readonly cvd = this.cvdSignal.asReadonly();
 
-  // 2. Add it to the computed theme() object
   readonly theme = computed<ThemeState>(() => ({
     mode: this.modeSignal(),
     contrast: this.contrastSignal(),
     scheme: this.schemeSignal(),
     customColors: this.customColorsSignal(),
     savedProfiles: this.savedProfilesSignal(),
-    cvd: this.cvdSignal(), // <-- Add this
+    cvd: this.cvdSignal(),
+    fontFamily: this.fontFamilySignal(),
+    fontScale: this.fontScaleSignal(),
   }));
 
-  // 3. Add the setter method
+  // Setters
   setCvdMode(mode: CvdMode): void {
     this.cvdSignal.set(mode);
   }
 
-  // 4. Update the constructor to inject the SVG filters on startup
+  setFontFamily(family: string): void {
+    this.fontFamilySignal.set(family);
+  }
+  setFontScale(scale: number): void {
+    this.fontScaleSignal.set(scale);
+  }
+
   constructor() {
     this.initMediaListeners();
-    this.injectCvdFilters(); // <-- Add this
+    this.injectCvdFilters();
     this.restoreFromStorage();
 
     effect(() => {
@@ -213,7 +229,7 @@ export class ThemeService {
     } else if (state.cvd === 'nightshift') {
       root.style.filter = 'sepia(0.35) hue-rotate(-15deg) contrast(0.9)';
     } else if (state.cvd !== 'none') {
-      root.style.filter = `url(#cvd-${state.cvd})`; 
+      root.style.filter = `url(#cvd-${state.cvd})`;
     } else {
       root.style.filter = '';
     }
@@ -224,6 +240,7 @@ export class ThemeService {
     root.setAttribute('data-theme-mode', activeMode);
     root.setAttribute('data-theme-scheme', state.scheme);
     root.style.colorScheme = activeMode;
+    this.applyTypography(root, state.fontFamily, state.fontScale);
 
     const isPreset = PRESET_COLOR_SCHEMES.includes(
       state.scheme as PresetColorScheme,
@@ -343,11 +360,13 @@ export class ThemeService {
         }
         this.customColorsSignal.set(restored);
       }
-      if (parsed.cvd) this.cvdSignal.set(parsed.cvd); // <-- Add this line
+      if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
+      if (parsed.fontFamily) this.fontFamilySignal.set(parsed.fontFamily);
+      if (parsed.fontScale) this.fontScaleSignal.set(parsed.fontScale);
     } catch {}
   }
 
-  // 7. Add the method to dynamically inject the SVG Color Matrices at the bottom of the class
+  // Method to dynamically inject the SVG Color Matrices
   private injectCvdFilters(): void {
     if (
       typeof document === 'undefined' ||
@@ -381,5 +400,45 @@ export class ThemeService {
     </defs>
   `;
     document.body.appendChild(svg);
+  }
+
+  // Typography engine
+  private applyTypography(root: HTMLElement, family: string, scale: number): void {
+    if (typeof document === 'undefined') return;
+
+    // Dynamically load Google Fonts if it's a web font (skipping OS fonts)
+    if (!family.includes('system') && !family.includes('monospace') && family !== 'Roboto') {
+      const urlFamily = family.replace(/\s+/g, '+');
+      const linkId = `font-${urlFamily}`;
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement('link');
+        link.id = linkId;
+        link.rel = 'stylesheet';
+        link.href = `https://fonts.googleapis.com/css2?family=${urlFamily}:wght@400;500;700&display=swap`;
+        document.head.appendChild(link);
+      }
+    }
+
+    // Material 3 Typography Scale (Base Pixel Sizes & Line Heights)
+    const roles = [
+      { name: 'display-large', size: 57, lh: 64 }, { name: 'display-medium', size: 45, lh: 52 }, { name: 'display-small', size: 36, lh: 44 },
+      { name: 'headline-large', size: 32, lh: 40 }, { name: 'headline-medium', size: 28, lh: 36 }, { name: 'headline-small', size: 24, lh: 32 },
+      { name: 'title-large', size: 22, lh: 28 }, { name: 'title-medium', size: 16, lh: 24 }, { name: 'title-small', size: 14, lh: 20 },
+      { name: 'body-large', size: 16, lh: 24 }, { name: 'body-medium', size: 14, lh: 20 }, { name: 'body-small', size: 12, lh: 16 },
+      { name: 'label-large', size: 14, lh: 20 }, { name: 'label-medium', size: 12, lh: 16 }, { name: 'label-small', size: 11, lh: 16 },
+    ];
+
+    for (const role of roles) {
+      root.style.setProperty(`--mat-sys-${role.name}-font`, family);
+      root.style.setProperty(`--mat-sys-${role.name}-size`, `calc(${role.size}px * ${scale})`);
+      root.style.setProperty(`--mat-sys-${role.name}-line-height`, `calc(${role.lh}px * ${scale})`);
+    }
+
+    // Apply font-family to standard non-Material HTML
+    document.body.style.fontFamily = family;
+    
+    // FIX: Scale standard HTML elements (p, h1, span) by adjusting the root percentage!
+    // A scale of 1.3 becomes 130%, naturally blowing up all 'rem' and inherited text.
+    root.style.fontSize = `${scale * 100}%`;
   }
 }

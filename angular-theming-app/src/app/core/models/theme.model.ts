@@ -44,13 +44,27 @@ export interface ThemeState {
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
+// Add these to ThemeState
+export interface ThemeState {
+  mode: ThemeMode;
+  contrast: ContrastMode;
+  scheme: ColorScheme;
+  customColors: CustomColors;
+  savedProfiles: CustomProfile[];
+  cvd: CvdMode;
+  fontFamily: string; // <-- Add this
+  fontScale: number;  // <-- Add this
+}
+
 export const DEFAULT_THEME_STATE: ThemeState = {
   mode: 'auto',
   contrast: 'auto',
   scheme: 'blue',
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
-  cvd: 'none' // <-- Add this
+  cvd: 'none',
+  fontFamily: 'Roboto', // <-- Add this
+  fontScale: 1          // <-- Add this
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
@@ -66,3 +80,13 @@ export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 export function isValidHexColor(value: string | undefined | null): value is string {
   return !!value && HEX_COLOR_PATTERN.test(value.trim());
 }
+
+// Add this constant at the end of the file
+export const FONT_OPTIONS = [
+  { value: 'Roboto', label: 'Roboto (Default)' },
+  { value: 'Inter', label: 'Inter (Modern & Clean)' },
+  { value: 'Montserrat', label: 'Montserrat (Geometric)' },
+  { value: 'Atkinson Hyperlegible', label: 'Hyperlegible (A11y)' },
+  { value: 'system-ui, sans-serif', label: 'System Native' },
+  { value: 'monospace', label: 'Monospace (Code)' }
+];
