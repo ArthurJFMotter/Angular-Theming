@@ -25,15 +25,19 @@ const PRESET_BASE_COLORS: Record<PresetColorScheme, CustomColors> = {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly modeSignal = signal<ThemeMode>(DEFAULT_THEME_STATE.mode);
+
   private readonly contrastSignal = signal<ContrastMode>(
     DEFAULT_THEME_STATE.contrast,
   );
+
   private readonly schemeSignal = signal<ColorScheme>(
     DEFAULT_THEME_STATE.scheme,
   );
+
   private readonly customColorsSignal = signal<CustomColors>(
     DEFAULT_THEME_STATE.customColors,
   );
+
   private readonly savedProfilesSignal = signal<CustomProfile[]>(
     DEFAULT_THEME_STATE.savedProfiles,
   );
@@ -45,13 +49,18 @@ export class ThemeService {
   private readonly fontFamilySignal = signal<string>(
     DEFAULT_THEME_STATE.fontFamily,
   );
+
   private readonly fontScaleSignal = signal<number>(
     DEFAULT_THEME_STATE.fontScale,
   );
 
+  private readonly shapeScaleSignal = signal<number>(
+    DEFAULT_THEME_STATE.shapeScale,
+  );
+  readonly shapeScale = this.shapeScaleSignal.asReadonly();
+
   readonly fontFamily = this.fontFamilySignal.asReadonly();
   readonly fontScale = this.fontScaleSignal.asReadonly();
-
   readonly mode = this.modeSignal.asReadonly();
   readonly contrast = this.contrastSignal.asReadonly();
   readonly scheme = this.schemeSignal.asReadonly();
@@ -97,6 +106,7 @@ export class ThemeService {
     cvd: this.cvdSignal(),
     fontFamily: this.fontFamilySignal(),
     fontScale: this.fontScaleSignal(),
+    shapeScale: this.shapeScaleSignal(),
   }));
 
   // Setters
@@ -109,6 +119,10 @@ export class ThemeService {
   }
   setFontScale(scale: number): void {
     this.fontScaleSignal.set(scale);
+  }
+
+  setShapeScale(scale: number): void {
+    this.shapeScaleSignal.set(scale);
   }
 
   constructor() {
@@ -241,6 +255,7 @@ export class ThemeService {
     root.setAttribute('data-theme-scheme', state.scheme);
     root.style.colorScheme = activeMode;
     this.applyTypography(root, state.fontFamily, state.fontScale);
+    this.applyShape(root, state.shapeScale);
 
     const isPreset = PRESET_COLOR_SCHEMES.includes(
       state.scheme as PresetColorScheme,
@@ -363,6 +378,8 @@ export class ThemeService {
       if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
       if (parsed.fontFamily) this.fontFamilySignal.set(parsed.fontFamily);
       if (parsed.fontScale) this.fontScaleSignal.set(parsed.fontScale);
+      if (parsed.shapeScale !== undefined)
+        this.shapeScaleSignal.set(parsed.shapeScale);
     } catch {}
   }
 
@@ -403,11 +420,19 @@ export class ThemeService {
   }
 
   // Typography engine
-  private applyTypography(root: HTMLElement, family: string, scale: number): void {
+  private applyTypography(
+    root: HTMLElement,
+    family: string,
+    scale: number,
+  ): void {
     if (typeof document === 'undefined') return;
 
     // Dynamically load Google Fonts if it's a web font (skipping OS fonts)
-    if (!family.includes('system') && !family.includes('monospace') && family !== 'Roboto') {
+    if (
+      !family.includes('system') &&
+      !family.includes('monospace') &&
+      family !== 'Roboto'
+    ) {
       const urlFamily = family.replace(/\s+/g, '+');
       const linkId = `font-${urlFamily}`;
       if (!document.getElementById(linkId)) {
@@ -421,24 +446,62 @@ export class ThemeService {
 
     // Material 3 Typography Scale (Base Pixel Sizes & Line Heights)
     const roles = [
-      { name: 'display-large', size: 57, lh: 64 }, { name: 'display-medium', size: 45, lh: 52 }, { name: 'display-small', size: 36, lh: 44 },
-      { name: 'headline-large', size: 32, lh: 40 }, { name: 'headline-medium', size: 28, lh: 36 }, { name: 'headline-small', size: 24, lh: 32 },
-      { name: 'title-large', size: 22, lh: 28 }, { name: 'title-medium', size: 16, lh: 24 }, { name: 'title-small', size: 14, lh: 20 },
-      { name: 'body-large', size: 16, lh: 24 }, { name: 'body-medium', size: 14, lh: 20 }, { name: 'body-small', size: 12, lh: 16 },
-      { name: 'label-large', size: 14, lh: 20 }, { name: 'label-medium', size: 12, lh: 16 }, { name: 'label-small', size: 11, lh: 16 },
+      { name: 'display-large', size: 57, lh: 64 },
+      { name: 'display-medium', size: 45, lh: 52 },
+      { name: 'display-small', size: 36, lh: 44 },
+      { name: 'headline-large', size: 32, lh: 40 },
+      { name: 'headline-medium', size: 28, lh: 36 },
+      { name: 'headline-small', size: 24, lh: 32 },
+      { name: 'title-large', size: 22, lh: 28 },
+      { name: 'title-medium', size: 16, lh: 24 },
+      { name: 'title-small', size: 14, lh: 20 },
+      { name: 'body-large', size: 16, lh: 24 },
+      { name: 'body-medium', size: 14, lh: 20 },
+      { name: 'body-small', size: 12, lh: 16 },
+      { name: 'label-large', size: 14, lh: 20 },
+      { name: 'label-medium', size: 12, lh: 16 },
+      { name: 'label-small', size: 11, lh: 16 },
     ];
 
     for (const role of roles) {
       root.style.setProperty(`--mat-sys-${role.name}-font`, family);
-      root.style.setProperty(`--mat-sys-${role.name}-size`, `calc(${role.size}px * ${scale})`);
-      root.style.setProperty(`--mat-sys-${role.name}-line-height`, `calc(${role.lh}px * ${scale})`);
+      root.style.setProperty(
+        `--mat-sys-${role.name}-size`,
+        `calc(${role.size}px * ${scale})`,
+      );
+      root.style.setProperty(
+        `--mat-sys-${role.name}-line-height`,
+        `calc(${role.lh}px * ${scale})`,
+      );
     }
 
     // Apply font-family to standard non-Material HTML
     document.body.style.fontFamily = family;
-    
+
     // FIX: Scale standard HTML elements (p, h1, span) by adjusting the root percentage!
     // A scale of 1.3 becomes 130%, naturally blowing up all 'rem' and inherited text.
     root.style.fontSize = `${scale * 100}%`;
+  }
+
+  // Shape engine
+  private applyShape(root: HTMLElement, scale: number): void {
+    if (typeof document === 'undefined') return;
+
+    // Material 3 defines shape roles in specific pixel tiers
+    const roles = [
+      { name: 'extra-small', size: 4 },
+      { name: 'small', size: 8 },
+      { name: 'medium', size: 12 },
+      { name: 'large', size: 16 },
+      { name: 'extra-large', size: 28 },
+      { name: 'full', size: 9999 }, // Multiplying 9999 ensures it stays a pill shape, UNLESS scale is 0 (which makes it a square!)
+    ];
+
+    for (const role of roles) {
+      root.style.setProperty(
+        `--mat-sys-corner-${role.name}`,
+        `calc(${role.size}px * ${scale})`,
+      );
+    }
   }
 }

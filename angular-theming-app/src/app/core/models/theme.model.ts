@@ -39,12 +39,10 @@ export interface ThemeState {
   scheme: ColorScheme;
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
-  cvd: CvdMode; // <-- Add this
+  cvd: CvdMode;
 }
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
-
-// Add these to ThemeState
 export interface ThemeState {
   mode: ThemeMode;
   contrast: ContrastMode;
@@ -52,8 +50,9 @@ export interface ThemeState {
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
   cvd: CvdMode;
-  fontFamily: string; // <-- Add this
-  fontScale: number;  // <-- Add this
+  fontFamily: string;
+  fontScale: number;
+  shapeScale: number;
 }
 
 export const DEFAULT_THEME_STATE: ThemeState = {
@@ -63,8 +62,9 @@ export const DEFAULT_THEME_STATE: ThemeState = {
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
   cvd: 'none',
-  fontFamily: 'Roboto', // <-- Add this
-  fontScale: 1          // <-- Add this
+  fontFamily: 'Roboto',
+  fontScale: 1,
+  shapeScale: 1       // (1 = 100% standard Material shape)
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
@@ -81,7 +81,6 @@ export function isValidHexColor(value: string | undefined | null): value is stri
   return !!value && HEX_COLOR_PATTERN.test(value.trim());
 }
 
-// Add this constant at the end of the file
 export const FONT_OPTIONS = [
   { value: 'Roboto', label: 'Roboto (Default)' },
   { value: 'Inter', label: 'Inter (Modern & Clean)' },

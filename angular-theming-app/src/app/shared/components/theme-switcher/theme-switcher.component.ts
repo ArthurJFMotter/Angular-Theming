@@ -57,6 +57,7 @@ export class ThemeSwitcherComponent {
   readonly fontFamily = this.themeService.fontFamily;
   readonly fontScale = this.themeService.fontScale;
   readonly fontOptions = FONT_OPTIONS;
+  readonly shapeScale = this.themeService.shapeScale;
 
   readonly schemeOptions: SchemeOption[] = [
     { value: 'blue', label: 'Blue', swatch: '#3b6fd6' },
@@ -111,5 +112,25 @@ export class ThemeSwitcherComponent {
   resetTypography(): void {
     this.setFontFamily('Roboto');
     this.setFontScale(1);
+  }
+
+  setShapeScale(s: number): void {
+    this.themeService.setShapeScale(s);
+  }
+
+  scaleShapeUp(): void {
+    const current = this.shapeScale();
+    if (current < 3)
+      this.setShapeScale(Math.round((current + 0.25) * 100) / 100);
+  }
+
+  scaleShapeDown(): void {
+    const current = this.shapeScale();
+    if (current > 0)
+      this.setShapeScale(Math.round((current - 0.25) * 100) / 100);
+  }
+
+  resetShape(): void {
+    this.setShapeScale(1);
   }
 }

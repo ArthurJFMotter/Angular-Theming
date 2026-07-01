@@ -49,6 +49,28 @@
       text_format
     </mat-icon>
   </button>
+
+  <!-- 5. Shape Settings -->
+  <button mat-icon-button [matMenuTriggerFor]="shapeMenu" matTooltip="Shape & borders">
+    <mat-icon [style.color]="shapeScale() !== 1 ? 'var(--mat-sys-primary)' : 'inherit'">
+      rounded_corner
+    </mat-icon>
+  </button>
+  
+  <mat-menu #shapeMenu="matMenu" class="typography-menu-panel">
+    <div class="menu-header">Corner Radius ({{ shapeScale() | percent }})</div>
+    <div class="slider-row" (click)="$event.stopPropagation()">
+      <button mat-icon-button (click)="scaleShapeDown()"><mat-icon>remove</mat-icon></button>
+      <!-- Range from 0 (Sharp squares) to 3 (Extremely bubbly) -->
+      <mat-slider min="0" max="3" step="0.25" discrete>
+        <input matSliderThumb [ngModel]="shapeScale()" (ngModelChange)="setShapeScale($event)">
+      </mat-slider>
+      <button mat-icon-button (click)="scaleShapeUp()"><mat-icon>add</mat-icon></button>
+    </div>
+    <div class="typography-actions" (click)="$event.stopPropagation()">
+      <button mat-button color="primary" (click)="resetShape()">Reset to default</button>
+    </div>
+  </mat-menu>
   
   <mat-menu #typographyMenu="matMenu" class="typography-menu-panel">
     <div class="menu-header">Font Family</div>
