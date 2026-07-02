@@ -205,3 +205,69 @@
     color: var(--mat-sys-on-info);
   }
 }
+
+// Layout for the position dropdowns
+.snackbar-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+// Styling the trigger buttons to match their semantic roles
+.btn-success {
+  --mdc-filled-button-container-color: var(--mat-sys-success);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-success);
+}
+.btn-warning {
+  --mdc-filled-button-container-color: var(--mat-sys-warning);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-warning);
+}
+.btn-info {
+  --mdc-filled-button-container-color: var(--mat-sys-info);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-info);
+}
+.btn-error {
+  --mdc-filled-button-container-color: var(--mat-sys-error);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-error);
+}
+
+// =============================================================================
+// CDK Overlay Styles (Snackbars)
+// =============================================================================
+// Overlays live outside the component tree. ::ng-deep lets us reach them.
+
+::ng-deep {
+  // 1. Wire the Snackbar shape into our global Shape Engine!
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    border-radius: var(--mat-sys-corner-small) !important;
+  }
+
+  // 2. Override default colors with our semantic container tokens
+  .snackbar-success {
+    --mdc-snackbar-container-color: var(--mat-sys-success-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-success-container);
+  }
+
+  .snackbar-warning {
+    --mdc-snackbar-container-color: var(--mat-sys-warning-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-warning-container);
+  }
+
+  .snackbar-info {
+    --mdc-snackbar-container-color: var(--mat-sys-info-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-info-container);
+  }
+
+  .snackbar-error {
+    --mdc-snackbar-container-color: var(--mat-sys-error-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
+  }
+}

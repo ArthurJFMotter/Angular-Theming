@@ -126,6 +126,46 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <!-- Add this right after the "Status & Alerts" card -->
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Snackbars & Toasts</mat-card-title>
+        <mat-card-subtitle>Dynamic positioning & semantic colors</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        
+        <!-- Controls for spawn position -->
+        <div class="snackbar-controls">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Vertical Spawn</mat-label>
+            <mat-select [(value)]="vPosition">
+              <mat-option value="top">Top</mat-option>
+              <mat-option value="bottom">Bottom</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Horizontal Spawn</mat-label>
+            <mat-select [(value)]="hPosition">
+              <mat-option value="start">Start (Left)</mat-option>
+              <mat-option value="center">Center</mat-option>
+              <mat-option value="end">End (Right)</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <!-- Triggers -->
+        <div class="button-row">
+          <button mat-stroked-button (click)="openSnackbar('default')">Default</button>
+          <button mat-flat-button class="btn-success" (click)="openSnackbar('success')">Success</button>
+          <button mat-flat-button class="btn-warning" (click)="openSnackbar('warning')">Warning</button>
+          <button mat-flat-button class="btn-info" (click)="openSnackbar('info')">Info</button>
+          <button mat-flat-button class="btn-error" (click)="openSnackbar('error')">Error</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </section>
 
   <section class="home__palette">
