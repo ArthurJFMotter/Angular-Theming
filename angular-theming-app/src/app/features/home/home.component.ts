@@ -21,83 +21,14 @@ import {
 import {
   MatDialog,
   MatDialogModule,
-  MatDialogRef,
 } from '@angular/material/dialog';
 import {
   MatBottomSheet,
   MatBottomSheetModule,
-  MatBottomSheetRef,
 } from '@angular/material/bottom-sheet';
-import { MatListModule } from '@angular/material/list';
 import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/theme-switcher.component';
-
-// =============================================================================
-// Inline Overlay Components (Dialog & Bottom Sheet)
-// =============================================================================
-
-@Component({
-  selector: 'app-sample-dialog',
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>M3 Elevation & Tinting</h2>
-    <mat-dialog-content>
-      <p style="margin-top: 8px; color: var(--mat-sys-on-surface-variant);">
-        Notice how there is no heavy drop-shadow? Material 3 uses
-        <strong>Surface Tinting</strong> (the
-        <code>surface-container-highest</code> token) to differentiate floating
-        layers from the background.
-      </p>
-      <p style="color: var(--mat-sys-on-surface-variant);">
-        The background behind this dialog is dimmed using the dynamically
-        generated <code>--mat-sys-scrim</code> color.
-      </p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-flat-button color="primary" mat-dialog-close>
-        Acknowledge
-      </button>
-    </mat-dialog-actions>
-  `,
-})
-export class SampleDialogComponent {}
-
-@Component({
-  selector: 'app-sample-bottom-sheet',
-  standalone: true,
-  imports: [MatListModule, MatIconModule],
-  template: `
-    <mat-nav-list>
-      <div
-        mat-subheader
-        style="color: var(--mat-sys-primary); font-weight: 500;"
-      >
-        Share Theme Profile
-      </div>
-      <a mat-list-item (click)="close()">
-        <mat-icon matListItemIcon>link</mat-icon>
-        <span matListItemTitle>Copy link</span>
-      </a>
-      <a mat-list-item (click)="close()">
-        <mat-icon matListItemIcon>code</mat-icon>
-        <span matListItemTitle>Export CSS</span>
-      </a>
-    </mat-nav-list>
-  `,
-})
-export class SampleBottomSheetComponent {
-  private readonly bottomSheetRef = inject(
-    MatBottomSheetRef<SampleBottomSheetComponent>,
-  );
-  close(): void {
-    this.bottomSheetRef.dismiss();
-  }
-}
-
-// =============================================================================
-// Main Home Component
-// =============================================================================
+import { SampleDialogComponent } from './components/sample-dialog.component';
+import { SampleBottomSheetComponent } from './components/sample-bottom-sheet.component';
 
 @Component({
   selector: 'app-home',
@@ -135,7 +66,7 @@ export class HomeComponent {
   readonly vPosition = signal<MatSnackBarVerticalPosition>('bottom');
 
   constructor() {
-    // 2. Restore from LocalStorage on load
+    // Restore from LocalStorage on load
     try {
       const saved = localStorage.getItem('angular-theming-app.snackbar-prefs');
       if (saved) {
@@ -145,7 +76,7 @@ export class HomeComponent {
       }
     } catch {}
 
-    // 3. Automatically save to LocalStorage anytime the signals change
+    // Automatically save to LocalStorage anytime the signals change
     effect(() => {
       try {
         localStorage.setItem(
@@ -183,7 +114,6 @@ export class HomeComponent {
 
     this.snackBar.open(message, 'Close', {
       duration: 4000,
-      // 4. Read the signal values here
       horizontalPosition: this.hPosition(),
       verticalPosition: this.vPosition(),
       panelClass: panelClass ? [panelClass] : undefined,

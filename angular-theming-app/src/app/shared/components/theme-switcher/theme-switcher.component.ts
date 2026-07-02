@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { ThemeService } from '../../../core/services/theme.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   PresetColorScheme,
   ThemeMode,
@@ -12,7 +12,7 @@ import {
   CVD_MODES,
   CvdMode,
   FONT_OPTIONS,
-} from '../../../core/models/theme.model';
+} from '../../../core/models/preferences.model';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSliderModule } from '@angular/material/slider';
@@ -44,21 +44,21 @@ interface SchemeOption {
   styleUrl: './theme-switcher.component.scss',
 })
 export class ThemeSwitcherComponent {
-  private readonly themeService = inject(ThemeService);
+  private readonly preferencesService = inject(PreferencesService);
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
-  readonly mode = this.themeService.mode;
-  readonly contrast = this.themeService.contrast;
-  readonly scheme = this.themeService.scheme;
-  readonly customColors = this.themeService.customColors;
-  readonly savedProfiles = this.themeService.savedProfiles;
-  readonly cvd = this.themeService.cvd;
+  readonly mode = this.preferencesService.mode;
+  readonly contrast = this.preferencesService.contrast;
+  readonly scheme = this.preferencesService.scheme;
+  readonly customColors = this.preferencesService.customColors;
+  readonly savedProfiles = this.preferencesService.savedProfiles;
+  readonly cvd = this.preferencesService.cvd;
   readonly cvdOptions = CVD_MODES;
-  readonly fontFamily = this.themeService.fontFamily;
-  readonly fontScale = this.themeService.fontScale;
+  readonly fontFamily = this.preferencesService.fontFamily;
+  readonly fontScale = this.preferencesService.fontScale;
   readonly fontOptions = FONT_OPTIONS;
-  readonly shapeScale = this.themeService.shapeScale;
-  readonly densityScale = this.themeService.densityScale;
+  readonly shapeScale = this.preferencesService.shapeScale;
+  readonly densityScale = this.preferencesService.densityScale;
 
   readonly schemeOptions: SchemeOption[] = [
     { value: 'blue', label: 'Blue', swatch: '#3b6fd6' },
@@ -67,19 +67,19 @@ export class ThemeSwitcherComponent {
   ];
 
   onModeChange(mode: ThemeMode): void {
-    this.themeService.setMode(mode);
+    this.preferencesService.setMode(mode);
   }
 
   onContrastChange(contrast: ContrastMode): void {
-    this.themeService.setContrast(contrast);
+    this.preferencesService.setContrast(contrast);
   }
 
   onSchemeSelect(scheme: string): void {
-    this.themeService.setScheme(scheme);
+    this.preferencesService.setScheme(scheme);
   }
 
   onCustomMenuOpened(scheme: string): void {
-    this.themeService.setScheme(scheme);
+    this.preferencesService.setScheme(scheme);
   }
 
   closeCustomMenu(): void {
@@ -87,15 +87,15 @@ export class ThemeSwitcherComponent {
   }
 
   onCvdChange(mode: CvdMode): void {
-    this.themeService.setCvdMode(mode);
+    this.preferencesService.setCvdMode(mode);
   }
 
   setFontFamily(f: string): void {
-    this.themeService.setFontFamily(f);
+    this.preferencesService.setFontFamily(f);
   }
 
   setFontScale(s: number): void {
-    this.themeService.setFontScale(s);
+    this.preferencesService.setFontScale(s);
   }
 
   scaleUp(): void {
@@ -116,7 +116,7 @@ export class ThemeSwitcherComponent {
   }
 
   setShapeScale(s: number): void {
-    this.themeService.setShapeScale(s);
+    this.preferencesService.setShapeScale(s);
   }
 
   scaleShapeUp(): void {
@@ -136,7 +136,7 @@ export class ThemeSwitcherComponent {
   }
 
   setDensityScale(s: number): void {
-    this.themeService.setDensityScale(s);
+    this.preferencesService.setDensityScale(s);
   }
 
   scaleDensityUp(): void {
