@@ -18,10 +18,7 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
-import {
-  MatDialog,
-  MatDialogModule,
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {
   MatBottomSheet,
   MatBottomSheetModule,
@@ -29,6 +26,7 @@ import {
 import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/theme-switcher.component';
 import { SampleDialogComponent } from './components/sample-dialog.component';
 import { SampleBottomSheetComponent } from './components/sample-bottom-sheet.component';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -56,7 +54,8 @@ import { SampleBottomSheetComponent } from './components/sample-bottom-sheet.com
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  private readonly snackBar = inject(MatSnackBar);
+  readonly notify = inject(NotificationService);
+
   private readonly dialog = inject(MatDialog);
   private readonly bottomSheet = inject(MatBottomSheet);
 
@@ -90,34 +89,16 @@ export class HomeComponent {
     });
   }
 
-  openSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
-    let message = 'Action completed.';
-    let panelClass = '';
-    switch (type) {
-      case 'success':
-        message = 'Changes saved successfully!';
-        panelClass = 'snackbar-success';
-        break;
-      case 'warning':
-        message = 'Warning: Your subscription expires in 3 days.';
-        panelClass = 'snackbar-warning';
-        break;
-      case 'info':
-        message = 'Did you know? New features are available in settings.';
-        panelClass = 'snackbar-info';
-        break;
-      case 'error':
-        message = 'Error: Failed to communicate with the server.';
-        panelClass = 'snackbar-error';
-        break;
-    }
+  triggerSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
+    let msg = 'Action completed.';
+    if (type === 'success') msg = 'Changes saved successfully!';
+    if (type === 'warning')
+      msg = 'Warning: Your subscription expires in 3 days.';
+    if (type === 'info')
+      msg = 'Did you know? New features are available in settings.';
+    if (type === 'error') msg = 'Error: Failed to communicate with the server.';
 
-    this.snackBar.open(message, 'Close', {
-      duration: 4000,
-      horizontalPosition: this.hPosition(),
-      verticalPosition: this.vPosition(),
-      panelClass: panelClass ? [panelClass] : undefined,
-    });
+    this.notify.show(type, msg);
   }
 
   openDialog() {

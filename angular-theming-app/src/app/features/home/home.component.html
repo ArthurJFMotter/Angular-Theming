@@ -139,14 +139,14 @@
         <div class="snackbar-controls">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Vertical Spawn</mat-label>
-            <mat-select [value]="vPosition()" (selectionChange)="vPosition.set($event.value)">
+            <mat-select [value]="notify.vPosition()" (selectionChange)="notify.vPosition.set($event.value)">
               <mat-option value="top">Top</mat-option>
               <mat-option value="bottom">Bottom</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Horizontal Spawn</mat-label>
-            <mat-select [value]="hPosition()" (selectionChange)="hPosition.set($event.value)">
+            <mat-select [value]="notify.hPosition()" (selectionChange)="notify.hPosition.set($event.value)">
               <mat-option value="start">Start (Left)</mat-option>
               <mat-option value="center">Center</mat-option>
               <mat-option value="end">End (Right)</mat-option>
@@ -158,12 +158,13 @@
 
         <!-- Triggers -->
         <div class="button-row">
-          <button mat-stroked-button (click)="openSnackbar('default')">Default</button>
-          <button mat-flat-button class="btn-success" (click)="openSnackbar('success')">Success</button>
-          <button mat-flat-button class="btn-warning" (click)="openSnackbar('warning')">Warning</button>
-          <button mat-flat-button class="btn-info" (click)="openSnackbar('info')">Info</button>
-          <button mat-flat-button class="btn-error" (click)="openSnackbar('error')">Error</button>
+          <button mat-stroked-button (click)="triggerSnackbar('default')">Default</button>
+          <button mat-flat-button class="btn-success" (click)="triggerSnackbar('success')">Success</button>
+          <button mat-flat-button class="btn-warning" (click)="triggerSnackbar('warning')">Warning</button>
+          <button mat-flat-button class="btn-info" (click)="triggerSnackbar('info')">Info</button>
+          <button mat-flat-button class="btn-error" (click)="triggerSnackbar('error')">Error</button>
         </div>
+
       </mat-card-content>
     </mat-card>
 
