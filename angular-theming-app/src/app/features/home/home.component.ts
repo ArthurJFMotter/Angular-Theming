@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,21 +12,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
-import {
-  MatSnackBar,
-  MatSnackBarModule,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import {
-  MatBottomSheet,
-  MatBottomSheetModule,
-} from '@angular/material/bottom-sheet';
 import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/theme-switcher.component';
-import { SampleDialogComponent } from './components/sample-dialog.component';
-import { SampleBottomSheetComponent } from './components/sample-bottom-sheet.component';
 import { NotificationService } from '../../core/services/notification.service';
+import { ModalService } from '../../core/services/modal.service';
 
 @Component({
   selector: 'app-home',
@@ -45,9 +33,6 @@ import { NotificationService } from '../../core/services/notification.service';
     MatTabsModule,
     MatBadgeModule,
     MatSelectModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatBottomSheetModule,
     ThemeSwitcherComponent,
   ],
   templateUrl: './home.component.html',
@@ -55,39 +40,9 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class HomeComponent {
   readonly notify = inject(NotificationService);
-
-  private readonly dialog = inject(MatDialog);
-  private readonly bottomSheet = inject(MatBottomSheet);
+  readonly modals = inject(ModalService);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
-
-  readonly hPosition = signal<MatSnackBarHorizontalPosition>('center');
-  readonly vPosition = signal<MatSnackBarVerticalPosition>('bottom');
-
-  constructor() {
-    // Restore from LocalStorage on load
-    try {
-      const saved = localStorage.getItem('angular-theming-app.snackbar-prefs');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.h) this.hPosition.set(parsed.h);
-        if (parsed.v) this.vPosition.set(parsed.v);
-      }
-    } catch {}
-
-    // Automatically save to LocalStorage anytime the signals change
-    effect(() => {
-      try {
-        localStorage.setItem(
-          'angular-theming-app.snackbar-prefs',
-          JSON.stringify({
-            h: this.hPosition(),
-            v: this.vPosition(),
-          }),
-        );
-      } catch {}
-    });
-  }
 
   triggerSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
     let msg = 'Action completed.';
@@ -102,10 +57,10 @@ export class HomeComponent {
   }
 
   openDialog() {
-    this.dialog.open(SampleDialogComponent, { width: '400px' });
+    this.modals.initModalDialog();
   }
 
   openBottomSheet() {
-    this.bottomSheet.open(SampleBottomSheetComponent);
+    this.modals.initModalBottomSheet();
   }
 }
