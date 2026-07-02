@@ -1,8 +1,8 @@
 // Global styles
 // Theme palettes (blue/green/purple x light/dark) live in _themes.scss,
 // applied via [data-theme-scheme]/[data-theme-mode] attributes on <html>.
-@use './themes';
-@use '@angular/material' as mat;
+@use "./themes";
+@use "@angular/material" as mat;
 
 html,
 body {
@@ -11,15 +11,20 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  transition: background-color 200ms ease, color 200ms ease;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 // Smooth, non-jarring crossfade whenever the theme attributes change.
 * {
-  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }
 
 // The custom-color-picker panel supplies its own padding/width; strip
@@ -33,14 +38,14 @@ body {
 // =============================================================================
 // CDK Overlay Styles (Snackbars)
 // =============================================================================
-// These run globally so any component can trigger a themed snackbar!
+// These run globally so any component can use these!
 
-// 1. Wire the Snackbar shape into our global Shape Engine
+// Wire the Snackbar shape into our global Shape Engine
 .mat-mdc-snack-bar-container .mdc-snackbar__surface {
   border-radius: var(--mat-sys-corner-small) !important;
 }
 
-// 2. Override default colors with our semantic container tokens
+// Override default colors with our semantic container tokens
 .snackbar-success {
   --mdc-snackbar-container-color: var(--mat-sys-success-container);
   --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
@@ -63,4 +68,17 @@ body {
   --mdc-snackbar-container-color: var(--mat-sys-error-container);
   --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
   --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
+}
+
+// Wire Dialogs into the Shape Engine
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: var(--mat-sys-corner-extra-large) !important;
+}
+
+// Wire Bottom Sheets into the Shape Engine (Top corners only!)
+.mat-bottom-sheet-container {
+  border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
+  border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }
