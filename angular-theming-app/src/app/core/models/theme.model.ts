@@ -1,4 +1,12 @@
-export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' | 'blur' | 'glare' | 'nightshift';
+export type CvdMode =
+  | 'none'
+  | 'protanopia'
+  | 'deuteranopia'
+  | 'tritanopia'
+  | 'achromatopsia'
+  | 'blur'
+  | 'glare'
+  | 'nightshift';
 
 export const CVD_MODES: { value: CvdMode; label: string }[] = [
   { value: 'none', label: 'Normal Vision' },
@@ -8,7 +16,7 @@ export const CVD_MODES: { value: CvdMode; label: string }[] = [
   { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' },
   { value: 'blur', label: 'Low Vision (Blur)' },
   { value: 'glare', label: 'Sunlight Glare' },
-  { value: 'nightshift', label: 'Night Shift (Warm)' }
+  { value: 'nightshift', label: 'Night Shift (Warm)' },
 ];
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
@@ -53,6 +61,7 @@ export interface ThemeState {
   fontFamily: string;
   fontScale: number;
   shapeScale: number;
+  densityScale: number;
 }
 
 export const DEFAULT_THEME_STATE: ThemeState = {
@@ -64,12 +73,17 @@ export const DEFAULT_THEME_STATE: ThemeState = {
   cvd: 'none',
   fontFamily: 'Roboto',
   fontScale: 1,
-  shapeScale: 1       // (1 = 100% standard Material shape)
+  shapeScale: 1, // (1 = 100% standard Material shape)
+  densityScale: 0,
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
 export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
-export const PRESET_COLOR_SCHEMES: PresetColorScheme[] = ['blue', 'green', 'purple'];
+export const PRESET_COLOR_SCHEMES: PresetColorScheme[] = [
+  'blue',
+  'green',
+  'purple',
+];
 
 /** localStorage key — centralized so service + any future SSR bootstrap code agree. */
 export const THEME_STORAGE_KEY = 'angular-theming-app.theme';
@@ -77,7 +91,9 @@ export const THEME_STORAGE_KEY = 'angular-theming-app.theme';
 /** Basic 3/6-digit hex validator, used before handing input to the color engine. */
 export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
-export function isValidHexColor(value: string | undefined | null): value is string {
+export function isValidHexColor(
+  value: string | undefined | null,
+): value is string {
   return !!value && HEX_COLOR_PATTERN.test(value.trim());
 }
 
@@ -87,5 +103,5 @@ export const FONT_OPTIONS = [
   { value: 'Montserrat', label: 'Montserrat (Geometric)' },
   { value: 'Atkinson Hyperlegible', label: 'Hyperlegible (A11y)' },
   { value: 'system-ui, sans-serif', label: 'System Native' },
-  { value: 'monospace', label: 'Monospace (Code)' }
+  { value: 'monospace', label: 'Monospace (Code)' },
 ];

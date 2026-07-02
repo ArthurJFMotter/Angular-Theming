@@ -50,3 +50,18 @@ html {
     density: 0,
   ));
 }
+
+// =============================================================================
+// Density Overrides
+// =============================================================================
+// Material 3 density scales from 0 (comfortable) down to -3 (compact).
+// By omitting color and typography, this mixin emits ONLY the sizing CSS 
+// variables (like padding and height). We use a 3-attribute selector so it 
+// beats the CSS specificity of the base presets at the top of this file!
+@for $i from 1 through 3 {
+  html[data-theme-density="-#{$i}"][data-theme-scheme][data-theme-mode] {
+    @include mat.theme((
+      density: -$i
+    ));
+  }
+}

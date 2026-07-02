@@ -58,6 +58,7 @@ export class ThemeSwitcherComponent {
   readonly fontScale = this.themeService.fontScale;
   readonly fontOptions = FONT_OPTIONS;
   readonly shapeScale = this.themeService.shapeScale;
+  readonly densityScale = this.themeService.densityScale;
 
   readonly schemeOptions: SchemeOption[] = [
     { value: 'blue', label: 'Blue', swatch: '#3b6fd6' },
@@ -132,5 +133,23 @@ export class ThemeSwitcherComponent {
 
   resetShape(): void {
     this.setShapeScale(1);
+  }
+
+  setDensityScale(s: number): void {
+    this.themeService.setDensityScale(s);
+  }
+
+  scaleDensityUp(): void {
+    const current = this.densityScale();
+    if (current < 0) this.setDensityScale(current + 1);
+  }
+
+  scaleDensityDown(): void {
+    const current = this.densityScale();
+    if (current > -3) this.setDensityScale(current - 1);
+  }
+
+  resetDensity(): void {
+    this.setDensityScale(0);
   }
 }

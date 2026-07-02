@@ -56,6 +56,28 @@
       rounded_corner
     </mat-icon>
   </button>
+
+  <!-- 6. Density Settings -->
+  <button mat-icon-button [matMenuTriggerFor]="densityMenu" matTooltip="Density & spacing">
+    <mat-icon [style.color]="densityScale() !== 0 ? 'var(--mat-sys-primary)' : 'inherit'">
+      compress
+    </mat-icon>
+  </button>
+  
+  <mat-menu #densityMenu="matMenu" class="typography-menu-panel">
+    <div class="menu-header">Density ({{ densityScale() === 0 ? '0 (Default)' : densityScale() }})</div>
+    <div class="slider-row" (click)="$event.stopPropagation()">
+      <button mat-icon-button (click)="scaleDensityDown()"><mat-icon>remove</mat-icon></button>
+      <!-- Range from -3 (Compact) to 0 (Comfortable) -->
+      <mat-slider min="-3" max="0" step="1" discrete>
+        <input matSliderThumb [ngModel]="densityScale()" (ngModelChange)="setDensityScale($event)">
+      </mat-slider>
+      <button mat-icon-button (click)="scaleDensityUp()"><mat-icon>add</mat-icon></button>
+    </div>
+    <div class="typography-actions" (click)="$event.stopPropagation()">
+      <button mat-button color="primary" (click)="resetDensity()">Reset to default</button>
+    </div>
+  </mat-menu>
   
   <mat-menu #shapeMenu="matMenu" class="typography-menu-panel">
     <div class="menu-header">Corner Radius ({{ shapeScale() | percent }})</div>

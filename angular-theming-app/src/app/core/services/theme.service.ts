@@ -59,6 +59,11 @@ export class ThemeService {
   );
   readonly shapeScale = this.shapeScaleSignal.asReadonly();
 
+  private readonly densityScaleSignal = signal<number>(
+    DEFAULT_THEME_STATE.densityScale,
+  );
+  readonly densityScale = this.densityScaleSignal.asReadonly();
+
   readonly fontFamily = this.fontFamilySignal.asReadonly();
   readonly fontScale = this.fontScaleSignal.asReadonly();
   readonly mode = this.modeSignal.asReadonly();
@@ -107,6 +112,7 @@ export class ThemeService {
     fontFamily: this.fontFamilySignal(),
     fontScale: this.fontScaleSignal(),
     shapeScale: this.shapeScaleSignal(),
+    densityScale: this.densityScaleSignal(),
   }));
 
   // Setters
@@ -123,6 +129,10 @@ export class ThemeService {
 
   setShapeScale(scale: number): void {
     this.shapeScaleSignal.set(scale);
+  }
+
+  setDensityScale(scale: number): void {
+    this.densityScaleSignal.set(scale);
   }
 
   constructor() {
@@ -253,6 +263,7 @@ export class ThemeService {
 
     root.setAttribute('data-theme-mode', activeMode);
     root.setAttribute('data-theme-scheme', state.scheme);
+    root.setAttribute('data-theme-density', state.densityScale.toString());
     root.style.colorScheme = activeMode;
     this.applyTypography(root, state.fontFamily, state.fontScale);
     this.applyShape(root, state.shapeScale);
