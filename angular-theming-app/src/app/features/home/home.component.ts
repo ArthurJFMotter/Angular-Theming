@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,10 +12,23 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';           
-import { MatBottomSheet, MatBottomSheetModule, MatBottomSheetRef } from '@angular/material/bottom-sheet'; 
-import { MatListModule } from '@angular/material/list';                                        
+import {
+  MatSnackBar,
+  MatSnackBarModule,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
+import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import {
+  MatBottomSheet,
+  MatBottomSheetModule,
+  MatBottomSheetRef,
+} from '@angular/material/bottom-sheet';
+import { MatListModule } from '@angular/material/list';
 import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/theme-switcher.component';
 
 // =============================================================================
@@ -30,17 +43,23 @@ import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/t
     <h2 mat-dialog-title>M3 Elevation & Tinting</h2>
     <mat-dialog-content>
       <p style="margin-top: 8px; color: var(--mat-sys-on-surface-variant);">
-        Notice how there is no heavy drop-shadow? Material 3 uses <strong>Surface Tinting</strong> (the <code>surface-container-highest</code> token) to differentiate floating layers from the background.
+        Notice how there is no heavy drop-shadow? Material 3 uses
+        <strong>Surface Tinting</strong> (the
+        <code>surface-container-highest</code> token) to differentiate floating
+        layers from the background.
       </p>
       <p style="color: var(--mat-sys-on-surface-variant);">
-        The background behind this dialog is dimmed using the dynamically generated <code>--mat-sys-scrim</code> color.
+        The background behind this dialog is dimmed using the dynamically
+        generated <code>--mat-sys-scrim</code> color.
       </p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-flat-button color="primary" mat-dialog-close>Acknowledge</button>
+      <button mat-flat-button color="primary" mat-dialog-close>
+        Acknowledge
+      </button>
     </mat-dialog-actions>
-  `
+  `,
 })
 export class SampleDialogComponent {}
 
@@ -50,7 +69,12 @@ export class SampleDialogComponent {}
   imports: [MatListModule, MatIconModule],
   template: `
     <mat-nav-list>
-      <div mat-subheader style="color: var(--mat-sys-primary); font-weight: 500;">Share Theme Profile</div>
+      <div
+        mat-subheader
+        style="color: var(--mat-sys-primary); font-weight: 500;"
+      >
+        Share Theme Profile
+      </div>
       <a mat-list-item (click)="close()">
         <mat-icon matListItemIcon>link</mat-icon>
         <span matListItemTitle>Copy link</span>
@@ -60,13 +84,16 @@ export class SampleDialogComponent {}
         <span matListItemTitle>Export CSS</span>
       </a>
     </mat-nav-list>
-  `
+  `,
 })
 export class SampleBottomSheetComponent {
-  private readonly bottomSheetRef = inject(MatBottomSheetRef<SampleBottomSheetComponent>);
-  close(): void { this.bottomSheetRef.dismiss(); }
+  private readonly bottomSheetRef = inject(
+    MatBottomSheetRef<SampleBottomSheetComponent>,
+  );
+  close(): void {
+    this.bottomSheetRef.dismiss();
+  }
 }
-
 
 // =============================================================================
 // Main Home Component
@@ -76,37 +103,90 @@ export class SampleBottomSheetComponent {
   selector: 'app-home',
   standalone: true,
   imports: [
-    MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, 
-    MatFormFieldModule, MatInputModule, MatSlideToggleModule, MatProgressBarModule, 
-    MatDividerModule, MatTabsModule, MatBadgeModule, MatSelectModule, MatSnackBarModule, 
-    MatDialogModule, MatBottomSheetModule, 
-    ThemeSwitcherComponent
+    MatToolbarModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    MatProgressBarModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatBadgeModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatBottomSheetModule,
+    ThemeSwitcherComponent,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   private readonly snackBar = inject(MatSnackBar);
-  private readonly dialog = inject(MatDialog);             
-  private readonly bottomSheet = inject(MatBottomSheet);   
+  private readonly dialog = inject(MatDialog);
+  private readonly bottomSheet = inject(MatBottomSheet);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
 
-  hPosition: MatSnackBarHorizontalPosition = 'center';
-  vPosition: MatSnackBarVerticalPosition = 'bottom';
+  readonly hPosition = signal<MatSnackBarHorizontalPosition>('center');
+  readonly vPosition = signal<MatSnackBarVerticalPosition>('bottom');
+
+  constructor() {
+    // 2. Restore from LocalStorage on load
+    try {
+      const saved = localStorage.getItem('angular-theming-app.snackbar-prefs');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.h) this.hPosition.set(parsed.h);
+        if (parsed.v) this.vPosition.set(parsed.v);
+      }
+    } catch {}
+
+    // 3. Automatically save to LocalStorage anytime the signals change
+    effect(() => {
+      try {
+        localStorage.setItem(
+          'angular-theming-app.snackbar-prefs',
+          JSON.stringify({
+            h: this.hPosition(),
+            v: this.vPosition(),
+          }),
+        );
+      } catch {}
+    });
+  }
 
   openSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
     let message = 'Action completed.';
     let panelClass = '';
     switch (type) {
-      case 'success': message = 'Changes saved successfully!'; panelClass = 'snackbar-success'; break;
-      case 'warning': message = 'Warning: Your subscription expires in 3 days.'; panelClass = 'snackbar-warning'; break;
-      case 'info': message = 'Did you know? New features are available in settings.'; panelClass = 'snackbar-info'; break;
-      case 'error': message = 'Error: Failed to communicate with the server.'; panelClass = 'snackbar-error'; break;
+      case 'success':
+        message = 'Changes saved successfully!';
+        panelClass = 'snackbar-success';
+        break;
+      case 'warning':
+        message = 'Warning: Your subscription expires in 3 days.';
+        panelClass = 'snackbar-warning';
+        break;
+      case 'info':
+        message = 'Did you know? New features are available in settings.';
+        panelClass = 'snackbar-info';
+        break;
+      case 'error':
+        message = 'Error: Failed to communicate with the server.';
+        panelClass = 'snackbar-error';
+        break;
     }
+
     this.snackBar.open(message, 'Close', {
-      duration: 4000, horizontalPosition: this.hPosition, verticalPosition: this.vPosition,
-      panelClass: panelClass ? [panelClass] : undefined
+      duration: 4000,
+      // 4. Read the signal values here
+      horizontalPosition: this.hPosition(),
+      verticalPosition: this.vPosition(),
+      panelClass: panelClass ? [panelClass] : undefined,
     });
   }
 

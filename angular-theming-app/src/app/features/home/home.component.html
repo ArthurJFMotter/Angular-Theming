@@ -139,14 +139,14 @@
         <div class="snackbar-controls">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Vertical Spawn</mat-label>
-            <mat-select [(value)]="vPosition">
+            <mat-select [value]="vPosition()" (selectionChange)="vPosition.set($event.value)">
               <mat-option value="top">Top</mat-option>
               <mat-option value="bottom">Bottom</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Horizontal Spawn</mat-label>
-            <mat-select [(value)]="hPosition">
+            <mat-select [value]="hPosition()" (selectionChange)="hPosition.set($event.value)">
               <mat-option value="start">Start (Left)</mat-option>
               <mat-option value="center">Center</mat-option>
               <mat-option value="end">End (Right)</mat-option>
