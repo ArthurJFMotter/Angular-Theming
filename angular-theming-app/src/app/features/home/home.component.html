@@ -166,6 +166,26 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <mat-card class="showcase-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Elevation & Surfaces</mat-card-title>
+        <mat-card-subtitle>Dialogs, bottom sheets, and scrims</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="tab-copy">
+          Material 3 avoids heavy shadows, instead using surface tints (mixing primary color into backgrounds) to indicate elevation.
+        </p>
+        <div class="button-row" style="margin-top: 16px;">
+          <button mat-flat-button color="primary" (click)="openDialog()">
+            <mat-icon>open_in_new</mat-icon> Open Dialog
+          </button>
+          <button mat-stroked-button (click)="openBottomSheet()">
+            <mat-icon>vertical_align_top</mat-icon> Bottom Sheet
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </section>
 
   <section class="home__palette">

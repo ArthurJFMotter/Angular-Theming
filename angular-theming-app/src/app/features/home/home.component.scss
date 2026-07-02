@@ -270,4 +270,17 @@
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
     --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
   }
+
+   // 3. Wire Dialogs into the Shape Engine
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+  }
+
+  // 4. Wire Bottom Sheets into the Shape Engine (Top corners only!)
+  .mat-bottom-sheet-container {
+    border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
+    border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
 }
