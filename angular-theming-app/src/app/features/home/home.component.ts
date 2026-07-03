@@ -12,31 +12,24 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
-import { ThemeSwitcherComponent } from '../../shared/components/theme-switcher/theme-switcher.component';
+import { PreferencesSideDrawerComponent } from '../../shared/components/preferences-side-drawer/preferences-side-drawer.component';
 import { NotificationService } from '../../core/services/notification.service';
 import { ModalService } from '../../core/services/modal.service';
+
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    MatToolbarModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSlideToggleModule,
-    MatProgressBarModule,
-    MatDividerModule,
-    MatTabsModule,
-    MatBadgeModule,
-    MatSelectModule,
-    ThemeSwitcherComponent,
+    MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, 
+    MatFormFieldModule, MatInputModule, MatSlideToggleModule, MatProgressBarModule, 
+    MatDividerModule, MatTabsModule, MatBadgeModule, MatSelectModule, 
+    MatSidenavModule,
+    PreferencesSideDrawerComponent
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  styleUrl: './home.component.scss'
 })
 export class HomeComponent {
   readonly notify = inject(NotificationService);
