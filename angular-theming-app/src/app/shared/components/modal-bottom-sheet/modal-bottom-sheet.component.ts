@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-modal-bottom-sheet',
   standalone: true,
-  imports: [MatListModule, MatIconModule],
+  imports: [MatListModule, MatIconModule, TranslatePipe],
   templateUrl: './modal-bottom-sheet.component.html',
   styleUrl: './modal-bottom-sheet.component.scss',
 })

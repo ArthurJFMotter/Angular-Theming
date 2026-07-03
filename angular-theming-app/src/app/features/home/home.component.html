@@ -1,5 +1,5 @@
 <mat-sidenav-container class="app-container">
-  <!-- The New Settings Drawer -->
+  <!-- Settings Drawer -->
   <mat-sidenav
     #settingsDrawer
     mode="over"
@@ -10,17 +10,26 @@
     <app-preferences-side-drawer (closeDrawer)="settingsDrawer.close()" />
   </mat-sidenav>
 
-  <!-- The Main Content -->
+  <!-- Main Content -->
   <mat-sidenav-content class="main-content">
     <mat-toolbar class="app-toolbar" color="primary">
       <mat-icon class="app-toolbar__logo">palette</mat-icon>
-      <span class="app-toolbar__title">Angular Theming App</span>
+      <span class="app-toolbar__title">{{ "app.title" | translate }}</span>
       <span class="app-toolbar__spacer"></span>
-      <!-- Button to open the drawer -->
+
+      <!-- Language Toggle -->
+      <button
+        mat-icon-button
+        (click)="i18n.toggleLocale()"
+        [matTooltip]="'toolbar.language' | translate"
+      >
+        <mat-icon>language</mat-icon>
+      </button>
+
       <button
         mat-icon-button
         (click)="settingsDrawer.toggle()"
-        matTooltip="Open Preferences"
+        [matTooltip]="'toolbar.settings' | translate"
       >
         <mat-icon>settings</mat-icon>
       </button>
@@ -28,18 +37,41 @@
 
     <main class="home">
       <section class="home__intro">
-        <h1>Live Material 3 theming</h1>
-        <p>
-          Pick a mode and a color scheme above — every component on this page
-          restyles instantly and your choice is remembered on this device. Want
-          your own colors? Click the dashed swatch to pick custom primary,
-          secondary, tertiary, and error colors — contrast is always kept safe
-          for you.
-        </p>
-        <!-- Test image for the simulator! -->
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+          "
+        >
+          <h1 style="margin: 0">{{ "home.title" | translate }}</h1>
+          <!-- NARRATION DIRECTIVE -->
+          <button
+            mat-icon-button
+            color="primary"
+            [appReadAloud]="'home.title'"
+            aria-label="Read title aloud"
+          >
+            <mat-icon>volume_up</mat-icon>
+          </button>
+        </div>
+
+        <div style="display: flex; align-items: flex-start; gap: 8px">
+          <p>{{ "home.desc" | translate }}</p>
+          <button
+            mat-icon-button
+            color="primary"
+            [appReadAloud]="'home.desc'"
+            aria-label="Read description aloud"
+          >
+            <mat-icon>volume_up</mat-icon>
+          </button>
+        </div>
+
         <img
           src="https://picsum.photos/id/1015/600/200"
-          alt="Colorful landscape"
+          [alt]="'home.image.alt' | translate"
           class="hero-image"
         />
       </section>
@@ -47,27 +79,40 @@
       <section class="home__grid">
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Buttons</mat-card-title>
-            <mat-card-subtitle
-              >Primary, secondary &amp; tertiary roles, side by
-              side</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.buttons.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.buttons.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content class="button-row">
-            <button mat-button>Text</button>
-            <button mat-flat-button color="primary">Primary</button>
-            <button mat-flat-button class="secondary-button">Secondary</button>
-            <button mat-stroked-button color="primary">Stroked</button>
-            <button mat-raised-button color="primary">Raised</button>
+            <button mat-button>{{ "home.buttons.text" | translate }}</button>
+            <button mat-flat-button color="primary">
+              {{ "home.buttons.primary" | translate }}
+            </button>
+            <button mat-flat-button class="secondary-button">
+              {{ "home.buttons.secondary" | translate }}
+            </button>
+            <button mat-stroked-button color="primary">
+              {{ "home.buttons.stroked" | translate }}
+            </button>
+            <button mat-raised-button color="primary">
+              {{ "home.buttons.raised" | translate }}
+            </button>
             <button
               mat-icon-button
               matBadge="3"
               matBadgeColor="warn"
-              aria-label="Notifications"
+              [attr.aria-label]="'home.buttons.aria.notifications' | translate"
             >
               <mat-icon>notifications</mat-icon>
             </button>
-            <button mat-fab class="tertiary-fab" aria-label="Add">
+            <button
+              mat-fab
+              class="tertiary-fab"
+              [attr.aria-label]="'home.buttons.aria.add' | translate"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </mat-card-content>
@@ -75,32 +120,42 @@
 
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Form field</mat-card-title>
-            <mat-card-subtitle
-              >Inputs follow the active scheme</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.forms.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.forms.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Project name</mat-label>
-              <input matInput placeholder="Angular Theming App" />
+              <mat-label>{{ "home.forms.label" | translate }}</mat-label>
+              <input
+                matInput
+                [placeholder]="'home.forms.placeholder' | translate"
+              />
               <mat-icon matSuffix>edit</mat-icon>
             </mat-form-field>
 
-            <mat-slide-toggle checked>Enable notifications</mat-slide-toggle>
+            <mat-slide-toggle checked>{{
+              "home.forms.toggle" | translate
+            }}</mat-slide-toggle>
           </mat-card-content>
         </mat-card>
 
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Chips</mat-card-title>
-            <mat-card-subtitle
-              >Selected chips use the secondary color</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.chips.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.chips.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <mat-chip-listbox aria-label="Tech stack">
+            <mat-chip-listbox [attr.aria-label]="'home.chips.aria' | translate">
               @for (chip of chips; track chip; let i = $index) {
+                <!-- (Keeping the technology stack array hardcoded intentionally) -->
                 <mat-chip-option [selected]="i === 0">{{
                   chip
                 }}</mat-chip-option>
@@ -111,21 +166,24 @@
 
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Progress &amp; tabs</mat-card-title>
-            <mat-card-subtitle>Surfaces, dividers and motion</mat-card-subtitle>
+            <mat-card-title>{{ "home.tabs.title" | translate }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.tabs.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <mat-progress-bar mode="determinate" value="64"></mat-progress-bar>
             <mat-divider class="section-divider"></mat-divider>
             <mat-tab-group>
-              <mat-tab label="Overview">
+              <!-- Angular binds dynamic labels via [label] instead of label="..." -->
+              <mat-tab [label]="'home.tabs.overview' | translate">
                 <p class="tab-copy">
-                  Surface colors update across every nested panel.
+                  {{ "home.tabs.overview.text" | translate }}
                 </p>
               </mat-tab>
-              <mat-tab label="Details">
+              <mat-tab [label]="'home.tabs.details' | translate">
                 <p class="tab-copy">
-                  Tab indicators use the primary color token.
+                  {{ "home.tabs.details.text" | translate }}
                 </p>
               </mat-tab>
             </mat-tab-group>
@@ -134,95 +192,110 @@
 
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Status & Alerts</mat-card-title>
-            <mat-card-subtitle
-              >Semantic colors utilizing container tokens</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.alerts.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.alerts.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content class="alerts-container">
             <div class="status-alert status-alert--success">
               <mat-icon>check_circle</mat-icon>
-              <span>Changes saved successfully.</span>
+              <span>{{ "home.alerts.success" | translate }}</span>
             </div>
             <div class="status-alert status-alert--warning">
               <mat-icon>warning</mat-icon>
-              <span>Your subscription expires in 3 days.</span>
+              <span>{{ "home.alerts.warning" | translate }}</span>
             </div>
             <div class="status-alert status-alert--info">
               <mat-icon>info</mat-icon>
-              <span>New features are available in settings.</span>
+              <span>{{ "home.alerts.info" | translate }}</span>
             </div>
           </mat-card-content>
         </mat-card>
 
-        <!-- Add this right after the "Status & Alerts" card -->
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Snackbars & Toasts</mat-card-title>
-            <mat-card-subtitle
-              >Dynamic positioning & semantic colors</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.snackbars.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.snackbars.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <!-- Controls for spawn position -->
             <div class="snackbar-controls">
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Vertical Spawn</mat-label>
+                <mat-label>{{
+                  "home.snackbars.vertical" | translate
+                }}</mat-label>
                 <mat-select
                   [value]="notify.vPosition()"
                   (selectionChange)="notify.vPosition.set($event.value)"
                 >
-                  <mat-option value="top">Top</mat-option>
-                  <mat-option value="bottom">Bottom</mat-option>
+                  <mat-option value="top">{{
+                    "home.snackbars.vertical.top" | translate
+                  }}</mat-option>
+                  <mat-option value="bottom">{{
+                    "home.snackbars.vertical.bottom" | translate
+                  }}</mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Horizontal Spawn</mat-label>
+                <mat-label>{{
+                  "home.snackbars.horizontal" | translate
+                }}</mat-label>
                 <mat-select
                   [value]="notify.hPosition()"
                   (selectionChange)="notify.hPosition.set($event.value)"
                 >
-                  <mat-option value="start">Start (Left)</mat-option>
-                  <mat-option value="center">Center</mat-option>
-                  <mat-option value="end">End (Right)</mat-option>
+                  <mat-option value="start">{{
+                    "home.snackbars.horizontal.start" | translate
+                  }}</mat-option>
+                  <mat-option value="center">{{
+                    "home.snackbars.horizontal.center" | translate
+                  }}</mat-option>
+                  <mat-option value="end">{{
+                    "home.snackbars.horizontal.end" | translate
+                  }}</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
 
             <mat-divider class="section-divider"></mat-divider>
 
-            <!-- Triggers -->
             <div class="button-row">
               <button mat-stroked-button (click)="triggerSnackbar('default')">
-                Default
+                {{ "home.snackbars.btn.default" | translate }}
               </button>
               <button
                 mat-flat-button
                 class="btn-success"
                 (click)="triggerSnackbar('success')"
               >
-                Success
+                {{ "home.snackbars.btn.success" | translate }}
               </button>
               <button
                 mat-flat-button
                 class="btn-warning"
                 (click)="triggerSnackbar('warning')"
               >
-                Warning
+                {{ "home.snackbars.btn.warning" | translate }}
               </button>
               <button
                 mat-flat-button
                 class="btn-info"
                 (click)="triggerSnackbar('info')"
               >
-                Info
+                {{ "home.snackbars.btn.info" | translate }}
               </button>
               <button
                 mat-flat-button
                 class="btn-error"
                 (click)="triggerSnackbar('error')"
               >
-                Error
+                {{ "home.snackbars.btn.error" | translate }}
               </button>
             </div>
           </mat-card-content>
@@ -230,22 +303,25 @@
 
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
-            <mat-card-title>Elevation & Surfaces</mat-card-title>
-            <mat-card-subtitle
-              >Dialogs, bottom sheets, and scrims</mat-card-subtitle
-            >
+            <mat-card-title>{{
+              "home.elevation.title" | translate
+            }}</mat-card-title>
+            <mat-card-subtitle>{{
+              "home.elevation.desc" | translate
+            }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
             <p class="tab-copy">
-              Material 3 avoids heavy shadows, instead using surface tints
-              (mixing primary color into backgrounds) to indicate elevation.
+              {{ "home.elevation.text" | translate }}
             </p>
             <div class="button-row" style="margin-top: 16px">
               <button mat-flat-button color="primary" (click)="openDialog()">
-                <mat-icon>settings</mat-icon> Advanced Preferences
+                <mat-icon>settings</mat-icon>
+                {{ "home.elevation.btn.settings" | translate }}
               </button>
               <button mat-stroked-button (click)="openBottomSheet()">
-                <mat-icon>share</mat-icon> Share Profile
+                <mat-icon>share</mat-icon>
+                {{ "home.elevation.btn.share" | translate }}
               </button>
             </div>
           </mat-card-content>
@@ -253,31 +329,31 @@
       </section>
 
       <section class="home__palette">
-        <h2>Surface &amp; role tokens</h2>
+        <h2>{{ "home.tokens.title" | translate }}</h2>
         <div class="palette-grid">
           <div class="palette-swatch palette-swatch--primary">
-            <span>Primary</span>
+            <span>{{ "home.tokens.primary" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--secondary">
-            <span>Secondary</span>
+            <span>{{ "home.tokens.secondary" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--tertiary">
-            <span>Tertiary</span>
+            <span>{{ "home.tokens.tertiary" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--surface">
-            <span>Surface</span>
+            <span>{{ "home.tokens.surface" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--error">
-            <span>Error</span>
+            <span>{{ "home.tokens.error" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--success">
-            <span>Success</span>
+            <span>{{ "home.tokens.success" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--warning">
-            <span>Warning</span>
+            <span>{{ "home.tokens.warning" | translate }}</span>
           </div>
           <div class="palette-swatch palette-swatch--info">
-            <span>Info</span>
+            <span>{{ "home.tokens.info" | translate }}</span>
           </div>
         </div>
       </section>

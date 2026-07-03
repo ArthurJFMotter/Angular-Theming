@@ -26,6 +26,7 @@ import {
   FONT_OPTIONS,
 } from '../../../core/models/preferences.model';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-preferences-side-drawer',
@@ -42,13 +43,14 @@ import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-
     MatSliderModule,
     MatSelectModule,
     MatFormFieldModule,
+    TranslatePipe,
     CustomColorPickerComponent,
   ],
   templateUrl: './preferences-side-drawer.component.html',
   styleUrl: './preferences-side-drawer.component.scss',
 })
 export class PreferencesSideDrawerComponent {
-  readonly prefs = inject(PreferencesService);
+  readonly preferencesService = inject(PreferencesService);
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
   @Output() closeDrawer = new EventEmitter<void>();
 
@@ -57,19 +59,19 @@ export class PreferencesSideDrawerComponent {
 
   // Extracted simple helpers
   onModeChange(mode: ThemeMode): void {
-    this.prefs.setMode(mode);
+    this.preferencesService.setMode(mode);
   }
 
   onContrastChange(contrast: ContrastMode): void {
-    this.prefs.setContrast(contrast);
+    this.preferencesService.setContrast(contrast);
   }
 
   onSchemeSelect(scheme: string): void {
-    this.prefs.setScheme(scheme);
+    this.preferencesService.setScheme(scheme);
   }
 
   onCustomMenuOpened(scheme: string): void {
-    this.prefs.setScheme(scheme);
+    this.preferencesService.setScheme(scheme);
   }
 
   closeCustomMenu(): void {
@@ -77,53 +79,53 @@ export class PreferencesSideDrawerComponent {
   }
 
   onCvdChange(mode: CvdMode): void {
-    this.prefs.setCvdMode(mode);
+    this.preferencesService.setCvdMode(mode);
   }
   
   setFontFamily(f: string): void {
-    this.prefs.setFontFamily(f);
+    this.preferencesService.setFontFamily(f);
   }
 
   // Slider Math
   setFontScale(s: number): void {
-    this.prefs.setFontScale(s);
+    this.preferencesService.setFontScale(s);
   }
 
   scaleUp(): void {
-    const c = this.prefs.fontScale();
+    const c = this.preferencesService.fontScale();
     if (c < 1.3) this.setFontScale(Math.round((c + 0.05) * 100) / 100);
   }
 
   scaleDown(): void {
-    const c = this.prefs.fontScale();
+    const c = this.preferencesService.fontScale();
     if (c > 0.8) this.setFontScale(Math.round((c - 0.05) * 100) / 100);
   }
 
   setShapeScale(s: number): void {
-    this.prefs.setShapeScale(s);
+    this.preferencesService.setShapeScale(s);
   }
 
   scaleShapeUp(): void {
-    const c = this.prefs.shapeScale();
+    const c = this.preferencesService.shapeScale();
     if (c < 3) this.setShapeScale(Math.round((c + 0.25) * 100) / 100);
   }
 
   scaleShapeDown(): void {
-    const c = this.prefs.shapeScale();
+    const c = this.preferencesService.shapeScale();
     if (c > 0) this.setShapeScale(Math.round((c - 0.25) * 100) / 100);
   }
 
   setDensityScale(s: number): void {
-    this.prefs.setDensityScale(s);
+    this.preferencesService.setDensityScale(s);
   }
 
   scaleDensityUp(): void {
-    const c = this.prefs.densityScale();
+    const c = this.preferencesService.densityScale();
     if (c < 0) this.setDensityScale(c + 1);
   }
 
   scaleDensityDown(): void {
-    const c = this.prefs.densityScale();
+    const c = this.preferencesService.densityScale();
     if (c > -3) this.setDensityScale(c - 1);
   }
 }

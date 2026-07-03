@@ -30,23 +30,23 @@ export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
 export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
 
 export const CVD_MODES: { value: CvdMode; label: string }[] = [
-  { value: 'none', label: 'Normal Vision' },
-  { value: 'protanopia', label: 'Protanopia (Red-blind)' },
-  { value: 'deuteranopia', label: 'Deuteranopia (Green-blind)' },
-  { value: 'tritanopia', label: 'Tritanopia (Blue-blind)' },
-  { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' },
-  { value: 'blur', label: 'Low Vision (Blur)' },
-  { value: 'glare', label: 'Sunlight Glare' },
-  { value: 'nightshift', label: 'Night Shift (Warm)' },
+  { value: 'none', label: 'cvd.none' },
+  { value: 'protanopia', label: 'cvd.protanopia' },
+  { value: 'deuteranopia', label: 'cvd.deuteranopia' },
+  { value: 'tritanopia', label: 'cvd.tritanopia' },
+  { value: 'achromatopsia', label: 'cvd.achromatopsia' },
+  { value: 'blur', label: 'cvd.blur' },
+  { value: 'glare', label: 'cvd.glare' },
+  { value: 'nightshift', label: 'cvd.nightshift' },
 ];
 
 export const FONT_OPTIONS = [
-  { value: 'Roboto', label: 'Roboto' },
-  { value: 'Inter', label: 'Inter' },
-  { value: 'Montserrat', label: 'Montserrat' },
-  { value: 'Atkinson Hyperlegible', label: 'Hyperlegible' },
-  { value: 'system-ui, sans-serif', label: 'System Native' },
-  { value: 'monospace', label: 'Monospace' },
+  { value: 'Roboto', label: 'font.roboto' },
+  { value: 'Inter', label: 'font.inter' },
+  { value: 'Montserrat', label: 'font.montserrat' },
+  { value: 'Atkinson Hyperlegible', label: 'font.hyperlegible' },
+  { value: 'system-ui, sans-serif', label: 'font.system' },
+  { value: 'monospace', label: 'font.monospace' },
 ];
 
 export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';

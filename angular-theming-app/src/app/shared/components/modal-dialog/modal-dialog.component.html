@@ -1,25 +1,19 @@
 <h2 mat-dialog-title style="display: flex; align-items: center; gap: 8px">
   <mat-icon color="primary">settings</mat-icon>
-  Advanced Preferences
+  {{ 'dialog.title' | translate }}
 </h2>
 
 <mat-dialog-content>
   <p style="margin-top: 8px; color: var(--mat-sys-on-surface-variant)">
-    Future home for advanced theming configuration, deeper accessibility
-    overrides, and JSON import/export settings.
+    {{ 'dialog.desc1' | translate }}
   </p>
-  <p style="color: var(--mat-sys-on-surface-variant)">
-    <em
-      >Notice how Material 3 uses <strong>Surface Tinting</strong> and
-      <code>--mat-sys-scrim</code> to separate this layer from the background
-      instead of a heavy drop-shadow!</em
-    >
-  </p>
+  
+  <p style="color: var(--mat-sys-on-surface-variant)" [innerHTML]="'dialog.desc2' | translate"></p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button mat-dialog-close>{{ 'dialog.cancel' | translate }}</button>
   <button mat-flat-button color="primary" mat-dialog-close>
-    Save Settings
+    {{ 'dialog.save' | translate }}
   </button>
 </mat-dialog-actions>

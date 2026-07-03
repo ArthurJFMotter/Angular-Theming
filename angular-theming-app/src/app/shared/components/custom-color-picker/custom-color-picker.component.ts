@@ -7,6 +7,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { isValidHexColor } from '../../../core/models/preferences.model';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 type OptionalRole = 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info';
 
@@ -19,7 +20,7 @@ interface RoleField {
 @Component({
   selector: 'app-custom-color-picker',
   standalone: true,
-  imports: [FormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSlideToggleModule, MatDividerModule],
+  imports: [FormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSlideToggleModule, MatDividerModule, TranslatePipe],
   templateUrl: './custom-color-picker.component.html',
   styleUrl: './custom-color-picker.component.scss'
 })
@@ -42,12 +43,12 @@ export class CustomColorPickerComponent {
   });
 
   readonly roleFields: RoleField[] = [
-    { role: 'secondary', label: 'Secondary', hint: 'Supporting accents.' },
-    { role: 'tertiary', label: 'Tertiary', hint: 'Contrasting highlights.' },
-    { role: 'error', label: 'Error', hint: 'Validation messages, destructive actions.' },
-    { role: 'success', label: 'Success', hint: 'Completion messages, positive trends.' },
-    { role: 'warning', label: 'Warning', hint: 'Cautionary messages, non-blocking issues.' },
-    { role: 'info', label: 'Info', hint: 'Neutral tips, informational banners.' }
+    { role: 'secondary', label: 'picker.role.secondary', hint: 'picker.role.secondary.hint' },
+    { role: 'tertiary', label: 'picker.role.tertiary', hint: 'picker.role.tertiary.hint' },
+    { role: 'error', label: 'picker.role.error', hint: 'picker.role.error.hint' },
+    { role: 'success', label: 'picker.role.success', hint: 'picker.role.success.hint' },
+    { role: 'warning', label: 'picker.role.warning', hint: 'picker.role.warning.hint' },
+    { role: 'info', label: 'picker.role.info', hint: 'picker.role.info.hint' }
   ];
 
   readonly suggested = computed(() => this.preferencesService.suggestedCustomDefaults());

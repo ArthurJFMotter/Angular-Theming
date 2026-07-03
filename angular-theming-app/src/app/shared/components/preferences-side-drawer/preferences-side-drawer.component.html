@@ -1,66 +1,43 @@
 <div class="settings-panel">
   <header class="settings-header">
-    <h2 class="settings-title">Preferences</h2>
-    <button mat-icon-button (click)="closeDrawer.emit()">
-      <mat-icon>close</mat-icon>
-    </button>
+    <h2 class="settings-title">{{ 'preferencesService.title' | translate }}</h2>
+    <button mat-icon-button (click)="closeDrawer.emit()"><mat-icon>close</mat-icon></button>
   </header>
   <mat-divider></mat-divider>
 
   <div class="settings-content">
     <!-- 1. COLORS -->
     <div class="settings-section">
-      <div class="section-title">Color Scheme</div>
+      <div class="section-title">{{ 'preferencesService.colors' | translate }}</div>
       <div class="scheme-picker" role="group">
         <!-- Saved Profiles -->
-        @for (profile of prefs.savedProfiles(); track profile.id) {
-          <button
-            type="button"
-            class="swatch"
-            [class.swatch--active]="prefs.scheme() === profile.id"
-            [style.--swatch-color]="profile.colors.primary"
-            [matTooltip]="
-              prefs.scheme() === profile.id
-                ? 'Edit ' + profile.name
-                : profile.name
-            "
-            (click)="onSchemeSelect(profile.id)"
-            [matMenuTriggerFor]="
-              prefs.scheme() === profile.id ? customMenu : null
-            "
-            (menuOpened)="onCustomMenuOpened(profile.id)"
-          >
-            @if (prefs.scheme() === profile.id) {
-              <mat-icon class="swatch__check">check</mat-icon>
-            }
+        @for (profile of preferencesService.savedProfiles(); track profile.id) {
+          <button type="button" class="swatch" 
+            [class.swatch--active]="preferencesService.scheme() === profile.id" 
+            [style.--swatch-color]="profile.colors.primary" 
+            [matTooltip]="(preferencesService.scheme() === profile.id ? ('preferencesService.edit' | translate) + ' ' : '') + profile.name" 
+            (click)="onSchemeSelect(profile.id)" 
+            [matMenuTriggerFor]="preferencesService.scheme() === profile.id ? customMenu : null" 
+            (menuOpened)="onCustomMenuOpened(profile.id)">
+            @if (preferencesService.scheme() === profile.id) { <mat-icon class="swatch__check">check</mat-icon> }
           </button>
         }
-
+        
         <!-- Custom Scratchpad -->
-        <button
-          type="button"
-          class="swatch swatch--custom"
-          [class.swatch--active]="prefs.scheme() === 'custom'"
-          [style.--swatch-color]="prefs.customColors().primary"
-          [matTooltip]="
-            prefs.scheme() === 'custom' ? 'Edit custom colors' : 'Custom colors'
-          "
-          (click)="onSchemeSelect('custom')"
-          [matMenuTriggerFor]="prefs.scheme() === 'custom' ? customMenu : null"
-          (menuOpened)="onCustomMenuOpened('custom')"
-        >
-          @if (prefs.scheme() === "custom") {
-            <mat-icon class="swatch__check">check</mat-icon>
-          } @else {
-            <mat-icon class="swatch__custom-icon">tune</mat-icon>
-          }
+        <button type="button" class="swatch swatch--custom" 
+          [class.swatch--active]="preferencesService.scheme() === 'custom'" 
+          [style.--swatch-color]="preferencesService.customColors().primary" 
+          [matTooltip]="preferencesService.scheme() === 'custom' ? ('preferencesService.custom.edit' | translate) : ('preferencesService.custom.title' | translate)" 
+          (click)="onSchemeSelect('custom')" 
+          [matMenuTriggerFor]="preferencesService.scheme() === 'custom' ? customMenu : null" 
+          (menuOpened)="onCustomMenuOpened('custom')">
+          @if (preferencesService.scheme() === 'custom') { <mat-icon class="swatch__check">check</mat-icon> } 
+          @else { <mat-icon class="swatch__custom-icon">tune</mat-icon> }
         </button>
 
         <mat-menu #customMenu="matMenu" class="custom-menu-panel">
           <ng-template matMenuContent>
-            <div (click)="$event.stopPropagation()">
-              <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
-            </div>
+            <div (click)="$event.stopPropagation()"><app-custom-color-picker (actionComplete)="closeCustomMenu()" /></div>
           </ng-template>
         </mat-menu>
       </div>
@@ -69,41 +46,21 @@
 
     <!-- 2. APPEARANCE -->
     <div class="settings-section">
-      <div class="section-title">Appearance</div>
+      <div class="section-title">{{ 'preferencesService.appearance' | translate }}</div>
       <div class="field-row">
-        <label>Theme Mode</label>
-        <mat-button-toggle-group
-          class="full-width-toggle"
-          [value]="prefs.mode()"
-          (change)="onModeChange($event.value)"
-        >
-          <mat-button-toggle value="light" matTooltip="Light mode"
-            ><mat-icon>light_mode</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="auto" matTooltip="System Default"
-            ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="dark" matTooltip="Dark mode"
-            ><mat-icon>dark_mode</mat-icon></mat-button-toggle
-          >
+        <label>{{ 'preferencesService.mode' | translate }}</label>
+        <mat-button-toggle-group class="full-width-toggle" [value]="preferencesService.mode()" (change)="onModeChange($event.value)">
+          <mat-button-toggle value="light" [matTooltip]="'preferencesService.mode.light' | translate"><mat-icon>light_mode</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="auto" [matTooltip]="'preferencesService.mode.auto' | translate"><mat-icon>brightness_auto</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="dark" [matTooltip]="'preferencesService.mode.dark' | translate"><mat-icon>dark_mode</mat-icon></mat-button-toggle>
         </mat-button-toggle-group>
       </div>
       <div class="field-row">
-        <label>Contrast</label>
-        <mat-button-toggle-group
-          class="full-width-toggle"
-          [value]="prefs.contrast()"
-          (change)="onContrastChange($event.value)"
-        >
-          <mat-button-toggle value="normal" matTooltip="Standard contrast"
-            ><mat-icon>tonality</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="auto" matTooltip="System Default"
-            ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="high" matTooltip="High contrast"
-            ><mat-icon>contrast</mat-icon></mat-button-toggle
-          >
+        <label>{{ 'preferencesService.contrast' | translate }}</label>
+        <mat-button-toggle-group class="full-width-toggle" [value]="preferencesService.contrast()" (change)="onContrastChange($event.value)">
+          <mat-button-toggle value="normal" [matTooltip]="'preferencesService.contrast.normal' | translate"><mat-icon>tonality</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="auto" [matTooltip]="'preferencesService.mode.auto' | translate"><mat-icon>brightness_auto</mat-icon></mat-button-toggle>
+          <mat-button-toggle value="high" [matTooltip]="'preferencesService.contrast.high' | translate"><mat-icon>contrast</mat-icon></mat-button-toggle>
         </mat-button-toggle-group>
       </div>
     </div>
@@ -111,42 +68,22 @@
 
     <!-- 3. TYPOGRAPHY -->
     <div class="settings-section">
-      <div class="section-title">Typography</div>
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="full-width"
-      >
-        <mat-label>Font Family (Default: Roboto)</mat-label>
-        <mat-select
-          [value]="prefs.fontFamily()"
-          (selectionChange)="setFontFamily($event.value)"
-        >
+      <div class="section-title">{{ 'preferencesService.typography' | translate }}</div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+        <mat-label>{{ 'preferencesService.font.label' | translate }}</mat-label>
+        <mat-select [value]="preferencesService.fontFamily()" (selectionChange)="setFontFamily($event.value)">
           @for (font of fontOptions; track font.value) {
-            <mat-option [value]="font.value" [style.font-family]="font.value">{{
-              font.label
-            }}</mat-option>
+            <!-- Notice the translation pipe mapped to font.label here! -->
+            <mat-option [value]="font.value" [style.font-family]="font.value">{{ font.label | translate }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
       <div class="slider-group">
-        <div class="slider-header">
-          <label>Size Scale (Default: 100%)</label
-          ><span>{{ prefs.fontScale() | percent }}</span>
-        </div>
+        <div class="slider-header"><label>{{ 'preferencesService.scale.size' | translate }}</label><span>{{ preferencesService.fontScale() | percent }}</span></div>
         <div class="slider-row">
-          <button mat-icon-button (click)="scaleDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="0.8" max="1.3" step="0.05" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.fontScale()"
-              (ngModelChange)="setFontScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleUp()">
-            <mat-icon>add</mat-icon>
-          </button>
+          <button mat-icon-button (click)="scaleDown()"><mat-icon>remove</mat-icon></button>
+          <mat-slider min="0.8" max="1.3" step="0.05" discrete><input matSliderThumb [ngModel]="preferencesService.fontScale()" (ngModelChange)="setFontScale($event)"></mat-slider>
+          <button mat-icon-button (click)="scaleUp()"><mat-icon>add</mat-icon></button>
         </div>
       </div>
     </div>
@@ -154,45 +91,21 @@
 
     <!-- 4. INTERFACE -->
     <div class="settings-section">
-      <div class="section-title">Interface</div>
+      <div class="section-title">{{ 'preferencesService.interface' | translate }}</div>
       <div class="slider-group">
-        <div class="slider-header">
-          <label>Corner Radius (Default: 100%)</label
-          ><span>{{ prefs.shapeScale() | percent }}</span>
-        </div>
+        <div class="slider-header"><label>{{ 'preferencesService.scale.shape' | translate }}</label><span>{{ preferencesService.shapeScale() | percent }}</span></div>
         <div class="slider-row">
-          <button mat-icon-button (click)="scaleShapeDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="0" max="3" step="0.25" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.shapeScale()"
-              (ngModelChange)="setShapeScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleShapeUp()">
-            <mat-icon>add</mat-icon>
-          </button>
+          <button mat-icon-button (click)="scaleShapeDown()"><mat-icon>remove</mat-icon></button>
+          <mat-slider min="0" max="3" step="0.25" discrete><input matSliderThumb [ngModel]="preferencesService.shapeScale()" (ngModelChange)="setShapeScale($event)"></mat-slider>
+          <button mat-icon-button (click)="scaleShapeUp()"><mat-icon>add</mat-icon></button>
         </div>
       </div>
       <div class="slider-group">
-        <div class="slider-header">
-          <label>Density (Default: 0)</label
-          ><span>{{ prefs.densityScale() }}</span>
-        </div>
+        <div class="slider-header"><label>{{ 'preferencesService.scale.density' | translate }}</label><span>{{ preferencesService.densityScale() === 0 ? ('preferencesService.density.default' | translate) : preferencesService.densityScale() }}</span></div>
         <div class="slider-row">
-          <button mat-icon-button (click)="scaleDensityDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="-3" max="0" step="1" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.densityScale()"
-              (ngModelChange)="setDensityScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleDensityUp()">
-            <mat-icon>add</mat-icon>
-          </button>
+          <button mat-icon-button (click)="scaleDensityDown()"><mat-icon>remove</mat-icon></button>
+          <mat-slider min="-3" max="0" step="1" discrete><input matSliderThumb [ngModel]="preferencesService.densityScale()" (ngModelChange)="setDensityScale($event)"></mat-slider>
+          <button mat-icon-button (click)="scaleDensityUp()"><mat-icon>add</mat-icon></button>
         </div>
       </div>
     </div>
@@ -200,34 +113,23 @@
 
     <!-- 5. ACCESSIBILITY -->
     <div class="settings-section">
-      <div class="section-title">Accessibility</div>
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="full-width"
-      >
-        <mat-label>Vision Simulator (Default: Normal)</mat-label>
-        <mat-select
-          [value]="prefs.cvd()"
-          (selectionChange)="onCvdChange($event.value)"
-        >
-          @for (option of cvdOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+      <div class="section-title">{{ 'preferencesService.a11y' | translate }}</div>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+        <mat-label>{{ 'preferencesService.cvd.label' | translate }}</mat-label>
+        <mat-select [value]="preferencesService.cvd()" (selectionChange)="onCvdChange($event.value)">
+          @for (option of cvdOptions; track option.value) { 
+            <mat-option [value]="option.value">{{ option.label | translate }}</mat-option> 
           }
         </mat-select>
       </mat-form-field>
     </div>
 
     <!-- GLOBAL RESET -->
-    <div class="settings-section" style="padding-top: 0">
-      <button
-        mat-stroked-button
-        color="warn"
-        class="full-width"
-        (click)="prefs.resetToDefaults()"
-      >
-        <mat-icon>restore</mat-icon> Reset all preferences
+    <div class="settings-section" style="padding-top: 0;">
+      <button mat-stroked-button color="warn" class="full-width" (click)="preferencesService.resetToDefaults()">
+        <mat-icon>restore</mat-icon> {{ 'preferencesService.reset.all' | translate }}
       </button>
     </div>
+
   </div>
 </div>

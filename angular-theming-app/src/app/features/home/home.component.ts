@@ -17,36 +17,53 @@ import { NotificationService } from '../../core/services/notification.service';
 import { ModalService } from '../../core/services/modal.service';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { ReadAloudDirective } from '../../shared/directives/read-aloud.directive';
+import { TranslatePipe } from '../../shared/pipes/translate.pipe';
+import { I18nService } from '../../core/services/i18n.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, 
-    MatFormFieldModule, MatInputModule, MatSlideToggleModule, MatProgressBarModule, 
-    MatDividerModule, MatTabsModule, MatBadgeModule, MatSelectModule, 
+    MatToolbarModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    MatProgressBarModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatTooltipModule,
+    MatBadgeModule,
+    MatSelectModule,
     MatSidenavModule,
-    PreferencesSideDrawerComponent
+    PreferencesSideDrawerComponent,
+    TranslatePipe,
+    ReadAloudDirective,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   readonly notify = inject(NotificationService);
   readonly modals = inject(ModalService);
+  readonly i18n = inject(I18nService);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
 
   triggerSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
-    let msg = 'Action completed.';
-    if (type === 'success') msg = 'Changes saved successfully!';
-    if (type === 'warning')
-      msg = 'Warning: Your subscription expires in 3 days.';
-    if (type === 'info')
-      msg = 'Did you know? New features are available in settings.';
-    if (type === 'error') msg = 'Error: Failed to communicate with the server.';
+    let msgKey = 'home.snackbars.msg.default';
 
-    this.notify.show(type, msg);
+    if (type === 'success') msgKey = 'home.alerts.success';
+    if (type === 'warning') msgKey = 'home.alerts.warning';
+    if (type === 'info') msgKey = 'home.alerts.info';
+    if (type === 'error') msgKey = 'home.snackbars.msg.error';
+
+    this.notify.show(type, this.i18n.translate(msgKey));
   }
 
   openDialog() {

@@ -1,120 +1,67 @@
 <div class="custom-picker">
   <header class="custom-picker__header">
-    <h3>{{ isProfileMode() ? 'Edit profile' : 'Custom theme colors' }}</h3>
+    <h3>{{ isProfileMode() ? ('picker.title.edit' | translate) : ('picker.title.custom' | translate) }}</h3>
     @if (!isProfileMode()) {
       <button mat-button (click)="resetToDefault()">
-        <mat-icon>restart_alt</mat-icon> Reset to default
+        <mat-icon>restart_alt</mat-icon> {{ 'picker.reset' | translate }}
       </button>
     }
   </header>
 
-  <!-- Descriptive text -->
-  <p class="custom-picker__note">
-    Pick a primary color. Other colors automatically adapt to maintain perfect contrast, or switch them to custom to lock in your own choices.
-  </p>
+  <p class="custom-picker__note">{{ 'picker.note' | translate }}</p>
 
-  <!-- Primary: required -->
   <section class="role-row role-row--required">
     <div class="role-row__swatch-input">
-      <input
-        type="color"
-        class="color-swatch-input"
-        [value]="primaryDraft()"
-        (input)="onPrimaryChange($any($event.target).value)"
-        aria-label="Pick primary color" />
+      <input type="color" class="color-swatch-input" [value]="primaryDraft()" (input)="onPrimaryChange($any($event.target).value)" />
     </div>
     <div class="role-row__fields">
-      <label class="role-row__label" for="primary-hex">Primary <span class="required-tag">required</span></label>
-      <input
-        id="primary-hex"
-        class="hex-input"
-        type="text"
-        spellcheck="false"
-        [class.hex-input--invalid]="primaryInvalid()"
-        [ngModel]="primaryDraft()"
-        (ngModelChange)="onPrimaryChange($event)"
-        placeholder="#3b6fd6" />
-      @if (primaryInvalid()) {
-        <span class="role-row__error">Enter a valid hex color (e.g. #3b6fd6).</span>
-      }
+      <label class="role-row__label" for="primary-hex">{{ 'picker.primary.label' | translate }} <span class="required-tag">{{ 'picker.primary.required' | translate }}</span></label>
+      <input id="primary-hex" class="hex-input" type="text" spellcheck="false" [class.hex-input--invalid]="primaryInvalid()" [ngModel]="primaryDraft()" (ngModelChange)="onPrimaryChange($event)" [placeholder]="'picker.primary.placeholder' | translate" />
+      @if (primaryInvalid()) { <span class="role-row__error">{{ 'picker.error.hex' | translate }}</span> }
     </div>
   </section>
 
-  <!-- Secondary / Tertiary / Error -->
   @for (field of roleFields; track field.role) {
     <section class="role-row">
       <div class="role-row__swatch-input">
-        <input
-          type="color"
-          class="color-swatch-input"
-          [class.color-swatch-input--disabled]="!isRoleCustom(field.role)"
-          [disabled]="!isRoleCustom(field.role)"
-          [value]="getRoleDisplayValue(field.role)"
-          (input)="onRoleChange(field.role, $any($event.target).value)"
-          [attr.aria-label]="'Pick ' + field.label + ' color'" />
+        <input type="color" class="color-swatch-input" [class.color-swatch-input--disabled]="!isRoleCustom(field.role)" [disabled]="!isRoleCustom(field.role)" [value]="getRoleDisplayValue(field.role)" (input)="onRoleChange(field.role, $any($event.target).value)" />
       </div>
       <div class="role-row__fields">
         <div class="role-row__label-line">
-          <label class="role-row__label" [for]="field.role + '-hex'">{{ field.label }}</label>
-          <mat-slide-toggle
-            [checked]="isRoleCustom(field.role)"
-            (change)="onRoleToggle(field.role, $event.checked)"
-            [matTooltip]="field.hint">
-            {{ isRoleCustom(field.role) ? 'Custom' : 'Auto' }}
+          <label class="role-row__label" [for]="field.role + '-hex'">{{ field.label | translate }}</label>
+          <mat-slide-toggle [checked]="isRoleCustom(field.role)" (change)="onRoleToggle(field.role, $event.checked)" [matTooltip]="field.hint | translate">
+            {{ isRoleCustom(field.role) ? ('picker.toggle.custom' | translate) : ('picker.toggle.auto' | translate) }}
           </mat-slide-toggle>
         </div>
-        <input
-          [id]="field.role + '-hex'"
-          class="hex-input"
-          type="text"
-          spellcheck="false"
-          [disabled]="!isRoleCustom(field.role)"
-          [class.hex-input--invalid]="roleDraftInvalid(field.role)"
-          [ngModel]="getRoleDisplayValue(field.role)"
-          (ngModelChange)="onRoleChange(field.role, $event)"
-          placeholder="Auto from primary" />
-        @if (roleDraftInvalid(field.role)) {
-          <span class="role-row__error">Enter a valid hex color.</span>
-        }
-        <span class="role-row__hint">{{ field.hint }}</span>
+        <input [id]="field.role + '-hex'" class="hex-input" type="text" spellcheck="false" [disabled]="!isRoleCustom(field.role)" [class.hex-input--invalid]="roleDraftInvalid(field.role)" [ngModel]="getRoleDisplayValue(field.role)" (ngModelChange)="onRoleChange(field.role, $event)" [placeholder]="'picker.placeholder.auto' | translate" />
+        @if (roleDraftInvalid(field.role)) { <span class="role-row__error">{{ 'picker.error.generic' | translate }}</span> }
+        <span class="role-row__hint">{{ field.hint | translate }}</span>
       </div>
     </section>
   }
-   <!-- Profile Interactions -->
+
   <div class="custom-picker__footer">
     @if (confirmDelete()) {
       <div class="confirm-delete-box">
-        <p>Are you sure you want to delete <strong>{{ activeProfile()?.name }}</strong>?</p>
+        <p>{{ 'picker.delete.confirm1' | translate }} <strong>{{ activeProfile()?.name }}</strong>{{ 'picker.delete.confirm2' | translate }}</p>
         <div class="confirm-delete-actions">
-          <button mat-button (click)="confirmDelete.set(false)">Cancel</button>
-          <button mat-flat-button color="warn" (click)="onDeleteProfileConfirm()">Delete</button>
+          <button mat-button (click)="confirmDelete.set(false)">{{ 'picker.delete.cancel' | translate }}</button>
+          <button mat-flat-button color="warn" (click)="onDeleteProfileConfirm()">{{ 'picker.delete.btn' | translate }}</button>
         </div>
       </div>
     } @else {
-      <!-- New Profile Name Input -->
       <div class="profile-name-field">
-        <label class="role-row__label" for="profile-name">Profile name</label>
-        <input
-          id="profile-name"
-          class="hex-input"
-          type="text"
-          spellcheck="false"
-          [ngModel]="profileNameDraft()"
-          (ngModelChange)="profileNameDraft.set($event)"
-          placeholder="e.g. Midnight Blue" />
+        <label class="role-row__label" for="profile-name">{{ 'picker.profile.name' | translate }}</label>
+        <input id="profile-name" class="hex-input" type="text" spellcheck="false" [ngModel]="profileNameDraft()" (ngModelChange)="profileNameDraft.set($event)" [placeholder]="'picker.profile.placeholder' | translate" />
       </div>
-
       <div class="custom-picker__actions">
         @if (isProfileMode()) {
-          <button mat-stroked-button color="warn" (click)="confirmDelete.set(true)">Delete</button>
-          <button mat-flat-button color="primary" (click)="onSaveProfile()">Save changes</button>
+          <button mat-stroked-button color="warn" (click)="confirmDelete.set(true)">{{ 'picker.delete.btn' | translate }}</button>
+          <button mat-flat-button color="primary" (click)="onSaveProfile()">{{ 'picker.save.changes' | translate }}</button>
         } @else if (preferencesService.canCreateColorProfile()) {
-          <!-- Only shows if under 12 profiles -->
-          <button mat-flat-button color="primary" class="full-width" (click)="onSaveProfile()">Save as profile</button>
+          <button mat-flat-button color="primary" class="full-width" (click)="onSaveProfile()">{{ 'picker.save.new' | translate }}</button>
         } @else {
-          <p class="role-row__hint" style="text-align: center; width: 100%;">
-            Max 12 profiles reached. Delete one to create a new one.
-          </p>
+          <p class="role-row__hint" style="text-align: center; width: 100%;">{{ 'picker.limit' | translate }}</p>
         }
       </div>
     }
