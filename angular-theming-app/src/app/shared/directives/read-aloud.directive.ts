@@ -21,7 +21,7 @@ export class ReadAloudDirective {
     const utterance = new SpeechSynthesisUtterance(text);
     
     // Assign the correct phonetic accent (e.g. 'pt-BR' or 'en-US')
-    utterance.lang = this.i18n.locale() === 'pt' ? 'pt-BR' : 'en-US';
+    utterance.lang = this.i18n.locale() === 'pt' ? 'pt-BR' : this.i18n.locale() === 'es' ? 'es-ES' : 'en-US';
     
     // Optional: Slow it down slightly for better comprehension
     utterance.rate = 0.95; 

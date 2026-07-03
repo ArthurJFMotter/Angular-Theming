@@ -15,17 +15,18 @@ export class I18nService {
     // 2. React to changes
     effect(() => {
       const current = this.locale();
-      
-      // Save to storage
       try { localStorage.setItem('angular-theming-app.locale', current); } catch {}
       
-      // THE GOLDEN RULE OF A11Y: Tell the OS Screen Reader the language changed!
-      document.documentElement.lang = current === 'pt' ? 'pt-BR' : 'en-US';
+      // Update DOM lang for OS Narrators (en-US, pt-BR, es-ES)
+      document.documentElement.lang = current === 'pt' ? 'pt-BR' : current === 'es' ? 'es-ES' : 'en-US';
     });
   }
 
   toggleLocale(): void {
-    this.locale.set(this.locale() === 'en' ? 'pt' : 'en');
+    const locales: Locale[] = ['en', 'pt', 'es'];
+    const currentIndex = locales.indexOf(this.locale());
+    const nextIndex = (currentIndex + 1) % locales.length;
+    this.locale.set(locales[nextIndex]);
   }
 
   /** Retrieves the translated string from the dictionary */

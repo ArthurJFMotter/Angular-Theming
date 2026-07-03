@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'pt';
+export type Locale = 'en' | 'pt' | 'es';
 
 export const TRANSLATIONS = {
   en: {
@@ -350,5 +350,185 @@ export const TRANSLATIONS = {
       'Mensagens de cautela, problemas não bloqueantes.',
     'picker.role.info': 'Info',
     'picker.role.info.hint': 'Dicas neutras, banners informativos.',
+  },
+
+  es: {
+    'app.title': 'App de Temas Angular',
+    'toolbar.language': 'Cambiar idioma',
+    'toolbar.settings': 'Abrir preferencias',
+
+    /* Home */
+    'home.title': 'Temas Material 3 en vivo',
+    'home.desc':
+      'Elija un modo y un esquema de color arriba — cada componente en esta página se reestiliza al instante y su elección se recuerda en este dispositivo.',
+    'home.image.alt': 'Paisaje colorido',
+
+    'home.buttons.title': 'Botones',
+    'home.buttons.desc':
+      'Roles primarios, secundarios y terciarios, lado a lado',
+    'home.buttons.text': 'Texto',
+    'home.buttons.primary': 'Primario',
+    'home.buttons.secondary': 'Secundario',
+    'home.buttons.stroked': 'Delineado',
+    'home.buttons.raised': 'Elevado',
+    'home.buttons.aria.notifications': 'Notificaciones',
+    'home.buttons.aria.add': 'Añadir',
+
+    'home.forms.title': 'Campo de formulario',
+    'home.forms.desc': 'Las entradas siguen el esquema activo',
+    'home.forms.label': 'Nombre del proyecto',
+    'home.forms.placeholder': 'App de Temas Angular',
+    'home.forms.toggle': 'Habilitar notificaciones',
+
+    'home.chips.title': 'Chips',
+    'home.chips.desc': 'Los chips seleccionados usan el color secundario',
+    'home.chips.aria': 'Tecnologías',
+
+    'home.tabs.title': 'Progreso y pestañas',
+    'home.tabs.desc': 'Superficies, divisores y movimiento',
+    'home.tabs.overview': 'Resumen',
+    'home.tabs.overview.text':
+      'Los colores de superficie se actualizan en todos los paneles anidados.',
+    'home.tabs.details': 'Detalles',
+    'home.tabs.details.text':
+      'Los indicadores de pestaña usan el token de color primario.',
+
+    'home.alerts.title': 'Estado y Alertas',
+    'home.alerts.desc': 'Colores semánticos utilizando tokens de contenedor',
+    'home.alerts.success': 'Cambios guardados con éxito.',
+    'home.alerts.warning': 'Su suscripción caduca en 3 días.',
+    'home.alerts.info': 'Nuevas funciones disponibles en la configuración.',
+
+    'home.snackbars.title': 'Snackbars y notificaciones',
+    'home.snackbars.desc': 'Posicionamiento dinámico y colores semánticos',
+    'home.snackbars.vertical': 'Posición vertical',
+    'home.snackbars.vertical.top': 'Arriba',
+    'home.snackbars.vertical.bottom': 'Abajo',
+    'home.snackbars.horizontal': 'Posición horizontal',
+    'home.snackbars.horizontal.start': 'Inicio (Izquierda)',
+    'home.snackbars.horizontal.center': 'Centro',
+    'home.snackbars.horizontal.end': 'Fin (Derecha)',
+    'home.snackbars.btn.default': 'Por defecto',
+    'home.snackbars.btn.success': 'Éxito',
+    'home.snackbars.btn.warning': 'Aviso',
+    'home.snackbars.btn.info': 'Info',
+    'home.snackbars.btn.error': 'Error',
+    'home.snackbars.msg.default': 'Acción completada.',
+    'home.snackbars.msg.error': 'Error: Fallo al comunicarse con el servidor.',
+
+    'home.elevation.title': 'Elevación y Superficies',
+    'home.elevation.desc': 'Cuadros de diálogo, paneles inferiores y scrims',
+    'home.elevation.text':
+      'Material 3 evita las sombras pesadas, utilizando en su lugar tintes de superficie (mezclando el color primario en los fondos) para indicar la elevación.',
+    'home.elevation.btn.settings': 'Preferencias avanzadas',
+    'home.elevation.btn.share': 'Compartir perfil',
+
+    'home.tokens.title': 'Tokens de superficie y rol',
+    'home.tokens.primary': 'Primario',
+    'home.tokens.secondary': 'Secundario',
+    'home.tokens.tertiary': 'Terciario',
+    'home.tokens.surface': 'Superficie',
+    'home.tokens.error': 'Error',
+    'home.tokens.success': 'Éxito',
+    'home.tokens.warning': 'Aviso',
+    'home.tokens.info': 'Info',
+
+    /* Bottom Sheet */
+    'export.title': 'Exportar y compartir perfil',
+    'export.copy': 'Copiar enlace URL',
+    'export.css': 'Exportar a SCSS / CSS',
+    'export.json': 'Descargar JSON',
+
+    /* Dialog */
+    'dialog.title': 'Preferencias avanzadas',
+    'dialog.desc1':
+      'Futuro hogar para configuraciones avanzadas de temas, anulaciones más profundas de accesibilidad y configuraciones de importación/exportación JSON.',
+    'dialog.desc2':
+      '<em>¡Note cómo Material 3 usa <strong>Tintes de superficie</strong> y <code>--mat-sys-scrim</code> para separar esta capa del fondo en lugar de una sombra pesada!</em>',
+    'dialog.cancel': 'Cancelar',
+    'dialog.save': 'Guardar configuración',
+
+    /* Preferences Side Drawer */
+    'preferencesService.title': 'Preferencias',
+    'preferencesService.colors': 'Esquema de color',
+    'preferencesService.edit': 'Editar',
+    'preferencesService.custom.edit': 'Editar colores personalizados',
+    'preferencesService.custom.title': 'Colores personalizados',
+    'preferencesService.appearance': 'Apariencia',
+    'preferencesService.mode': 'Modo del tema',
+    'preferencesService.mode.light': 'Modo claro',
+    'preferencesService.mode.auto': 'Predeterminado del sistema',
+    'preferencesService.mode.dark': 'Modo oscuro',
+    'preferencesService.contrast': 'Contraste',
+    'preferencesService.contrast.normal': 'Contraste estándar',
+    'preferencesService.contrast.high': 'Alto contraste',
+    'preferencesService.typography': 'Tipografía',
+    'preferencesService.font.label':
+      'Familia tipográfica (Por defecto: Roboto)',
+    'preferencesService.scale.size': 'Escala de tamaño (Por defecto: 100%)',
+    'preferencesService.interface': 'Interfaz',
+    'preferencesService.scale.shape': 'Radio de esquina (Por defecto: 100%)',
+    'preferencesService.scale.density': 'Densidad (Por defecto: 0)',
+    'preferencesService.density.default': '0 (Por defecto)',
+    'preferencesService.a11y': 'Accesibilidad',
+    'preferencesService.cvd.label': 'Simulador de visión (Por defecto: Normal)',
+    'preferencesService.reset.all': 'Restablecer todas las preferencias',
+
+    // Dropdown Options
+    'font.roboto': 'Roboto (Por defecto)',
+    'font.inter': 'Inter (Moderna y limpia)',
+    'font.montserrat': 'Montserrat (Geométrica)',
+    'font.hyperlegible': 'Hyperlegible (Accesibilidad)',
+    'font.system': 'Nativa del sistema',
+    'font.monospace': 'Monospace (Código)',
+    'cvd.none': 'Visión normal',
+    'cvd.protanopia': 'Protanopía (Ceguera al rojo)',
+    'cvd.deuteranopia': 'Deuteranopía (Ceguera al verde)',
+    'cvd.tritanopia': 'Tritanopía (Ceguera al azul)',
+    'cvd.achromatopsia': 'Acromatopsia (Escala de grises)',
+    'cvd.blur': 'Baja visión (Desfoque)',
+    'cvd.glare': 'Resplandor solar',
+    'cvd.nightshift': 'Filtro de luz azul (Cálido)',
+
+    // Custom Color Picker
+    'picker.title.edit': 'Editar perfil',
+    'picker.title.custom': 'Colores de tema personalizados',
+    'picker.reset': 'Restablecer a valores predeterminados',
+    'picker.note':
+      'Elija un color primario. Los demás colores se adaptan automáticamente para mantener un contraste perfecto, o cámbielos a personalizados para fijar sus propias elecciones.',
+    'picker.primary.label': 'Primario',
+    'picker.primary.required': 'requerido',
+    'picker.primary.placeholder': '#3b6fd6',
+    'picker.error.hex': 'Introduzca un color hex válido (ej. #3b6fd6).',
+    'picker.error.generic': 'Introduzca un color hex válido.',
+    'picker.toggle.custom': 'Personalizado',
+    'picker.toggle.auto': 'Automático',
+    'picker.placeholder.auto': 'Auto por primario',
+    'picker.delete.confirm1': '¿Está seguro de que desea eliminar',
+    'picker.delete.confirm2': '?',
+    'picker.delete.cancel': 'Cancelar',
+    'picker.delete.btn': 'Eliminar',
+    'picker.profile.name': 'Nombre del perfil',
+    'picker.profile.placeholder': 'ej. Azul Medianoche',
+    'picker.save.changes': 'Guardar cambios',
+    'picker.save.new': 'Guardar como perfil',
+    'picker.limit':
+      'Límite de 12 perfiles alcanzado. Elimine uno para crear otro nuevo.',
+
+    // Roles for Color Picker
+    'picker.role.secondary': 'Secundario',
+    'picker.role.secondary.hint': 'Acentos de apoyo.',
+    'picker.role.tertiary': 'Terciario',
+    'picker.role.tertiary.hint': 'Destacados contrastantes.',
+    'picker.role.error': 'Error',
+    'picker.role.error.hint': 'Mensajes de validación, acciones destructivas.',
+    'picker.role.success': 'Éxito',
+    'picker.role.success.hint':
+      'Mensajes de finalización, tendencias positivas.',
+    'picker.role.warning': 'Aviso',
+    'picker.role.warning.hint':
+      'Mensajes de precaución, problemas no bloqueantes.',
+    'picker.role.info': 'Info',
+    'picker.role.info.hint': 'Consejos neutros, banners informativos.',
   },
 };
