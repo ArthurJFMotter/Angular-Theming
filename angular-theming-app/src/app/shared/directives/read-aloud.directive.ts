@@ -1,5 +1,6 @@
 import { Directive, HostListener, Input, inject } from '@angular/core';
 import { I18nService } from '../../core/services/i18n.service';
+import { Locale } from '../../core/i18n/translations';
 
 @Directive({
   selector: '[appReadAloud]',
@@ -19,9 +20,10 @@ export class ReadAloudDirective {
 
     const text = this.i18n.translate(this.textKey);
     const utterance = new SpeechSynthesisUtterance(text);
-    
-    // Assign the correct phonetic accent (e.g. 'pt-BR' or 'en-US')
-    utterance.lang = this.i18n.locale() === 'pt' ? 'pt-BR' : this.i18n.locale() === 'es' ? 'es-ES' : 'en-US';
+
+     // Assign the correct phonetic accent
+    const langMap: Record<Locale, string> = { en: 'en-US', pt: 'pt-BR', es: 'es-ES', ar: 'ar' };
+    utterance.lang = langMap[this.i18n.locale()];
     
     // Optional: Slow it down slightly for better comprehension
     utterance.rate = 0.95; 

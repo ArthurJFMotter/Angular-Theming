@@ -17,14 +17,27 @@
       <span class="app-toolbar__title">{{ "app.title" | translate }}</span>
       <span class="app-toolbar__spacer"></span>
 
-      <!-- Language Toggle -->
+      <!-- New Language Menu -->
       <button
         mat-icon-button
-        (click)="i18n.toggleLocale()"
+        [matMenuTriggerFor]="langMenu"
         [matTooltip]="'toolbar.language' | translate"
       >
         <mat-icon>language</mat-icon>
       </button>
+
+      <mat-menu #langMenu="matMenu">
+        @for (lang of i18n.locales; track lang.value) {
+          <button mat-menu-item (click)="i18n.setLocale(lang.value)">
+            <mat-icon>{{
+              i18n.locale() === lang.value
+                ? "radio_button_checked"
+                : "radio_button_unchecked"
+            }}</mat-icon>
+            <span>{{ lang.label }}</span>
+          </button>
+        }
+      </mat-menu>
 
       <button
         mat-icon-button

@@ -21,6 +21,7 @@ import { ReadAloudDirective } from '../../shared/directives/read-aloud.directive
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { I18nService } from '../../core/services/i18n.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +34,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatChipsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatMenuModule,
     MatSlideToggleModule,
     MatProgressBarModule,
     MatDividerModule,
