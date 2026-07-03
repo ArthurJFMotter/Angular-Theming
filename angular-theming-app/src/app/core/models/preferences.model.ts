@@ -1,56 +1,33 @@
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
-export type ColorScheme = string;
-export type PresetColorScheme = 'blue' | 'green' | 'purple';
+export type ColorScheme = string; // Either 'custom' or a profile ID
 export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' | 'blur' | 'glare' | 'nightshift';
 
 export interface CustomColors {
-  primary: string;
-  secondary?: string;
-  tertiary?: string;
-  error?: string;
-  success?: string;
-  warning?: string;
-  info?: string;
+  primary: string; secondary?: string; tertiary?: string; error?: string; success?: string; warning?: string; info?: string;
 }
 
-export interface CustomProfile {
-  id: string;
-  name: string;
-  colors: CustomColors;
-}
+export interface CustomProfile { id: string; name: string; colors: CustomColors; }
 
 export interface PreferencesState {
-  mode: ThemeMode;
-  contrast: ContrastMode;
-  scheme: ColorScheme;
-  customColors: CustomColors;
-  savedProfiles: CustomProfile[];
-  cvd: CvdMode;
-  fontFamily: string;
-  fontScale: number;
-  shapeScale: number;
-  densityScale: number;
+  mode: ThemeMode; contrast: ContrastMode; scheme: ColorScheme;
+  customColors: CustomColors; savedProfiles: CustomProfile[]; cvd: CvdMode;
+  fontFamily: string; fontScale: number; shapeScale: number; densityScale: number;
 }
 
+// Baseline starting colors
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
-  mode: 'auto',
-  contrast: 'auto',
-  scheme: 'blue',
+  mode: 'auto', contrast: 'auto',
+  scheme: 'custom', // <-- defaults to custom scratchpad
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
-  cvd: 'none',
-  fontFamily: 'Roboto',
-  fontScale: 1,
-  shapeScale: 1,
-  densityScale: 0,
+  cvd: 'none', fontFamily: 'Roboto', fontScale: 1, shapeScale: 1, densityScale: 0,
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
 export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
-export const PRESET_COLOR_SCHEMES: PresetColorScheme[] = ['blue', 'green', 'purple'];
 
 export const CVD_MODES: { value: CvdMode; label: string }[] = [
   { value: 'none', label: 'Normal Vision' },
@@ -64,12 +41,12 @@ export const CVD_MODES: { value: CvdMode; label: string }[] = [
 ];
 
 export const FONT_OPTIONS = [
-  { value: 'Roboto', label: 'Roboto (Default)' },
-  { value: 'Inter', label: 'Inter (Modern & Clean)' },
-  { value: 'Montserrat', label: 'Montserrat (Geometric)' },
-  { value: 'Atkinson Hyperlegible', label: 'Hyperlegible (A11y)' },
+  { value: 'Roboto', label: 'Roboto' },
+  { value: 'Inter', label: 'Inter' },
+  { value: 'Montserrat', label: 'Montserrat' },
+  { value: 'Atkinson Hyperlegible', label: 'Hyperlegible' },
   { value: 'system-ui, sans-serif', label: 'System Native' },
-  { value: 'monospace', label: 'Monospace (Code)' },
+  { value: 'monospace', label: 'Monospace' },
 ];
 
 export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';

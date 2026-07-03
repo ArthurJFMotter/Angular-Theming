@@ -24,7 +24,7 @@ interface RoleField {
   styleUrl: './custom-color-picker.component.scss'
 })
 export class CustomColorPickerComponent {
-  private readonly preferencesService = inject(PreferencesService);
+  readonly preferencesService = inject(PreferencesService);
 
   @Output() actionComplete = new EventEmitter<void>();
 

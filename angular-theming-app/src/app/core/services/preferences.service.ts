@@ -1,15 +1,11 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import {
-  ColorScheme, PresetColorScheme, PRESET_COLOR_SCHEMES, CustomColors, CustomProfile,
+  ColorScheme, CustomColors, CustomProfile,
   DEFAULT_PREFERENCES_STATE, isValidHexColor, ThemeMode, PreferencesState,
   PREFERENCES_STORAGE_KEY, ContrastMode, CvdMode
 } from '../models/preferences.model';
 import { ColorEngine } from '../utils/color-engine';
 import { DomEngine } from '../utils/dom-engine';
-
-const PRESET_BASE_COLORS: Record<PresetColorScheme, CustomColors> = {
-  blue: { primary: '#3b6fd6' }, green: { primary: '#006e1c' }, purple: { primary: '#6750a4' }
-};
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
@@ -59,6 +55,8 @@ export class PreferencesService {
   readonly activeProfile = computed<CustomProfile | undefined>(() => 
     this.savedProfilesSignal().find((p) => p.id === this.schemeSignal())
   );
+
+  readonly canCreateColorProfile = computed(() => this.savedProfilesSignal().length < 12);
 
   readonly preferences = computed<PreferencesState>(() => ({
     mode: this.modeSignal(), contrast: this.contrastSignal(), scheme: this.schemeSignal(),
@@ -151,29 +149,14 @@ export class PreferencesService {
     root.setAttribute('data-theme-density', state.densityScale.toString());
     root.style.colorScheme = activeMode;
 
-    const isPreset = PRESET_COLOR_SCHEMES.includes(state.scheme as PresetColorScheme);
-    const activeColors = state.scheme === 'custom' ? state.customColors : state.savedProfiles.find((p) => p.id === state.scheme)?.colors || state.customColors;
-    const baseColors = isPreset ? PRESET_BASE_COLORS[state.scheme as PresetColorScheme] : activeColors;
-
     if (this.resolvedHighContrast()) {
       root.setAttribute('data-theme-contrast', 'high');
-      DomEngine.applyTokens(root, ColorEngine.buildTokens(baseColors, activeMode, 1));
+      // Force contrastLevel 1
+      DomEngine.applyTokens(root, ColorEngine.buildTokens(this.activeCustomColors(), activeMode, 1));
     } else {
       root.removeAttribute('data-theme-contrast');
-      if (!isPreset) {
-        DomEngine.applyTokens(root, this.activeTokenPair()[activeMode]);
-      } else {
-        DomEngine.clearCustomTokens(root, this.activeTokenPair().light);
-        const presetTokens = ColorEngine.buildTokens(baseColors, activeMode, 0);
-        DomEngine.applyTokens(root, {
-          success: presetTokens.success, 'on-success': presetTokens['on-success'],
-          'success-container': presetTokens['success-container'], 'on-success-container': presetTokens['on-success-container'],
-          warning: presetTokens.warning, 'on-warning': presetTokens['on-warning'],
-          'warning-container': presetTokens['warning-container'], 'on-warning-container': presetTokens['on-warning-container'],
-          info: presetTokens.info, 'on-info': presetTokens['on-info'],
-          'info-container': presetTokens['info-container'], 'on-info-container': presetTokens['on-info-container'],
-        });
-      }
+      // Apply standard tokens
+      DomEngine.applyTokens(root, this.activeTokenPair()[activeMode]);
     }
   }
 
@@ -190,6 +173,18 @@ export class PreferencesService {
       this.prefersHighContrast.set(contrastQuery.matches);
       contrastQuery.addEventListener('change', (e) => this.prefersHighContrast.set(e.matches));
     }
+  }
+
+  resetToDefaults(): void {
+    this.modeSignal.set(DEFAULT_PREFERENCES_STATE.mode);
+    this.contrastSignal.set(DEFAULT_PREFERENCES_STATE.contrast);
+    this.schemeSignal.set(DEFAULT_PREFERENCES_STATE.scheme);
+    this.customColorsSignal.set({ ...DEFAULT_PREFERENCES_STATE.customColors });
+    this.cvdSignal.set(DEFAULT_PREFERENCES_STATE.cvd);
+    this.fontFamilySignal.set(DEFAULT_PREFERENCES_STATE.fontFamily);
+    this.fontScaleSignal.set(DEFAULT_PREFERENCES_STATE.fontScale);
+    this.shapeScaleSignal.set(DEFAULT_PREFERENCES_STATE.shapeScale);
+    this.densityScaleSignal.set(DEFAULT_PREFERENCES_STATE.densityScale);
   }
 
   private restoreFromStorage(): void {

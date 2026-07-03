@@ -1,44 +1,7 @@
-// =============================================================================
-// Theme definitions
-// =============================================================================
-
-@use 'sass:map';
 @use '@angular/material' as mat;
 
-$schemes: (
-  'blue': (
-    primary: mat.$blue-palette,
-    tertiary: mat.$azure-palette,
-  ),
-  'green': (
-    primary: mat.$green-palette,
-    tertiary: mat.$chartreuse-palette,
-  ),
-  'purple': (
-    primary: mat.$violet-palette,
-    tertiary: mat.$magenta-palette,
-  ),
-);
-
-$modes: ('light', 'dark');
-
-@each $scheme-name, $palettes in $schemes {
-  @each $mode in $modes {
-    html[data-theme-scheme='#{$scheme-name}'][data-theme-mode='#{$mode}'] {
-      @include mat.theme((
-        color: (
-          theme-type: $mode,
-          primary: map.get($palettes, primary),
-          tertiary: map.get($palettes, tertiary),
-        ),
-        typography: Roboto,
-        density: 0,
-      ));
-    }
-  }
-}
-
-// Sensible default
+// Base fallback theme. Everything visual gets instantly overridden
+// by our DOM Engine's CSS custom properties at runtime.
 html {
   @include mat.theme((
     color: (
@@ -51,15 +14,9 @@ html {
   ));
 }
 
-// =============================================================================
-// Density Overrides
-// =============================================================================
-// Material 3 density scales from 0 (comfortable) down to -3 (compact).
-// By omitting color and typography, this mixin emits ONLY the sizing CSS 
-// variables (like padding and height). We use a 3-attribute selector so it 
-// beats the CSS specificity of the base presets at the top of this file!
+// Density Overrides (Requires SCSS generation to adjust component heights/padding)
 @for $i from 1 through 3 {
-  html[data-theme-density="-#{$i}"][data-theme-scheme][data-theme-mode] {
+  html[data-theme-density="-#{$i}"] {
     @include mat.theme((
       density: -$i
     ));

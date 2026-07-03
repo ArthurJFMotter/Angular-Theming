@@ -108,8 +108,13 @@
         @if (isProfileMode()) {
           <button mat-stroked-button color="warn" (click)="confirmDelete.set(true)">Delete</button>
           <button mat-flat-button color="primary" (click)="onSaveProfile()">Save changes</button>
-        } @else {
+        } @else if (preferencesService.canCreateColorProfile()) {
+          <!-- Only shows if under 12 profiles -->
           <button mat-flat-button color="primary" class="full-width" (click)="onSaveProfile()">Save as profile</button>
+        } @else {
+          <p class="role-row__hint" style="text-align: center; width: 100%;">
+            Max 12 profiles reached. Delete one to create a new one.
+          </p>
         }
       </div>
     }
