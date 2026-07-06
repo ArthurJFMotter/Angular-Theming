@@ -255,30 +255,22 @@
       <section class="home__palette">
         <h2>Surface &amp; role tokens</h2>
         <div class="palette-grid">
-          <div class="palette-swatch palette-swatch--primary">
-            <span>Primary</span>
-          </div>
-          <div class="palette-swatch palette-swatch--secondary">
-            <span>Secondary</span>
-          </div>
-          <div class="palette-swatch palette-swatch--tertiary">
-            <span>Tertiary</span>
-          </div>
-          <div class="palette-swatch palette-swatch--surface">
-            <span>Surface</span>
-          </div>
-          <div class="palette-swatch palette-swatch--error">
-            <span>Error</span>
-          </div>
-          <div class="palette-swatch palette-swatch--success">
-            <span>Success</span>
-          </div>
-          <div class="palette-swatch palette-swatch--warning">
-            <span>Warning</span>
-          </div>
-          <div class="palette-swatch palette-swatch--info">
-            <span>Info</span>
-          </div>
+          @for (swatch of paletteSwatches(); track swatch.id) {
+            <!-- 
+              Dynamically bind background and text color based on the token ID
+            -->
+            <div
+              class="palette-swatch"
+              [style.background-color]="'var(--mat-sys-' + swatch.id + ')'"
+              [style.color]="
+                'var(--mat-sys-on-' +
+                (swatch.id === 'surface' ? 'surface' : swatch.id) +
+                ')'
+              "
+            >
+              <span>{{ swatch.label }}</span>
+            </div>
+          }
         </div>
       </section>
     </main>

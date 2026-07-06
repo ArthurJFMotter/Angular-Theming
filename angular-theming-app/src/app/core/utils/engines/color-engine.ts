@@ -76,6 +76,7 @@ export interface MatSysColorTokens {
   'on-info': string;
   'info-container': string;
   'on-info-container': string;
+  [key: string]: string; 
 }
 
 /**
@@ -148,6 +149,14 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       };
     };
 
+    // Process extended (dynamic) colors
+    const extendedTokens: Record<string, string> = {};
+    if (colors.extended) {
+      for (const ext of colors.extended) {
+        Object.assign(extendedTokens, buildSemanticTokens(ext.color, ext.id));
+      }
+    }
+
     return {
       primary: argb(scheme.primary),
       'on-primary': argb(scheme.onPrimary),
@@ -190,7 +199,8 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       // Inject the semantic tokens
       ...buildSemanticTokens(colors.success || '#188038', 'success'),
       ...buildSemanticTokens(colors.warning || '#f29900', 'warning'),
-      ...buildSemanticTokens(colors.info || '#1967d2', 'info')
+      ...buildSemanticTokens(colors.info || '#1967d2', 'info'),
+      ...extendedTokens
     } as MatSysColorTokens;
   }
 
@@ -217,6 +227,7 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       success: '#188038', // Green
       warning: '#f29900', // Amber/Orange
       info: '#1967d2', // Blue
+      extended: [] // Custom colors (optional)
     };
   }
 

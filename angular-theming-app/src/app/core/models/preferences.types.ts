@@ -5,6 +5,12 @@ export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
 export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' | 'blur' | 'glare' | 'nightshift';
 
+export interface ExtendedColor {
+  id: string;
+  label: string;
+  color: string; // Hex value
+}
+
 export interface CustomColors {
   primary: string;
   secondary?: string;
@@ -13,6 +19,7 @@ export interface CustomColors {
   success?: string;
   warning?: string;
   info?: string;
+  extended?: ExtendedColor[];
 }
 
 export interface CustomProfile {

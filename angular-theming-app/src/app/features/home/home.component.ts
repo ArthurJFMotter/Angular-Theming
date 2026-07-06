@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,14 +23,24 @@ import { PreferencesService } from '../../core/services/preferences.service';
   selector: 'app-home',
   standalone: true,
   imports: [
-    MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, 
-    MatFormFieldModule, MatInputModule, MatSlideToggleModule, MatProgressBarModule, 
-    MatDividerModule, MatTabsModule, MatBadgeModule, MatSelectModule, 
+    MatToolbarModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSlideToggleModule,
+    MatProgressBarModule,
+    MatDividerModule,
+    MatTabsModule,
+    MatBadgeModule,
+    MatSelectModule,
     MatSidenavModule,
-    PreferencesSideDrawerComponent
+    PreferencesSideDrawerComponent,
   ],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
   readonly notify = inject(NotificationService);
@@ -38,6 +48,27 @@ export class HomeComponent {
   readonly prefs = inject(PreferencesService);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
+
+  // ADD THIS COMPUTED SIGNAL:
+  readonly paletteSwatches = computed(() => {
+    const baseSwatches = [
+      { id: 'primary', label: 'Primary' },
+      { id: 'secondary', label: 'Secondary' },
+      { id: 'tertiary', label: 'Tertiary' },
+      { id: 'surface', label: 'Surface' },
+      { id: 'error', label: 'Error' },
+      { id: 'success', label: 'Success' },
+      { id: 'warning', label: 'Warning' },
+      { id: 'info', label: 'Info' },
+    ];
+
+    const extended = this.prefs.activeCustomColors().extended || [];
+
+    return [
+      ...baseSwatches,
+      ...extended.map((ext) => ({ id: ext.id, label: ext.label })),
+    ];
+  });
 
   triggerSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
     let msg = 'Action completed.';

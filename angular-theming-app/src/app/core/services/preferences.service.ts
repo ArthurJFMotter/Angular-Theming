@@ -227,6 +227,33 @@ export class PreferencesService {
       );
   }
 
+  addExtendedColor(label: string, hexColor: string): void {
+    const nextColors = { ...this.activeCustomColors() };
+    const currentExtended = nextColors.extended || [];
+    
+    if (currentExtended.length >= 5) {
+      console.warn('Maximum of 5 extended colors reached per profile.');
+      return;
+    }
+
+    const id = label.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
+    
+    nextColors.extended = [...currentExtended, { id, label, color: hexColor }];
+    
+    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
+    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+  }
+
+  removeExtendedColor(id: string): void {
+    const nextColors = { ...this.activeCustomColors() };
+    if (!nextColors.extended) return;
+
+    nextColors.extended = nextColors.extended.filter(c => c.id !== id);
+
+    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
+    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+  }
+
   suggestedCustomDefaults() {
     return ColorEngine.suggestDefaults(this.activeCustomColors().primary);
   }
