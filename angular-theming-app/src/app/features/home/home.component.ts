@@ -17,6 +17,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { ModalService } from '../../core/services/modal.service';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { PreferencesService } from '../../core/services/preferences.service';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 export class HomeComponent {
   readonly notify = inject(NotificationService);
   readonly modals = inject(ModalService);
+  readonly prefs = inject(PreferencesService);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
 

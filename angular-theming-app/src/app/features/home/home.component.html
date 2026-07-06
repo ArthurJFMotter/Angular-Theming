@@ -169,8 +169,8 @@
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Vertical Spawn</mat-label>
                 <mat-select
-                  [value]="notify.vPosition()"
-                  (selectionChange)="notify.vPosition.set($event.value)"
+                  [value]="prefs.snackbarVPosition()"
+                  (selectionChange)="prefs.setSnackbarVPosition($event.value)"
                 >
                   <mat-option value="top">Top</mat-option>
                   <mat-option value="bottom">Bottom</mat-option>
@@ -179,8 +179,8 @@
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Horizontal Spawn</mat-label>
                 <mat-select
-                  [value]="notify.hPosition()"
-                  (selectionChange)="notify.hPosition.set($event.value)"
+                  [value]="prefs.snackbarHPosition()"
+                  (selectionChange)="prefs.setSnackbarHPosition($event.value)"
                 >
                   <mat-option value="start">Start (Left)</mat-option>
                   <mat-option value="center">Center</mat-option>

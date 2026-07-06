@@ -1,3 +1,5 @@
+import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from "@angular/material/snack-bar";
+
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
@@ -30,4 +32,6 @@ export interface PreferencesState {
   fontScale: number;
   shapeScale: number;
   densityScale: number;
+  snackbarHPosition: MatSnackBarHorizontalPosition;
+  snackbarVPosition: MatSnackBarVerticalPosition;
 }
