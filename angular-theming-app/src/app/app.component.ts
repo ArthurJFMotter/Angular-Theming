@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ThemeSyncService } from './core/services/theme-sync.service';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,6 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'angular-theming-app';
+
+  constructor(private themeSync: ThemeSyncService) {}
 }

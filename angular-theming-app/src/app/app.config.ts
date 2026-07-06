@@ -3,11 +3,14 @@ import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
+import { PREFERENCES_STORAGE_TOKEN } from './core/storage/preferences-storage.interface';
+import { LocalPreferencesStorageService } from './core/storage/local-preferences-storage.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    { provide: PREFERENCES_STORAGE_TOKEN, useClass: LocalPreferencesStorageService }
   ]
 };

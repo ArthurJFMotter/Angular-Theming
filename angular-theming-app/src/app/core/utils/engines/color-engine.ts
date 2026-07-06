@@ -5,7 +5,7 @@ import {
   TonalPalette,
   DynamicScheme,
 } from '@material/material-color-utilities';
-import { CustomColors, ThemeMode } from '../models/preferences.model';
+import { CustomColors, ThemeMode } from '../../models/preferences.types';
 
 /**
  * @material/material-color-utilities@0.3.0 exports `Variant` in its type
