@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { isValidHexColor } from '../../../core/models/preferences.model';
+import { isValidHexColor } from '../../../core/models/preferences.constants';
 
 type OptionalRole = 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info';
 
@@ -41,6 +41,10 @@ export class CustomColorPickerComponent {
     secondary: '', tertiary: '', error: '', success: '', warning: '', info: ''
   });
 
+  // Extended Colors signals
+  readonly extendedColors = computed(() => this.activeCustomColors().extended || []);
+  readonly canAddExtendedColor = computed(() => this.extendedColors().length < 5);
+
   readonly roleFields: RoleField[] = [
     { role: 'secondary', label: 'Secondary', hint: 'Supporting accents.' },
     { role: 'tertiary', label: 'Tertiary', hint: 'Contrasting highlights.' },
@@ -54,14 +58,9 @@ export class CustomColorPickerComponent {
   readonly primaryInvalid = computed(() => !isValidHexColor(this.primaryDraft()));
 
   constructor() {
-    // This effect tracks the active scheme. If the component opens during a 
-    // click race-condition, it will automatically resync the drafts the millisecond 
-    // the scheme finishes updating!
     effect(() => {
       const currentScheme = this.preferencesService.scheme();
 
-      // untracked() ensures that if the user manually edits a color, this block 
-      // doesn't re-run and overwrite their typing. It ONLY runs when the scheme changes.
       untracked(() => {
         const currentColors = this.activeCustomColors();
         
@@ -117,6 +116,30 @@ export class CustomColorPickerComponent {
     }
   }
 
+  // --- Extended Colors Methods ---
+  addExtendedRole() {
+    if (!this.canAddExtendedColor()) return;
+    const nextNumber = this.extendedColors().length + 1;
+    const randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    this.preferencesService.addExtendedColor(`Custom Role ${nextNumber}`, randomHex);
+  }
+
+  updateExtendedColorHex(id: string, value: string) {
+    if (isValidHexColor(value)) {
+      this.preferencesService.updateExtendedColor(id, { color: value.trim() });
+    }
+  }
+
+  updateExtendedColorLabel(id: string, value: string) {
+    if (value.trim()) {
+      this.preferencesService.updateExtendedColor(id, { label: value.trim() });
+    }
+  }
+
+  removeExtendedRole(id: string) {
+    this.preferencesService.removeExtendedColor(id);
+  }
+
   resetToDefault(): void {
     const defaultPrimary = '#3b6fd6';
     this.primaryDraft.set(defaultPrimary);
@@ -126,6 +149,12 @@ export class CustomColorPickerComponent {
     const roles: OptionalRole[] = ['secondary', 'tertiary', 'error', 'success', 'warning', 'info'];
     for (const role of roles) {
       this.preferencesService.clearCustomColorRole(role);
+    }
+
+    // Also clear extended colors on reset
+    const currentExtended = this.extendedColors();
+    for (const ext of currentExtended) {
+      this.preferencesService.removeExtendedColor(ext.id);
     }
   }
 

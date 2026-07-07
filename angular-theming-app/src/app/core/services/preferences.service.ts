@@ -244,6 +244,18 @@ export class PreferencesService {
     else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
   }
 
+  updateExtendedColor(id: string, updates: { label?: string; color?: string }): void {
+    const nextColors = { ...this.activeCustomColors() };
+    if (!nextColors.extended) return;
+
+    nextColors.extended = nextColors.extended.map((c) =>
+      c.id === id ? { ...c, ...updates } : c
+    );
+
+    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
+    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+  }
+
   removeExtendedColor(id: string): void {
     const nextColors = { ...this.activeCustomColors() };
     if (!nextColors.extended) return;

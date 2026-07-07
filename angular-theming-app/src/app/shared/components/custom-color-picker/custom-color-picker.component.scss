@@ -193,3 +193,60 @@
   gap: 6px;
   margin-bottom: 12px;
 }
+
+// --- Extended Roles Overrides & Additions ---
+
+.extended-colors-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0 8px;
+
+  .header-text h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .header-text p {
+    margin: 2px 0 0;
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  button {
+    font-size: 0.8rem;
+  }
+}
+
+.extended-label-input {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: 1px dashed var(--mat-sys-outline);
+  padding: 2px 4px;
+  width: 100%;
+  margin-right: 8px;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-bottom-color: var(--mat-sys-primary);
+  }
+}
+
+.delete-ext-btn {
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  flex-shrink: 0;
+  
+  ::ng-deep .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
