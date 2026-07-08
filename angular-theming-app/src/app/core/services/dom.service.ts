@@ -36,7 +36,8 @@ export class DomService {
     this.document.body.appendChild(svg);
   }
 
-  applyTypography(family: string, scale: number): void {
+  // Helper to load fonts from Google Fonts
+  private loadFont(family: string): void {
     if (
       !family.includes('system') &&
       !family.includes('monospace') &&
@@ -52,9 +53,30 @@ export class DomService {
         this.document.head.appendChild(link);
       }
     }
+  }
+
+  applyTypography(
+    headingFamily: string,
+    bodyFamily: string,
+    scale: number,
+  ): void {
+    // Load fonts if needed
+    this.loadFont(headingFamily);
+    if (headingFamily !== bodyFamily) {
+      this.loadFont(bodyFamily);
+    }
 
     const root = this.document.documentElement;
+
+    // Map roles to the correct font family
     for (const role of TYPOGRAPHY_ROLES) {
+      // Display, Headline, and Title use the Heading Font. Body and Label use the Body Font.
+      const isHeading =
+        role.name.includes('display') ||
+        role.name.includes('headline') ||
+        role.name.includes('title');
+      const family = isHeading ? headingFamily : bodyFamily;
+
       root.style.setProperty(`--mat-sys-${role.name}-font`, family);
       root.style.setProperty(
         `--mat-sys-${role.name}-size`,
@@ -66,7 +88,8 @@ export class DomService {
       );
     }
 
-    this.document.body.style.fontFamily = family;
+    // Default base body font
+    this.document.body.style.fontFamily = bodyFamily;
     root.style.fontSize = `${scale * 100}%`;
   }
 

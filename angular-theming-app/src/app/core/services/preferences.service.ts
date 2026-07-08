@@ -25,34 +25,48 @@ export class PreferencesService {
   private readonly modeSignal = signal<ThemeMode>(
     DEFAULT_PREFERENCES_STATE.mode,
   );
+
   private readonly contrastSignal = signal<ContrastMode>(
     DEFAULT_PREFERENCES_STATE.contrast,
   );
+
   private readonly schemeSignal = signal<ColorScheme>(
     DEFAULT_PREFERENCES_STATE.scheme,
   );
+
   private readonly customColorsSignal = signal<CustomColors>(
     DEFAULT_PREFERENCES_STATE.customColors,
   );
+
   private readonly savedProfilesSignal = signal<CustomProfile[]>(
     DEFAULT_PREFERENCES_STATE.savedProfiles,
   );
+
   private readonly cvdSignal = signal<CvdMode>(DEFAULT_PREFERENCES_STATE.cvd);
-  private readonly fontFamilySignal = signal<string>(
-    DEFAULT_PREFERENCES_STATE.fontFamily,
+
+  private readonly headingFontFamilySignal = signal<string>(
+    DEFAULT_PREFERENCES_STATE.headingFontFamily,
   );
+  private readonly bodyFontFamilySignal = signal<string>(
+    DEFAULT_PREFERENCES_STATE.bodyFontFamily,
+  );
+
   private readonly fontScaleSignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.fontScale,
   );
+
   private readonly shapeScaleSignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.shapeScale,
   );
+
   private readonly densityScaleSignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.densityScale,
   );
+
   private readonly snackbarHSignal = signal<MatSnackBarHorizontalPosition>(
     DEFAULT_PREFERENCES_STATE.snackbarHPosition,
   );
+
   private readonly snackbarVSignal = signal<MatSnackBarVerticalPosition>(
     DEFAULT_PREFERENCES_STATE.snackbarVPosition,
   );
@@ -64,7 +78,8 @@ export class PreferencesService {
   readonly customColors = this.customColorsSignal.asReadonly();
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
   readonly cvd = this.cvdSignal.asReadonly();
-  readonly fontFamily = this.fontFamilySignal.asReadonly();
+  readonly headingFontFamily = this.headingFontFamilySignal.asReadonly();
+  readonly bodyFontFamily = this.bodyFontFamilySignal.asReadonly();
   readonly fontScale = this.fontScaleSignal.asReadonly();
   readonly shapeScale = this.shapeScaleSignal.asReadonly();
   readonly densityScale = this.densityScaleSignal.asReadonly();
@@ -109,7 +124,8 @@ export class PreferencesService {
     customColors: this.customColorsSignal(),
     savedProfiles: this.savedProfilesSignal(),
     cvd: this.cvdSignal(),
-    fontFamily: this.fontFamilySignal(),
+    headingFontFamily: this.headingFontFamilySignal(),
+    bodyFontFamily: this.bodyFontFamilySignal(),
     fontScale: this.fontScaleSignal(),
     shapeScale: this.shapeScaleSignal(),
     densityScale: this.densityScaleSignal(),
@@ -132,8 +148,11 @@ export class PreferencesService {
   setCvdMode(mode: CvdMode): void {
     this.cvdSignal.set(mode);
   }
-  setFontFamily(family: string): void {
-    this.fontFamilySignal.set(family);
+  setHeadingFontFamily(family: string): void {
+    this.headingFontFamilySignal.set(family);
+  }
+  setBodyFontFamily(family: string): void {
+    this.bodyFontFamilySignal.set(family);
   }
   setFontScale(scale: number): void {
     this.fontScaleSignal.set(scale);
@@ -230,40 +249,64 @@ export class PreferencesService {
   addExtendedColor(label: string, hexColor: string): void {
     const nextColors = { ...this.activeCustomColors() };
     const currentExtended = nextColors.extended || [];
-    
+
     if (currentExtended.length >= 5) {
       console.warn('Maximum of 5 extended colors reached per profile.');
       return;
     }
 
-    const id = label.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
-    
+    const id = label
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-');
+
     nextColors.extended = [...currentExtended, { id, label, color: hexColor }];
-    
-    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
-    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+
+    if (this.schemeSignal() === 'custom')
+      this.customColorsSignal.set(nextColors);
+    else
+      this.savedProfilesSignal.update((p) =>
+        p.map((x) =>
+          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
+        ),
+      );
   }
 
-  updateExtendedColor(id: string, updates: { label?: string; color?: string }): void {
+  updateExtendedColor(
+    id: string,
+    updates: { label?: string; color?: string },
+  ): void {
     const nextColors = { ...this.activeCustomColors() };
     if (!nextColors.extended) return;
 
     nextColors.extended = nextColors.extended.map((c) =>
-      c.id === id ? { ...c, ...updates } : c
+      c.id === id ? { ...c, ...updates } : c,
     );
 
-    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
-    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+    if (this.schemeSignal() === 'custom')
+      this.customColorsSignal.set(nextColors);
+    else
+      this.savedProfilesSignal.update((p) =>
+        p.map((x) =>
+          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
+        ),
+      );
   }
 
   removeExtendedColor(id: string): void {
     const nextColors = { ...this.activeCustomColors() };
     if (!nextColors.extended) return;
 
-    nextColors.extended = nextColors.extended.filter(c => c.id !== id);
+    nextColors.extended = nextColors.extended.filter((c) => c.id !== id);
 
-    if (this.schemeSignal() === 'custom') this.customColorsSignal.set(nextColors);
-    else this.savedProfilesSignal.update((p) => p.map((x) => x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x));
+    if (this.schemeSignal() === 'custom')
+      this.customColorsSignal.set(nextColors);
+    else
+      this.savedProfilesSignal.update((p) =>
+        p.map((x) =>
+          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
+        ),
+      );
   }
 
   suggestedCustomDefaults() {
@@ -291,7 +334,17 @@ export class PreferencesService {
       this.contrastSignal.set(parsed.highContrast ? 'high' : 'normal');
     else if (parsed.contrast) this.contrastSignal.set(parsed.contrast);
     if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
-    if (parsed.fontFamily) this.fontFamilySignal.set(parsed.fontFamily);
+    if (parsed.headingFontFamily)
+      this.headingFontFamilySignal.set(parsed.headingFontFamily);
+    if (parsed.bodyFontFamily)
+      this.bodyFontFamilySignal.set(parsed.bodyFontFamily);
+
+    // Migration for legacy saves
+    if ((parsed as any).fontFamily && !parsed.headingFontFamily) {
+      this.headingFontFamilySignal.set((parsed as any).fontFamily);
+      this.bodyFontFamilySignal.set((parsed as any).fontFamily);
+    }
+
     if (parsed.fontScale) this.fontScaleSignal.set(parsed.fontScale);
     if (parsed.shapeScale !== undefined)
       this.shapeScaleSignal.set(parsed.shapeScale);

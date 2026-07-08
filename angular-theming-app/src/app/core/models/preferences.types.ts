@@ -35,7 +35,8 @@ export interface PreferencesState {
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
   cvd: CvdMode;
-  fontFamily: string;
+  headingFontFamily: string;
+  bodyFontFamily: string;
   fontScale: number;
   shapeScale: number;
   densityScale: number;

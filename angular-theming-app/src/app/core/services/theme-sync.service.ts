@@ -35,7 +35,7 @@ export class ThemeSyncService {
 
       // Apply structural & layout styling
       this.dom.applyCvdFilter(state.cvd);
-      this.dom.applyTypography(state.fontFamily, state.fontScale);
+      this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
       this.dom.applyShape(state.shapeScale);
 
       // Apply HTML data attributes for SCSS targeting

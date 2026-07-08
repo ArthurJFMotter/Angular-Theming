@@ -112,24 +112,55 @@
     <!-- 3. TYPOGRAPHY -->
     <div class="settings-section">
       <div class="section-title">Typography</div>
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="full-width"
-      >
-        <mat-label>Font Family (Default: Roboto)</mat-label>
-        <mat-select
-          [value]="prefs.fontFamily()"
-          (selectionChange)="setFontFamily($event.value)"
+
+      <!-- Heading Font Picker -->
+      <div class="field-row">
+        <label>Heading Font (Display, Titles)</label>
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="full-width"
         >
-          @for (font of fontOptions; track font.value) {
-            <mat-option [value]="font.value" [style.font-family]="font.value">{{
-              font.label
-            }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <div class="slider-group">
+          <mat-select
+            [value]="prefs.headingFontFamily()"
+            (selectionChange)="setHeadingFontFamily($event.value)"
+          >
+            @for (font of fontOptions; track font.value) {
+              <mat-option
+                [value]="font.value"
+                [style.font-family]="font.value"
+                >{{ font.label }}</mat-option
+              >
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Body Font Picker -->
+      <div class="field-row" style="margin-top: 4px">
+        <label>Body Font (Text, Labels)</label>
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="full-width"
+        >
+          <mat-select
+            [value]="prefs.bodyFontFamily()"
+            (selectionChange)="setBodyFontFamily($event.value)"
+          >
+            @for (font of fontOptions; track font.value) {
+              <mat-option
+                [value]="font.value"
+                [style.font-family]="font.value"
+                >{{ font.label }}</mat-option
+              >
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Size Scale Slider -->
+      <div class="slider-group" style="margin-top: 8px">
         <div class="slider-header">
           <label>Size Scale (Default: 100%)</label
           ><span>{{ prefs.fontScale() | percent }}</span>

@@ -18,13 +18,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import {
-  ThemeMode,
-  ContrastMode,
-  CVD_MODES,
-  CvdMode,
-  FONT_OPTIONS,
-} from '../../../core/models/preferences.model';
+import { ThemeMode, ContrastMode, CvdMode } from '../../../core/models/preferences.types';
+import { CVD_MODES, FONT_OPTIONS } from '../../../core/models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 
 @Component({
@@ -55,7 +50,6 @@ export class PreferencesSideDrawerComponent {
   readonly cvdOptions = CVD_MODES;
   readonly fontOptions = FONT_OPTIONS;
 
-  // Extracted simple helpers
   onModeChange(mode: ThemeMode): void {
     this.prefs.setMode(mode);
   }
@@ -80,11 +74,15 @@ export class PreferencesSideDrawerComponent {
     this.prefs.setCvdMode(mode);
   }
   
-  setFontFamily(f: string): void {
-    this.prefs.setFontFamily(f);
+  setHeadingFontFamily(f: string): void {
+    this.prefs.setHeadingFontFamily(f);
   }
 
-  // Slider Math
+  setBodyFontFamily(f: string): void {
+    this.prefs.setBodyFontFamily(f);
+  }
+
+  // --- Sliders ---
   setFontScale(s: number): void {
     this.prefs.setFontScale(s);
   }
