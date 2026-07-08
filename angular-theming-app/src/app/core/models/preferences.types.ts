@@ -52,6 +52,7 @@ export interface PreferencesState {
   fontScale: number;
   shapeScale: number;
   densityScale: number;
+  motionScale: number;
   snackbarHPosition: MatSnackBarHorizontalPosition;
   snackbarVPosition: MatSnackBarVerticalPosition;
 }

@@ -255,6 +255,29 @@
           </button>
         </div>
       </div>
+      <!-- Motion Slider -->
+      <div class="slider-group">
+        <div class="slider-header">
+          <label>Motion (Default: Normal)</label>
+          <span style="color: var(--mat-sys-primary);">{{ formatMotion(prefs.motionScale()) }}</span>
+        </div>
+        <div class="slider-row">
+          <button mat-icon-button (click)="decreaseMotion()">
+            <mat-icon>remove</mat-icon>
+          </button>
+          
+          <mat-slider min="0" max="1" step="0.5" discrete>
+            <input 
+              matSliderThumb 
+              [ngModel]="prefs.motionScale()" 
+              (ngModelChange)="prefs.setMotionScale($event)" />
+          </mat-slider>
+          
+          <button mat-icon-button (click)="increaseMotion()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
     <mat-divider></mat-divider>
 

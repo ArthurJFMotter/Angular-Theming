@@ -24,6 +24,7 @@ export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
   fontScale: 1,
   shapeScale: 1,
   densityScale: 0,
+  motionScale: 1,
   snackbarHPosition: 'center',
   snackbarVPosition: 'bottom',
 };

@@ -155,4 +155,24 @@ export class PreferencesSideDrawerComponent {
     const c = this.prefs.densityScale();
     if (c > -3) this.setDensityScale(c - 1);
   }
+
+  setMotionScale(s: number): void {
+    this.prefs.setMotionScale(s);
+  }
+
+  increaseMotion(): void {
+    const c = this.prefs.motionScale();
+    if (c < 1) this.setMotionScale(c + 0.5);
+  }
+
+  decreaseMotion(): void {
+    const c = this.prefs.motionScale();
+    if (c > 0) this.setMotionScale(c - 0.5);
+  }
+
+  formatMotion(value: number): string {
+    if (value === 0) return 'Off';
+    if (value === 0.5) return 'Fast';
+    return 'Normal';
+  }
 }

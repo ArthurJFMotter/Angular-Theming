@@ -66,6 +66,10 @@ export class PreferencesService {
     DEFAULT_PREFERENCES_STATE.densityScale,
   );
 
+  private readonly motionScaleSignal = signal<number>(
+    DEFAULT_PREFERENCES_STATE.motionScale,
+  );
+
   private readonly snackbarHSignal = signal<MatSnackBarHorizontalPosition>(
     DEFAULT_PREFERENCES_STATE.snackbarHPosition,
   );
@@ -87,6 +91,7 @@ export class PreferencesService {
   readonly fontScale = this.fontScaleSignal.asReadonly();
   readonly shapeScale = this.shapeScaleSignal.asReadonly();
   readonly densityScale = this.densityScaleSignal.asReadonly();
+  readonly motionScale = this.motionScaleSignal.asReadonly();
   readonly snackbarHPosition = this.snackbarHSignal.asReadonly();
   readonly snackbarVPosition = this.snackbarVSignal.asReadonly();
 
@@ -136,6 +141,7 @@ export class PreferencesService {
     fontScale: this.fontScaleSignal(),
     shapeScale: this.shapeScaleSignal(),
     densityScale: this.densityScaleSignal(),
+    motionScale: this.motionScaleSignal(),
     snackbarHPosition: this.snackbarHSignal(),
     snackbarVPosition: this.snackbarVSignal(),
   }));
@@ -172,6 +178,9 @@ export class PreferencesService {
   }
   setDensityScale(scale: number): void {
     this.densityScaleSignal.set(scale);
+  }
+  setMotionScale(scale: number): void {
+    this.motionScaleSignal.set(scale);
   }
   setSnackbarHPosition(pos: MatSnackBarHorizontalPosition): void {
     this.snackbarHSignal.set(pos);
@@ -361,6 +370,8 @@ export class PreferencesService {
       this.shapeScaleSignal.set(parsed.shapeScale);
     if (parsed.densityScale !== undefined)
       this.densityScaleSignal.set(parsed.densityScale);
+    if (parsed.motionScale !== undefined)
+      this.motionScaleSignal.set(parsed.motionScale);
     if (parsed.snackbarHPosition)
       this.snackbarHSignal.set(parsed.snackbarHPosition);
     if (parsed.snackbarVPosition)
