@@ -28,7 +28,7 @@ export class ThemeSyncService {
     effect(() => {
       const state = this.prefs.preferences();
       const activeMode = this.prefs.resolvedMode();
-      const isHighContrast = this.prefs.resolvedHighContrast();
+      const contrastValue = this.prefs.resolvedContrastLevel();
       
       // Save to persistence
       this.storage.save(state);
@@ -45,15 +45,15 @@ export class ThemeSyncService {
       this.dom.setColorScheme(activeMode);
 
       // Calculate and apply M3 color tokens
-      if (isHighContrast) {
+      if (contrastValue >= 0.5) {
         this.dom.setAttribute('data-theme-contrast', 'high');
-        const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, 1);
-        this.dom.applyTokens(tokens);
       } else {
         this.dom.removeAttribute('data-theme-contrast');
-        const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, 0);
-        this.dom.applyTokens(tokens);
       }
+      
+      // Pass the exact contrastValue (-1.0 to 1.0) to the engine
+      const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, contrastValue);
+      this.dom.applyTokens(tokens);
     });
   }
 }

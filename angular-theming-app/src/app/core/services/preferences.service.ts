@@ -26,8 +26,11 @@ export class PreferencesService {
     DEFAULT_PREFERENCES_STATE.mode,
   );
 
-  private readonly contrastSignal = signal<ContrastMode>(
-    DEFAULT_PREFERENCES_STATE.contrast,
+  private readonly autoContrastSignal = signal<boolean>(
+    DEFAULT_PREFERENCES_STATE.autoContrast,
+  );
+  private readonly contrastLevelSignal = signal<number>(
+    DEFAULT_PREFERENCES_STATE.contrastLevel,
   );
 
   private readonly schemeSignal = signal<ColorScheme>(
@@ -73,7 +76,8 @@ export class PreferencesService {
 
   // Readonly exposures
   readonly mode = this.modeSignal.asReadonly();
-  readonly contrast = this.contrastSignal.asReadonly();
+  readonly autoContrast = this.autoContrastSignal.asReadonly();
+  readonly contrastLevel = this.contrastLevelSignal.asReadonly();
   readonly scheme = this.schemeSignal.asReadonly();
   readonly customColors = this.customColorsSignal.asReadonly();
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
@@ -95,11 +99,13 @@ export class PreferencesService {
       : (this.modeSignal() as 'light' | 'dark'),
   );
 
-  readonly resolvedHighContrast = computed<boolean>(() =>
-    this.contrastSignal() === 'auto'
-      ? this.mediaQuery.prefersHighContrast()
-      : this.contrastSignal() === 'high',
-  );
+  readonly resolvedContrastLevel = computed<number>(() => {
+    if (this.autoContrastSignal()) {
+      // If OS prefers high contrast, jump to 1.0, otherwise 0
+      return this.mediaQuery.prefersHighContrast() ? 1.0 : 0.0;
+    }
+    return this.contrastLevelSignal();
+  });
 
   readonly activeCustomColors = computed<CustomColors>(() => {
     const scheme = this.schemeSignal();
@@ -119,7 +125,8 @@ export class PreferencesService {
   // Full state payload getter for the ThemeSyncService
   readonly preferences = computed<PreferencesState>(() => ({
     mode: this.modeSignal(),
-    contrast: this.contrastSignal(),
+    autoContrast: this.autoContrastSignal(),
+    contrastLevel: this.contrastLevelSignal(),
     scheme: this.schemeSignal(),
     customColors: this.customColorsSignal(),
     savedProfiles: this.savedProfilesSignal(),
@@ -139,8 +146,11 @@ export class PreferencesService {
   setMode(mode: ThemeMode): void {
     this.modeSignal.set(mode);
   }
-  setContrast(contrast: ContrastMode): void {
-    this.contrastSignal.set(contrast);
+  setAutoContrast(auto: boolean): void {
+    this.autoContrastSignal.set(auto);
+  }
+  setContrastLevel(level: number): void {
+    this.contrastLevelSignal.set(level);
   }
   setScheme(scheme: ColorScheme): void {
     this.schemeSignal.set(scheme);
@@ -330,9 +340,10 @@ export class PreferencesService {
           name: p.name || 'Saved Profile',
         })),
       );
-    if (typeof parsed.highContrast === 'boolean')
-      this.contrastSignal.set(parsed.highContrast ? 'high' : 'normal');
-    else if (parsed.contrast) this.contrastSignal.set(parsed.contrast);
+    if (parsed.autoContrast !== undefined)
+      this.autoContrastSignal.set(parsed.autoContrast);
+    if (parsed.contrastLevel !== undefined)
+      this.contrastLevelSignal.set(parsed.contrastLevel);
     if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
     if (parsed.headingFontFamily)
       this.headingFontFamilySignal.set(parsed.headingFontFamily);

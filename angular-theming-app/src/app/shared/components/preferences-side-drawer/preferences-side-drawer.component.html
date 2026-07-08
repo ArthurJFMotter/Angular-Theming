@@ -88,23 +88,34 @@
           >
         </mat-button-toggle-group>
       </div>
-      <div class="field-row">
-        <label>Contrast</label>
-        <mat-button-toggle-group
-          class="full-width-toggle"
-          [value]="prefs.contrast()"
-          (change)="onContrastChange($event.value)"
-        >
-          <mat-button-toggle value="normal" matTooltip="Standard contrast"
-            ><mat-icon>tonality</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="auto" matTooltip="System Default"
-            ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
-          >
-          <mat-button-toggle value="high" matTooltip="High contrast"
-            ><mat-icon>contrast</mat-icon></mat-button-toggle
-          >
-        </mat-button-toggle-group>
+      <!-- Continuous Contrast Scale -->
+      <div class="slider-group" style="margin-top: 8px;">
+        <div class="slider-header">
+          <label>Contrast: <span style="color: var(--mat-sys-primary);">{{ formatContrast(prefs.contrastLevel()) }}</span></label>
+          <mat-slide-toggle 
+            [checked]="prefs.autoContrast()" 
+            (change)="prefs.setAutoContrast($event.checked)">
+            <span style="font-size: 0.75rem; font-weight: 400; color: var(--mat-sys-on-surface-variant)">Auto (OS)</span>
+          </mat-slide-toggle>
+        </div>
+        
+        <div class="slider-row" [style.opacity]="prefs.autoContrast() ? '0.4' : '1'" style="margin-top: 4px;">
+          <button mat-icon-button (click)="decreaseContrast()" [disabled]="prefs.autoContrast()">
+            <mat-icon>remove</mat-icon>
+          </button>
+          
+          <mat-slider min="-1" max="1" step="0.5" discrete>
+            <input 
+              matSliderThumb 
+              [ngModel]="prefs.contrastLevel()" 
+              (ngModelChange)="prefs.setContrastLevel($event)" 
+              [disabled]="prefs.autoContrast()" />
+          </mat-slider>
+          
+          <button mat-icon-button (click)="increaseContrast()" [disabled]="prefs.autoContrast()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
     <mat-divider></mat-divider>

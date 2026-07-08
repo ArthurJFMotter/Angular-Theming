@@ -1,4 +1,10 @@
-import { PreferencesState, CustomColors, ThemeMode, ContrastMode, CvdMode } from './preferences.types';
+import {
+  PreferencesState,
+  CustomColors,
+  ThemeMode,
+  ContrastMode,
+  CvdMode,
+} from './preferences.types';
 
 export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';
 export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
@@ -7,8 +13,9 @@ export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
   mode: 'auto',
-  contrast: 'auto',
-  scheme: 'custom', 
+  autoContrast: true,
+  contrastLevel: 0,
+  scheme: 'custom',
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
   cvd: 'none',
@@ -44,6 +51,8 @@ export const FONT_OPTIONS = [
   { value: 'monospace', label: 'Monospace' },
 ];
 
-export function isValidHexColor(value: string | undefined | null): value is string {
+export function isValidHexColor(
+  value: string | undefined | null,
+): value is string {
   return !!value && HEX_COLOR_PATTERN.test(value.trim());
 }

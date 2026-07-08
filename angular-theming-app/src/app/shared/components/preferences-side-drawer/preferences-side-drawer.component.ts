@@ -18,11 +18,19 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { ThemeMode, ContrastMode, CvdMode } from '../../../core/models/preferences.types';
-import { CVD_MODES, FONT_OPTIONS } from '../../../core/models/preferences.constants';
+import {
+  ThemeMode,
+  ContrastMode,
+  CvdMode,
+} from '../../../core/models/preferences.types';
+import {
+  CVD_MODES,
+  FONT_OPTIONS,
+} from '../../../core/models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-preferences-side-drawer',
@@ -41,6 +49,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatSelectModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSlideToggleModule,
     CustomColorPickerComponent,
   ],
   templateUrl: './preferences-side-drawer.component.html',
@@ -58,8 +67,27 @@ export class PreferencesSideDrawerComponent {
     this.prefs.setMode(mode);
   }
 
-  onContrastChange(contrast: ContrastMode): void {
-    this.prefs.setContrast(contrast);
+  increaseContrast(): void {
+    const c = this.prefs.contrastLevel();
+    if (c < 1) {
+      this.prefs.setContrastLevel(c + 0.5);
+    }
+  }
+
+  decreaseContrast(): void {
+    const c = this.prefs.contrastLevel();
+    if (c > -1) {
+      this.prefs.setContrastLevel(c - 0.5);
+    }
+  }
+
+  formatContrast(value: number): string {
+    if (value === -1) return 'Reduced';
+    if (value === -0.5) return 'Low';
+    if (value === 0) return 'Standard';
+    if (value === 0.5) return 'Medium';
+    if (value === 1) return 'High';
+    return value.toString();
   }
 
   onSchemeSelect(scheme: string): void {
@@ -77,7 +105,7 @@ export class PreferencesSideDrawerComponent {
   onCvdChange(mode: CvdMode): void {
     this.prefs.setCvdMode(mode);
   }
-  
+
   setHeadingFontFamily(f: string): void {
     this.prefs.setHeadingFontFamily(f);
   }
@@ -86,7 +114,6 @@ export class PreferencesSideDrawerComponent {
     this.prefs.setBodyFontFamily(f);
   }
 
-  // --- Sliders ---
   setFontScale(s: number): void {
     this.prefs.setFontScale(s);
   }

@@ -134,7 +134,7 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       let tOnContainer = isDark ? 90 : 10;
       
       // High Contrast Tone shifts (Maximize contrast against backgrounds)
-      if (contrastLevel > 0) {
+      if (contrastLevel >= 0.5) { // <-- Update this from "> 0" to ">= 0.5"
         tBase = isDark ? 90 : 30;
         tOnBase = isDark ? 0 : 100;
         tContainer = isDark ? 20 : 85;

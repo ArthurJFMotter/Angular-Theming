@@ -1,9 +1,20 @@
-import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from "@angular/material/snack-bar";
+import {
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
-export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' | 'blur' | 'glare' | 'nightshift';
+export type CvdMode =
+  | 'none'
+  | 'protanopia'
+  | 'deuteranopia'
+  | 'tritanopia'
+  | 'achromatopsia'
+  | 'blur'
+  | 'glare'
+  | 'nightshift';
 
 export interface ExtendedColor {
   id: string;
@@ -30,7 +41,8 @@ export interface CustomProfile {
 
 export interface PreferencesState {
   mode: ThemeMode;
-  contrast: ContrastMode;
+  autoContrast: boolean;
+  contrastLevel: number; // -1.0 to 1.0
   scheme: ColorScheme;
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
