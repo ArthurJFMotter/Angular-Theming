@@ -38,17 +38,21 @@ export class DomService {
 
   // Helper to load fonts from Google Fonts
   private loadFont(family: string): void {
-    if (
-      !family.includes('system') &&
-      !family.includes('monospace') &&
-      family !== 'Roboto'
-    ) {
-      const urlFamily = family.replace(/\s+/g, '+');
-      const linkId = `font-${urlFamily}`;
+    // Extract just the primary font name (e.g. "'Fira Code', monospace" -> "Fira Code")
+    const primaryFont = family.split(',')[0].replace(/['"]/g, '').trim();
+
+    if (!primaryFont.toLowerCase().includes('system') && 
+        !primaryFont.toLowerCase().includes('monospace') && 
+        primaryFont.toLowerCase() !== 'roboto') {
+          
+      const urlFamily = primaryFont.replace(/\s+/g, '+');
+      const linkId = `font-${urlFamily.toLowerCase()}`;
+      
       if (!this.document.getElementById(linkId)) {
         const link = this.document.createElement('link');
-        link.id = linkId;
+        link.id = linkId; 
         link.rel = 'stylesheet';
+        // Ask Google Fonts for the 400, 500, and 700 weights
         link.href = `https://fonts.googleapis.com/css2?family=${urlFamily}:wght@400;500;700&display=swap`;
         this.document.head.appendChild(link);
       }

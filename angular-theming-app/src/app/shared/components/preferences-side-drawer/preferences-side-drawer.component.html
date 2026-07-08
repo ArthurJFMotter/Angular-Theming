@@ -121,18 +121,27 @@
           subscriptSizing="dynamic"
           class="full-width"
         >
-          <mat-select
+          <!-- Text Input -->
+          <input
+            type="text"
+            matInput
             [value]="prefs.headingFontFamily()"
-            (selectionChange)="setHeadingFontFamily($event.value)"
+            (change)="setHeadingFontFamily($any($event.target).value)"
+            [matAutocomplete]="headingAuto"
+            placeholder="e.g. Oswald, serif"
+          />
+
+          <!-- Dropdown Options -->
+          <mat-autocomplete
+            #headingAuto="matAutocomplete"
+            (optionSelected)="setHeadingFontFamily($event.option.value)"
           >
             @for (font of fontOptions; track font.value) {
-              <mat-option
-                [value]="font.value"
-                [style.font-family]="font.value"
-                >{{ font.label }}</mat-option
-              >
+              <mat-option [value]="font.value" [style.font-family]="font.value">
+                {{ font.label }}
+              </mat-option>
             }
-          </mat-select>
+          </mat-autocomplete>
         </mat-form-field>
       </div>
 
@@ -144,18 +153,27 @@
           subscriptSizing="dynamic"
           class="full-width"
         >
-          <mat-select
+          <!-- Text Input -->
+          <input
+            type="text"
+            matInput
             [value]="prefs.bodyFontFamily()"
-            (selectionChange)="setBodyFontFamily($event.value)"
+            (change)="setBodyFontFamily($any($event.target).value)"
+            [matAutocomplete]="bodyAuto"
+            placeholder="e.g. Open Sans"
+          />
+
+          <!-- Dropdown Options -->
+          <mat-autocomplete
+            #bodyAuto="matAutocomplete"
+            (optionSelected)="setBodyFontFamily($event.option.value)"
           >
             @for (font of fontOptions; track font.value) {
-              <mat-option
-                [value]="font.value"
-                [style.font-family]="font.value"
-                >{{ font.label }}</mat-option
-              >
+              <mat-option [value]="font.value" [style.font-family]="font.value">
+                {{ font.label }}
+              </mat-option>
             }
-          </mat-select>
+          </mat-autocomplete>
         </mat-form-field>
       </div>
 

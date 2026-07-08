@@ -21,6 +21,8 @@ import { PreferencesService } from '../../../core/services/preferences.service';
 import { ThemeMode, ContrastMode, CvdMode } from '../../../core/models/preferences.types';
 import { CVD_MODES, FONT_OPTIONS } from '../../../core/models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-preferences-side-drawer',
@@ -28,6 +30,7 @@ import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-
   imports: [
     FormsModule,
     PercentPipe,
+    MatAutocompleteModule,
     MatButtonToggleModule,
     MatIconModule,
     MatTooltipModule,
@@ -37,6 +40,7 @@ import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-
     MatSliderModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatInputModule,
     CustomColorPickerComponent,
   ],
   templateUrl: './preferences-side-drawer.component.html',
