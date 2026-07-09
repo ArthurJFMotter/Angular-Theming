@@ -11,29 +11,70 @@ import {
 export class DomService {
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
-  applyCvdFilter(cvd: CvdMode): void {
+  applyAccessibilityFilters(cvd: string, cvdSeverity: number, screen: string, screenIntensity: number): void {
     const root = this.document.documentElement;
-    if (cvd === 'blur') root.style.filter = 'blur(1.5px) contrast(0.95)';
-    else if (cvd === 'glare')
-      root.style.filter = 'contrast(0.75) brightness(1.15) sepia(0.1)';
-    else if (cvd === 'nightshift')
-      root.style.filter = 'sepia(0.35) hue-rotate(-15deg) contrast(0.9)';
-    else if (cvd !== 'none') root.style.filter = `url(#cvd-${cvd})`;
-    else root.style.filter = '';
+    let filterCss = '';
+
+    // 1. Handle CVD (Color Vision Deficiency) Dynamic SVG Matrix
+    if (cvd !== 'none' && cvdSeverity > 0) {
+      this.updateDynamicCvdSvg(cvd, cvdSeverity);
+      filterCss += 'url(#dynamic-cvd-filter) ';
+    }
+
+    // 2. Handle Screen Filters (CSS based)
+    if (screen !== 'none' && screenIntensity > 0) {
+      const s = screenIntensity / 100;
+      if (screen === 'blur') {
+        filterCss += `blur(${s * 2.5}px) contrast(${1 - (s * 0.15)}) `;
+      } else if (screen === 'glare') {
+        filterCss += `contrast(${1 - (s * 0.45)}) brightness(${1 + (s * 0.35)}) sepia(${s * 0.2}) `;
+      } else if (screen === 'nightshift') {
+        filterCss += `sepia(${s * 0.4}) hue-rotate(${-s * 20}deg) contrast(${1 - (s * 0.05)}) brightness(${1 - (s * 0.1)}) `;
+      }
+    }
+
+    root.style.filter = filterCss.trim();
   }
 
-  injectCvdFilters(): void {
-    if (this.document.getElementById('cvd-filters-svg')) return;
+  private updateDynamicCvdSvg(mode: string, severity: number): void {
+    const svgId = 'accessibility-svg-filters';
+    
+    // Create the SVG container if it doesn't exist
+    if (!this.document.getElementById(svgId)) {
+      const newSvg = this.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      newSvg.id = svgId;
+      newSvg.setAttribute('style', 'display: none; width: 0; height: 0;');
+      newSvg.innerHTML = `<defs><filter id="dynamic-cvd-filter"><feColorMatrix id="dynamic-cvd-matrix" type="matrix" values="" /></filter></defs>`;
+      this.document.body.appendChild(newSvg);
+    }
 
-    const svg = this.document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'svg',
-    );
-    svg.id = 'cvd-filters-svg';
-    svg.setAttribute('style', 'display: none; width: 0; height: 0;');
-    svg.innerHTML = CVD_FILTERS_SVG;
+    const matrixEl = this.document.getElementById('dynamic-cvd-matrix');
+    if (!matrixEl) return;
 
-    this.document.body.appendChild(svg);
+    // Hardcoded target values for 100% total color blindness
+    const matrices: Record<string, number[]> = {
+      protanopia: [0.567, 0.433, 0, 0, 0, 0.558, 0.442, 0, 0, 0, 0, 0.242, 0.758, 0, 0, 0, 0, 0, 1, 0],
+      deuteranopia: [0.625, 0.375, 0, 0, 0, 0.7, 0.3, 0, 0, 0, 0, 0.3, 0.7, 0, 0, 0, 0, 0, 1, 0],
+      tritanopia: [0.95, 0.05, 0, 0, 0, 0, 0.433, 0.567, 0, 0, 0, 0.475, 0.525, 0, 0, 0, 0, 0, 1, 0],
+      achromatopsia: [0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0, 0, 0, 1, 0]
+    };
+
+    const target = matrices[mode] || matrices['achromatopsia'];
+    
+    // Normal 1:1 color vision
+    const identity = [
+      1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0
+    ];
+
+    // Mathematical Interpolation: Blends normal vision with the colorblind target 
+    // depending on severity (e.g. 50% slider = 50% colorblindness)
+    const s = severity / 100;
+    const values = identity.map((idVal, i) => idVal * (1 - s) + target[i] * s).join(' ');
+    
+    matrixEl.setAttribute('values', values);
   }
 
   // Helper to load fonts from Google Fonts

@@ -90,13 +90,37 @@
       </div>
       <div class="field-row">
         <label>Theme Variant</label>
-        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
-          <mat-select [value]="prefs.variant()" (selectionChange)="setVariant($event.value)">
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="full-width"
+        >
+          <mat-select
+            [value]="prefs.variant()"
+            (selectionChange)="setVariant($event.value)"
+          >
+            <mat-select-trigger>
+              {{ getVariantLabel(prefs.variant()) }}
+            </mat-select-trigger>
+
             @for (variant of variantOptions; track variant.value) {
               <mat-option [value]="variant.value">
-                <div style="display: flex; flex-direction: column; line-height: 1.2; padding: 6px 0;">
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    line-height: 1.2;
+                    padding: 6px 0;
+                  "
+                >
                   <span>{{ variant.label }}</span>
-                  <span style="font-size: 0.75rem; color: var(--mat-sys-on-surface-variant)">{{ variant.desc }}</span>
+                  <span
+                    style="
+                      font-size: 0.75rem;
+                      color: var(--mat-sys-on-surface-variant);
+                    "
+                    >{{ variant.desc }}</span
+                  >
                 </div>
               </mat-option>
             }
@@ -104,30 +128,56 @@
         </mat-form-field>
       </div>
       <!-- Continuous Contrast Scale -->
-      <div class="slider-group" style="margin-top: 8px;">
+      <div class="slider-group" style="margin-top: 8px">
         <div class="slider-header">
-          <label>Contrast: <span style="color: var(--mat-sys-primary);">{{ formatContrast(prefs.contrastLevel()) }}</span></label>
-          <mat-slide-toggle 
-            [checked]="prefs.autoContrast()" 
-            (change)="prefs.setAutoContrast($event.checked)">
-            <span style="font-size: 0.75rem; font-weight: 400; color: var(--mat-sys-on-surface-variant)">Auto (OS)</span>
+          <label
+            >Contrast:
+            <span style="color: var(--mat-sys-primary)">{{
+              formatContrast(prefs.contrastLevel())
+            }}</span></label
+          >
+          <mat-slide-toggle
+            [checked]="prefs.autoContrast()"
+            (change)="prefs.setAutoContrast($event.checked)"
+          >
+            <span
+              style="
+                font-size: 0.75rem;
+                font-weight: 400;
+                color: var(--mat-sys-on-surface-variant);
+              "
+              >Auto (OS)</span
+            >
           </mat-slide-toggle>
         </div>
-        
-        <div class="slider-row" [style.opacity]="prefs.autoContrast() ? '0.4' : '1'" style="margin-top: 4px;">
-          <button mat-icon-button (click)="decreaseContrast()" [disabled]="prefs.autoContrast()">
+
+        <div
+          class="slider-row"
+          [style.opacity]="prefs.autoContrast() ? '0.4' : '1'"
+          style="margin-top: 4px"
+        >
+          <button
+            mat-icon-button
+            (click)="decreaseContrast()"
+            [disabled]="prefs.autoContrast()"
+          >
             <mat-icon>remove</mat-icon>
           </button>
-          
+
           <mat-slider min="-1" max="1" step="0.5" discrete>
-            <input 
-              matSliderThumb 
-              [ngModel]="prefs.contrastLevel()" 
-              (ngModelChange)="prefs.setContrastLevel($event)" 
-              [disabled]="prefs.autoContrast()" />
+            <input
+              matSliderThumb
+              [ngModel]="prefs.contrastLevel()"
+              (ngModelChange)="prefs.setContrastLevel($event)"
+              [disabled]="prefs.autoContrast()"
+            />
           </mat-slider>
-          
-          <button mat-icon-button (click)="increaseContrast()" [disabled]="prefs.autoContrast()">
+
+          <button
+            mat-icon-button
+            (click)="increaseContrast()"
+            [disabled]="prefs.autoContrast()"
+          >
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -274,20 +324,23 @@
       <div class="slider-group">
         <div class="slider-header">
           <label>Motion (Default: Normal)</label>
-          <span style="color: var(--mat-sys-primary);">{{ formatMotion(prefs.motionScale()) }}</span>
+          <span style="color: var(--mat-sys-primary)">{{
+            formatMotion(prefs.motionScale())
+          }}</span>
         </div>
         <div class="slider-row">
           <button mat-icon-button (click)="decreaseMotion()">
             <mat-icon>remove</mat-icon>
           </button>
-          
+
           <mat-slider min="0" max="1" step="0.5" discrete>
-            <input 
-              matSliderThumb 
-              [ngModel]="prefs.motionScale()" 
-              (ngModelChange)="prefs.setMotionScale($event)" />
+            <input
+              matSliderThumb
+              [ngModel]="prefs.motionScale()"
+              (ngModelChange)="prefs.setMotionScale($event)"
+            />
           </mat-slider>
-          
+
           <button mat-icon-button (click)="increaseMotion()">
             <mat-icon>add</mat-icon>
           </button>
@@ -298,22 +351,140 @@
 
     <!-- 5. ACCESSIBILITY -->
     <div class="settings-section">
-      <div class="section-title">Accessibility</div>
+      <div class="section-title">Vision Simulator</div>
+
+      <!-- CVD Selector -->
       <mat-form-field
         appearance="outline"
         subscriptSizing="dynamic"
         class="full-width"
       >
-        <mat-label>Vision Simulator (Default: Normal)</mat-label>
+        <mat-label>Color Deficiency</mat-label>
         <mat-select
           [value]="prefs.cvd()"
-          (selectionChange)="onCvdChange($event.value)"
+          (selectionChange)="prefs.setCvdMode($event.value)"
         >
+          <mat-select-trigger>
+            {{ getCvdLabel(prefs.cvd()) }}
+          </mat-select-trigger>
+
           @for (option of cvdOptions; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            <mat-option [value]="option.value">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  line-height: 1.2;
+                  padding: 6px 0;
+                "
+              >
+                <span>{{ option.label }}</span>
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--mat-sys-on-surface-variant);
+                  "
+                  >{{ option.desc }}</span
+                >
+              </div>
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
+
+      <!-- CVD Severity Slider -->
+      @if (prefs.cvd() !== "none") {
+        <div class="slider-group" style="margin-top: 8px; margin-bottom: 16px">
+          <div class="slider-header">
+            <label>Severity</label>
+            <span style="color: var(--mat-sys-primary)"
+              >{{ prefs.cvdSeverity() }}%</span
+            >
+          </div>
+          <div class="slider-row">
+            <mat-slider
+              min="10"
+              max="100"
+              step="10"
+              discrete
+              style="margin-left: 8px; width: 100%"
+            >
+              <input
+                matSliderThumb
+                [ngModel]="prefs.cvdSeverity()"
+                (ngModelChange)="prefs.setCvdSeverity($event)"
+              />
+            </mat-slider>
+          </div>
+        </div>
+      }
+
+      <!-- Screen Filter Selector -->
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="full-width"
+        [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'"
+      >
+        <mat-label>Environmental Overlay</mat-label>
+        <mat-select
+          [value]="prefs.screenFilter()"
+          (selectionChange)="prefs.setScreenFilter($event.value)"
+        >
+          <mat-select-trigger>
+            {{ getScreenFilterLabel(prefs.screenFilter()) }}
+          </mat-select-trigger>
+
+          @for (option of screenFilterOptions; track option.value) {
+            <mat-option [value]="option.value">
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  line-height: 1.2;
+                  padding: 6px 0;
+                "
+              >
+                <span>{{ option.label }}</span>
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--mat-sys-on-surface-variant);
+                  "
+                  >{{ option.desc }}</span
+                >
+              </div>
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Screen Filter Intensity Slider -->
+      @if (prefs.screenFilter() !== "none") {
+        <div class="slider-group" style="margin-top: 8px">
+          <div class="slider-header">
+            <label>Intensity</label>
+            <span style="color: var(--mat-sys-primary)"
+              >{{ prefs.screenFilterIntensity() }}%</span
+            >
+          </div>
+          <div class="slider-row">
+            <mat-slider
+              min="10"
+              max="100"
+              step="10"
+              discrete
+              style="margin-left: 8px; width: 100%"
+            >
+              <input
+                matSliderThumb
+                [ngModel]="prefs.screenFilterIntensity()"
+                (ngModelChange)="prefs.setScreenFilterIntensity($event)"
+              />
+            </mat-slider>
+          </div>
+        </div>
+      }
     </div>
 
     <!-- GLOBAL RESET -->

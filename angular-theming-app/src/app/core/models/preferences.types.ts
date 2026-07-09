@@ -7,15 +7,8 @@ export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
 export type SchemeVariant = 'tonal-spot' | 'vibrant' | 'expressive' | 'neutral' | 'monochrome' | 'fidelity' | 'content';
-export type CvdMode =
-  | 'none'
-  | 'protanopia'
-  | 'deuteranopia'
-  | 'tritanopia'
-  | 'achromatopsia'
-  | 'blur'
-  | 'glare'
-  | 'nightshift';
+export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+export type ScreenFilter = 'none' | 'blur' | 'glare' | 'nightshift';
 
 export interface ExtendedColor {
   id: string;
@@ -49,6 +42,9 @@ export interface PreferencesState {
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
   cvd: CvdMode;
+  cvdSeverity: number; // 0 to 100
+  screenFilter: ScreenFilter;
+  screenFilterIntensity: number; // 0 to 100
   headingFontFamily: string;
   bodyFontFamily: string;
   fontScale: number;

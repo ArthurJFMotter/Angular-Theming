@@ -28,6 +28,7 @@ import {
   CVD_MODES,
   FONT_OPTIONS,
   SCHEME_VARIANTS,
+  SCREEN_FILTERS,
 } from '../../../core/models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 import { MatInputModule } from '@angular/material/input';
@@ -63,8 +64,13 @@ export class PreferencesSideDrawerComponent {
   @Output() closeDrawer = new EventEmitter<void>();
 
   readonly cvdOptions = CVD_MODES;
+  readonly screenFilterOptions = SCREEN_FILTERS;
   readonly fontOptions = FONT_OPTIONS;
   readonly variantOptions = SCHEME_VARIANTS;
+
+  getVariantLabel(value: string): string {
+    return this.variantOptions.find((v) => v.value === value)?.label || value;
+  }
 
   setVariant(v: SchemeVariant): void {
     this.prefs.setVariant(v);
@@ -181,5 +187,15 @@ export class PreferencesSideDrawerComponent {
     if (value === 0) return 'Off';
     if (value === 0.5) return 'Fast';
     return 'Normal';
+  }
+
+  getCvdLabel(value: string): string {
+    return this.cvdOptions.find((v) => v.value === value)?.label || value;
+  }
+
+  getScreenFilterLabel(value: string): string {
+    return (
+      this.screenFilterOptions.find((v) => v.value === value)?.label || value
+    );
   }
 }

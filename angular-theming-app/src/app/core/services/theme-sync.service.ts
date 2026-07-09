@@ -15,16 +15,13 @@ export class ThemeSyncService {
   }
 
   private initialize(): void {
-    // 1. Setup global resources
-    this.dom.injectCvdFilters();
-
-    // 2. Load from storage and patch state
+    // Load from storage and patch state
     const savedState = this.storage.load();
     if (savedState) {
       this.prefs.patchState(savedState);
     }
 
-    // 3. Setup reactive side-effect to apply changes whenever state updates
+    // Setup reactive side-effect to apply changes whenever state updates
     effect(() => {
       const state = this.prefs.preferences();
       const activeMode = this.prefs.resolvedMode();
@@ -34,7 +31,8 @@ export class ThemeSyncService {
       this.storage.save(state);
 
       // Apply structural, layout, & motion styling
-      this.dom.applyCvdFilter(state.cvd);
+      this.dom.applyAccessibilityFilters(state.cvd, state.cvdSeverity, state.screenFilter, state.screenFilterIntensity);
+      this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
       this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
       this.dom.applyShape(state.shapeScale);
       this.dom.applyMotion(state.motionScale);
@@ -52,7 +50,7 @@ export class ThemeSyncService {
         this.dom.removeAttribute('data-theme-contrast');
       }
       
-      // THE FIX: We are now explicitly passing `state.variant` into the Engine!
+      // Handle color variant data attribute
       const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, contrastValue, state.variant);
       this.dom.applyTokens(tokens);
     });

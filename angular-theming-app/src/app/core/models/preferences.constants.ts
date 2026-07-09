@@ -5,6 +5,7 @@ import {
   ContrastMode,
   CvdMode,
   SchemeVariant,
+  ScreenFilter,
 } from './preferences.types';
 
 export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';
@@ -21,6 +22,9 @@ export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
   cvd: 'none',
+  cvdSeverity: 100,
+  screenFilter: 'none',
+  screenFilterIntensity: 50,
   headingFontFamily: 'Roboto',
   bodyFontFamily: 'Roboto',
   fontScale: 1,
@@ -44,15 +48,19 @@ export const SCHEME_VARIANTS: { value: SchemeVariant; label: string; desc: strin
   { value: 'content', label: 'Content', desc: 'Optimized for embedded content' },
 ];
 
-export const CVD_MODES: { value: CvdMode; label: string }[] = [
-  { value: 'none', label: 'Normal Vision' },
-  { value: 'protanopia', label: 'Protanopia (Red-blind)' },
-  { value: 'deuteranopia', label: 'Deuteranopia (Green-blind)' },
-  { value: 'tritanopia', label: 'Tritanopia (Blue-blind)' },
-  { value: 'achromatopsia', label: 'Achromatopsia (Grayscale)' },
-  { value: 'blur', label: 'Low Vision (Blur)' },
-  { value: 'glare', label: 'Sunlight Glare' },
-  { value: 'nightshift', label: 'Night Shift (Warm)' },
+export const CVD_MODES: { value: CvdMode; label: string; desc: string }[] = [
+  { value: 'none', label: 'Normal Vision', desc: 'No color deficiency' },
+  { value: 'protanopia', label: 'Protanomaly/Protanopia', desc: 'Red-blindness spectrum' },
+  { value: 'deuteranopia', label: 'Deuteranomaly/Deuteranopia', desc: 'Green-blindness spectrum' },
+  { value: 'tritanopia', label: 'Tritanomaly/Tritanopia', desc: 'Blue-blindness spectrum' },
+  { value: 'achromatopsia', label: 'Achromatomaly/Achromatopsia', desc: 'Grayscale spectrum' },
+];
+
+export const SCREEN_FILTERS: { value: ScreenFilter; label: string; desc: string }[] = [
+  { value: 'none', label: 'No Overlay', desc: 'Clear screen' },
+  { value: 'blur', label: 'Low Vision', desc: 'Simulates blurred vision' },
+  { value: 'glare', label: 'Sunlight Glare', desc: 'Washed out, low-contrast screen' },
+  { value: 'nightshift', label: 'Night Shift', desc: 'Warm blue-light reduction' },
 ];
 
 export const FONT_OPTIONS = [

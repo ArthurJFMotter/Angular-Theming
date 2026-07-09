@@ -8,6 +8,7 @@ import {
   CvdMode,
   PreferencesState,
   SchemeVariant,
+  ScreenFilter,
 } from '../models/preferences.types';
 import {
   DEFAULT_PREFERENCES_STATE,
@@ -53,6 +54,16 @@ export class PreferencesService {
 
   private readonly cvdSignal = signal<CvdMode>(DEFAULT_PREFERENCES_STATE.cvd);
 
+  private readonly cvdSeveritySignal = signal<number>(
+    DEFAULT_PREFERENCES_STATE.cvdSeverity,
+  );
+  private readonly screenFilterSignal = signal<ScreenFilter>(
+    DEFAULT_PREFERENCES_STATE.screenFilter,
+  );
+  private readonly screenFilterIntensitySignal = signal<number>(
+    DEFAULT_PREFERENCES_STATE.screenFilterIntensity,
+  );
+
   private readonly headingFontFamilySignal = signal<string>(
     DEFAULT_PREFERENCES_STATE.headingFontFamily,
   );
@@ -94,6 +105,10 @@ export class PreferencesService {
   readonly customColors = this.customColorsSignal.asReadonly();
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
   readonly cvd = this.cvdSignal.asReadonly();
+  readonly cvdSeverity = this.cvdSeveritySignal.asReadonly();
+  readonly screenFilter = this.screenFilterSignal.asReadonly();
+  readonly screenFilterIntensity =
+    this.screenFilterIntensitySignal.asReadonly();
   readonly headingFontFamily = this.headingFontFamilySignal.asReadonly();
   readonly bodyFontFamily = this.bodyFontFamilySignal.asReadonly();
   readonly fontScale = this.fontScaleSignal.asReadonly();
@@ -145,6 +160,9 @@ export class PreferencesService {
     customColors: this.customColorsSignal(),
     savedProfiles: this.savedProfilesSignal(),
     cvd: this.cvdSignal(),
+    cvdSeverity: this.cvdSeveritySignal(),
+    screenFilter: this.screenFilterSignal(),
+    screenFilterIntensity: this.screenFilterIntensitySignal(),
     headingFontFamily: this.headingFontFamilySignal(),
     bodyFontFamily: this.bodyFontFamilySignal(),
     fontScale: this.fontScaleSignal(),
@@ -175,6 +193,15 @@ export class PreferencesService {
   }
   setCvdMode(mode: CvdMode): void {
     this.cvdSignal.set(mode);
+  }
+  setCvdSeverity(val: number): void {
+    this.cvdSeveritySignal.set(val);
+  }
+  setScreenFilter(val: ScreenFilter): void {
+    this.screenFilterSignal.set(val);
+  }
+  setScreenFilterIntensity(val: number): void {
+    this.screenFilterIntensitySignal.set(val);
   }
   setHeadingFontFamily(family: string): void {
     this.headingFontFamilySignal.set(family);
@@ -370,6 +397,12 @@ export class PreferencesService {
     if (parsed.contrastLevel !== undefined)
       this.contrastLevelSignal.set(parsed.contrastLevel);
     if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
+    if (parsed.cvdSeverity !== undefined)
+      this.cvdSeveritySignal.set(parsed.cvdSeverity);
+    if (parsed.screenFilter !== undefined)
+      this.screenFilterSignal.set(parsed.screenFilter);
+    if (parsed.screenFilterIntensity !== undefined)
+      this.screenFilterIntensitySignal.set(parsed.screenFilterIntensity);
     if (parsed.headingFontFamily)
       this.headingFontFamilySignal.set(parsed.headingFontFamily);
     if (parsed.bodyFontFamily)
