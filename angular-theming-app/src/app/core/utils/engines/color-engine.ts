@@ -81,13 +81,28 @@ export class ColorEngine {
     const argb = (value: number) => hexFromArgb(value);
 
     const buildSemanticTokens = (hex: string, name: string) => {
-      const palette = TonalPalette.fromInt(argbFromHex(hex));
+      const sourceHct = Hct.fromInt(argbFromHex(hex));
+      let palette: TonalPalette;
+
+      switch (variant) {
+        case 'vibrant': palette = new SchemeVibrant(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'expressive': palette = new SchemeExpressive(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'neutral': palette = new SchemeNeutral(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'monochrome': palette = new SchemeMonochrome(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'fidelity': palette = new SchemeFidelity(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'content': palette = new SchemeContent(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'tonal-spot':
+        default:
+          palette = new SchemeTonalSpot(sourceHct, isDark, contrastLevel).primaryPalette; break;
+      }
       
+      // Standard M3 Tones
       let tBase = isDark ? 80 : 40;
       let tOnBase = isDark ? 20 : 100;
       let tContainer = isDark ? 30 : 90;
       let tOnContainer = isDark ? 90 : 10;
       
+      // High Contrast Tone shifts
       if (contrastLevel >= 0.5) { 
         tBase = isDark ? 90 : 30;
         tOnBase = isDark ? 0 : 100;
@@ -182,7 +197,6 @@ export class ColorEngine {
     const primaryHct = Hct.fromInt(argbFromHex(colors.primary));
     let scheme: DynamicScheme;
 
-    // 1. Initialize the correct Google scheme class
     switch (variant) {
       case 'vibrant': scheme = new SchemeVibrant(primaryHct, isDark, contrastLevel); break;
       case 'expressive': scheme = new SchemeExpressive(primaryHct, isDark, contrastLevel); break;
@@ -195,9 +209,6 @@ export class ColorEngine {
         scheme = new SchemeTonalSpot(primaryHct, isDark, contrastLevel); break;
     }
 
-    // 2. Forcefully override the palettes if the user has locked custom colors.
-    // Bypassing the TypeScript readonly constraint with (scheme as any) guarantees 
-    // the variant math is preserved for everything else!
     if (colors.secondary) {
       (scheme as any).secondaryPalette = TonalPalette.fromInt(argbFromHex(colors.secondary));
     }
