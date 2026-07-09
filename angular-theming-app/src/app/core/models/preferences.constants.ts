@@ -4,6 +4,7 @@ import {
   ThemeMode,
   ContrastMode,
   CvdMode,
+  SchemeVariant,
 } from './preferences.types';
 
 export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';
@@ -16,6 +17,7 @@ export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
   autoContrast: true,
   contrastLevel: 0,
   scheme: 'custom',
+  variant: 'tonal-spot',
   customColors: DEFAULT_CUSTOM_COLORS,
   savedProfiles: [],
   cvd: 'none',
@@ -31,6 +33,16 @@ export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
 export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
+
+export const SCHEME_VARIANTS: { value: SchemeVariant; label: string; desc: string }[] = [
+  { value: 'tonal-spot', label: 'Tonal Spot', desc: 'Standard Material 3 (Pastel/Safe)' },
+  { value: 'vibrant', label: 'Vibrant', desc: 'Maximized saturation' },
+  { value: 'expressive', label: 'Expressive', desc: 'Unexpected complementary hues' },
+  { value: 'neutral', label: 'Neutral', desc: 'Washed out, professional look' },
+  { value: 'monochrome', label: 'Monochrome', desc: 'Pure greyscale UI' },
+  { value: 'fidelity', label: 'Fidelity', desc: 'Strictly follows primary color' },
+  { value: 'content', label: 'Content', desc: 'Optimized for embedded content' },
+];
 
 export const CVD_MODES: { value: CvdMode; label: string }[] = [
   { value: 'none', label: 'Normal Vision' },

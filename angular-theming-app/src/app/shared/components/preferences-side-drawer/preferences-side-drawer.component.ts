@@ -22,10 +22,12 @@ import {
   ThemeMode,
   ContrastMode,
   CvdMode,
+  SchemeVariant,
 } from '../../../core/models/preferences.types';
 import {
   CVD_MODES,
   FONT_OPTIONS,
+  SCHEME_VARIANTS,
 } from '../../../core/models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 import { MatInputModule } from '@angular/material/input';
@@ -62,6 +64,11 @@ export class PreferencesSideDrawerComponent {
 
   readonly cvdOptions = CVD_MODES;
   readonly fontOptions = FONT_OPTIONS;
+  readonly variantOptions = SCHEME_VARIANTS;
+
+  setVariant(v: SchemeVariant): void {
+    this.prefs.setVariant(v);
+  }
 
   onModeChange(mode: ThemeMode): void {
     this.prefs.setMode(mode);

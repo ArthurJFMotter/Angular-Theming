@@ -6,6 +6,7 @@ import {
 export type ThemeMode = 'light' | 'dark' | 'auto';
 export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
+export type SchemeVariant = 'tonal-spot' | 'vibrant' | 'expressive' | 'neutral' | 'monochrome' | 'fidelity' | 'content';
 export type CvdMode =
   | 'none'
   | 'protanopia'
@@ -44,6 +45,7 @@ export interface PreferencesState {
   autoContrast: boolean;
   contrastLevel: number; // -1.0 to 1.0
   scheme: ColorScheme;
+  variant: SchemeVariant;
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
   cvd: CvdMode;

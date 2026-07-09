@@ -88,6 +88,21 @@
           >
         </mat-button-toggle-group>
       </div>
+      <div class="field-row">
+        <label>Theme Variant</label>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+          <mat-select [value]="prefs.variant()" (selectionChange)="setVariant($event.value)">
+            @for (variant of variantOptions; track variant.value) {
+              <mat-option [value]="variant.value">
+                <div style="display: flex; flex-direction: column; line-height: 1.2; padding: 6px 0;">
+                  <span>{{ variant.label }}</span>
+                  <span style="font-size: 0.75rem; color: var(--mat-sys-on-surface-variant)">{{ variant.desc }}</span>
+                </div>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
       <!-- Continuous Contrast Scale -->
       <div class="slider-group" style="margin-top: 8px;">
         <div class="slider-header">

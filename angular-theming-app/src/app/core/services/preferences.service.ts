@@ -7,6 +7,7 @@ import {
   ContrastMode,
   CvdMode,
   PreferencesState,
+  SchemeVariant,
 } from '../models/preferences.types';
 import {
   DEFAULT_PREFERENCES_STATE,
@@ -29,12 +30,17 @@ export class PreferencesService {
   private readonly autoContrastSignal = signal<boolean>(
     DEFAULT_PREFERENCES_STATE.autoContrast,
   );
+
   private readonly contrastLevelSignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.contrastLevel,
   );
 
   private readonly schemeSignal = signal<ColorScheme>(
     DEFAULT_PREFERENCES_STATE.scheme,
+  );
+
+  private readonly variantSignal = signal<SchemeVariant>(
+    DEFAULT_PREFERENCES_STATE.variant,
   );
 
   private readonly customColorsSignal = signal<CustomColors>(
@@ -50,6 +56,7 @@ export class PreferencesService {
   private readonly headingFontFamilySignal = signal<string>(
     DEFAULT_PREFERENCES_STATE.headingFontFamily,
   );
+
   private readonly bodyFontFamilySignal = signal<string>(
     DEFAULT_PREFERENCES_STATE.bodyFontFamily,
   );
@@ -83,6 +90,7 @@ export class PreferencesService {
   readonly autoContrast = this.autoContrastSignal.asReadonly();
   readonly contrastLevel = this.contrastLevelSignal.asReadonly();
   readonly scheme = this.schemeSignal.asReadonly();
+  readonly variant = this.variantSignal.asReadonly();
   readonly customColors = this.customColorsSignal.asReadonly();
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
   readonly cvd = this.cvdSignal.asReadonly();
@@ -133,6 +141,7 @@ export class PreferencesService {
     autoContrast: this.autoContrastSignal(),
     contrastLevel: this.contrastLevelSignal(),
     scheme: this.schemeSignal(),
+    variant: this.variantSignal(),
     customColors: this.customColorsSignal(),
     savedProfiles: this.savedProfilesSignal(),
     cvd: this.cvdSignal(),
@@ -160,6 +169,9 @@ export class PreferencesService {
   }
   setScheme(scheme: ColorScheme): void {
     this.schemeSignal.set(scheme);
+  }
+  setVariant(variant: SchemeVariant): void {
+    this.variantSignal.set(variant);
   }
   setCvdMode(mode: CvdMode): void {
     this.cvdSignal.set(mode);
@@ -329,7 +341,10 @@ export class PreferencesService {
   }
 
   suggestedCustomDefaults() {
-    return ColorEngine.suggestDefaults(this.activeCustomColors().primary);
+    return ColorEngine.suggestDefaults(
+      this.activeCustomColors().primary,
+      this.variantSignal(),
+    );
   }
 
   resetToDefaults(): void {
@@ -342,6 +357,7 @@ export class PreferencesService {
   ): void {
     if (parsed.mode) this.modeSignal.set(parsed.mode);
     if (parsed.scheme) this.schemeSignal.set(parsed.scheme);
+    if (parsed.variant) this.variantSignal.set(parsed.variant);
     if (parsed.savedProfiles)
       this.savedProfilesSignal.set(
         parsed.savedProfiles.map((p) => ({

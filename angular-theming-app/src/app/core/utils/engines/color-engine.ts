@@ -4,28 +4,17 @@ import {
   Hct,
   TonalPalette,
   DynamicScheme,
+  SchemeTonalSpot,
+  SchemeVibrant,
+  SchemeExpressive,
+  SchemeNeutral,
+  SchemeMonochrome,
+  SchemeFidelity,
+  SchemeContent
 } from '@material/material-color-utilities';
-import { CustomColors, ThemeMode } from '../../models/preferences.types';
+import { CustomColors, SchemeVariant, ThemeMode } from '../../models/preferences.types';
 
-/**
- * @material/material-color-utilities@0.3.0 exports `Variant` in its type
- * declarations but not from the package's public ESM `exports` map, so it
- * can't be imported directly. Its value is part of Google's published M3
- * spec (https://github.com/material-foundation/material-color-utilities)
- * and is stable: TONAL_SPOT = 2. This is the same variant Angular
- * Material's own `mat.theme()` SCSS mixin uses for its preset palettes,
- * which is what keeps custom and preset themes visually consistent.
- */
-const VARIANT_TONAL_SPOT = 2;
-
-/**
- * Full set of M3 system color tokens, matching the CSS custom-property
- * names Angular Material emits via `mat.theme()` (the `--mat-sys-*` family).
- * Keys here are the *unprefixed* token names — ColorEngine's caller is
- * responsible for adding the `--mat-sys-` prefix when writing to the DOM.
- */
 export interface MatSysColorTokens {
-  // Native Angular Material vars
   primary: string;
   'on-primary': string;
   'primary-container': string;
@@ -63,7 +52,6 @@ export interface MatSysColorTokens {
   'surface-tint': string;
   shadow: string;
   scrim: string;
-  // Custom vars
   success: string;
   'on-success': string;
   'success-container': string;
@@ -79,62 +67,28 @@ export interface MatSysColorTokens {
   [key: string]: string; 
 }
 
-/**
- * ColorEngine
- * -----------
- * Thin, pure-function wrapper around @material/material-color-utilities —
- * the same color-science library Angular Material's own SCSS theming is
- * generated from. Given hex inputs for primary/secondary/tertiary/error,
- * it builds an M3 DynamicScheme and reads off every system color role as a
- * hex string, ready to apply as CSS custom properties.
- *
- * Design choices that protect contrast (per product requirement: dynamic
- * color input must not be able to make the app low-contrast or "blurry"):
- *  - Neutral/neutral-variant palettes (which drive background/surface/
- *    outline) are ALWAYS derived from primary's hue at M3's low spec'd
- *    chroma (6 / 8). User-chosen chroma never reaches a surface color, only
- *    role colors (primary/secondary/tertiary/error) — so surfaces stay
- *    reliably near-white in light mode and near-black in dark mode no
- *    matter how saturated a color the user picks.
- *  - Tone (lightness) for every role is fixed by the M3 spec per
- *    light/dark mode, not by user input — only hue + chroma come from the
- *    user. This is what guarantees on-primary-on-X pairs always meet
- *    contrast, the same guarantee Material's hard-coded palettes give.
- */
 export class ColorEngine {
-  /**
-   * Builds a complete light AND dark token set from a CustomColors input.
-   */
-  static buildTokenPair(
-    colors: CustomColors,
-    contrastLevel = 0,
-  ): { light: MatSysColorTokens; dark: MatSysColorTokens } {
+  static buildTokenPair(colors: CustomColors, contrastLevel = 0, variant: SchemeVariant = 'tonal-spot') {
     return {
-      light: ColorEngine.buildTokens(colors, 'light', contrastLevel),
-      dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel),
+      light: ColorEngine.buildTokens(colors, 'light', contrastLevel, variant),
+      dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel, variant),
     };
   }
 
-  /**
-   * Builds a single mode's token set.
-   */
-static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): MatSysColorTokens {
+  static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0, variant: SchemeVariant = 'tonal-spot'): MatSysColorTokens {
     const isDark = mode === 'dark';
-    const scheme = ColorEngine.buildScheme(colors, isDark, contrastLevel);
+    const scheme = ColorEngine.buildScheme(colors, isDark, contrastLevel, variant);
     const argb = (value: number) => hexFromArgb(value);
 
-    // Helper: Build semantic tokens with High Contrast awareness
     const buildSemanticTokens = (hex: string, name: string) => {
       const palette = TonalPalette.fromInt(argbFromHex(hex));
       
-      // Standard M3 Tones
       let tBase = isDark ? 80 : 40;
       let tOnBase = isDark ? 20 : 100;
       let tContainer = isDark ? 30 : 90;
       let tOnContainer = isDark ? 90 : 10;
       
-      // High Contrast Tone shifts (Maximize contrast against backgrounds)
-      if (contrastLevel >= 0.5) { // <-- Update this from "> 0" to ">= 0.5"
+      if (contrastLevel >= 0.5) { 
         tBase = isDark ? 90 : 30;
         tOnBase = isDark ? 0 : 100;
         tContainer = isDark ? 20 : 85;
@@ -149,7 +103,6 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       };
     };
 
-    // Process extended (dynamic) colors
     const extendedTokens: Record<string, string> = {};
     if (colors.extended) {
       for (const ext of colors.extended) {
@@ -196,7 +149,6 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
       shadow: argb(scheme.shadow),
       scrim: argb(scheme.scrim),
       
-      // Inject the semantic tokens
       ...buildSemanticTokens(colors.success || '#188038', 'success'),
       ...buildSemanticTokens(colors.warning || '#f29900', 'warning'),
       ...buildSemanticTokens(colors.info || '#1967d2', 'info'),
@@ -204,86 +156,58 @@ static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0): Ma
     } as MatSysColorTokens;
   }
 
-  /**
-   * Suggests a default secondary/tertiary/error hex (as the M3 spec's
-   * TonalSpot variant would derive them from primary alone), so the color
-   * picker UI can show a sensible starting point for optional fields
-   * instead of leaving them blank.
-   */
-  static suggestDefaults(primaryHex: string): Required<CustomColors> {
+  static suggestDefaults(primaryHex: string, variant: SchemeVariant = 'tonal-spot'): Required<CustomColors> {
     const primaryHct = Hct.fromInt(argbFromHex(primaryHex));
+    const mockScheme = ColorEngine.buildScheme({ primary: primaryHex }, false, 0, variant);
+
     return {
       primary: primaryHex,
-      secondary: hexFromArgb(
-        TonalPalette.fromHueAndChroma(primaryHct.hue, 16).tone(40),
-      ),
-      tertiary: hexFromArgb(
-        TonalPalette.fromHueAndChroma(
-          sanitizeDegrees(primaryHct.hue + 60),
-          24,
-        ).tone(40),
-      ),
-      error: hexFromArgb(TonalPalette.fromHueAndChroma(25, 84).tone(40)),
-      success: '#188038', // Green
-      warning: '#f29900', // Amber/Orange
-      info: '#1967d2', // Blue
-      extended: [] // Custom colors (optional)
+      secondary: hexFromArgb(mockScheme.secondaryPalette.tone(40)),
+      tertiary: hexFromArgb(mockScheme.tertiaryPalette.tone(40)),
+      // Fallback used safely just in case the Scheme version doesn't initialize errorPalette immediately
+      error: hexFromArgb((mockScheme as any).errorPalette?.tone(40) || TonalPalette.fromHueAndChroma(25, 84).tone(40)),
+      success: '#188038', 
+      warning: '#f29900', 
+      info: '#1967d2', 
+      extended: []
     };
   }
 
-  /**
-   * Builds a DynamicScheme with each role palette wired to its own user
-   * color when provided, falling back to the spec-default derivation
-   * (relative to primary's hue) otherwise. Neutral palettes always follow
-   * primary's hue at fixed low chroma — see class doc for why.
-   */
   private static buildScheme(
     colors: CustomColors,
     isDark: boolean,
     contrastLevel = 0,
+    variant: SchemeVariant = 'tonal-spot'
   ): DynamicScheme {
     const primaryHct = Hct.fromInt(argbFromHex(colors.primary));
+    let scheme: DynamicScheme;
 
-    const primaryPalette = TonalPalette.fromHueAndChroma(
-      primaryHct.hue,
-      Math.max(primaryHct.chroma, 36),
-    );
+    // 1. Initialize the correct Google scheme class
+    switch (variant) {
+      case 'vibrant': scheme = new SchemeVibrant(primaryHct, isDark, contrastLevel); break;
+      case 'expressive': scheme = new SchemeExpressive(primaryHct, isDark, contrastLevel); break;
+      case 'neutral': scheme = new SchemeNeutral(primaryHct, isDark, contrastLevel); break;
+      case 'monochrome': scheme = new SchemeMonochrome(primaryHct, isDark, contrastLevel); break;
+      case 'fidelity': scheme = new SchemeFidelity(primaryHct, isDark, contrastLevel); break;
+      case 'content': scheme = new SchemeContent(primaryHct, isDark, contrastLevel); break;
+      case 'tonal-spot':
+      default:
+        scheme = new SchemeTonalSpot(primaryHct, isDark, contrastLevel); break;
+    }
 
-    const secondaryPalette = colors.secondary
-      ? TonalPalette.fromInt(argbFromHex(colors.secondary))
-      : TonalPalette.fromHueAndChroma(primaryHct.hue, 16);
-
-    const tertiaryPalette = colors.tertiary
-      ? TonalPalette.fromInt(argbFromHex(colors.tertiary))
-      : TonalPalette.fromHueAndChroma(sanitizeDegrees(primaryHct.hue + 60), 24);
-
-    const neutralPalette = TonalPalette.fromHueAndChroma(primaryHct.hue, 6);
-    const neutralVariantPalette = TonalPalette.fromHueAndChroma(
-      primaryHct.hue,
-      8,
-    );
-
-    const scheme = new DynamicScheme({
-      sourceColorArgb: primaryHct.toInt(),
-      variant: VARIANT_TONAL_SPOT,
-      contrastLevel,
-      isDark,
-      primaryPalette,
-      secondaryPalette,
-      tertiaryPalette,
-      neutralPalette,
-      neutralVariantPalette,
-    });
-
+    // 2. Forcefully override the palettes if the user has locked custom colors.
+    // Bypassing the TypeScript readonly constraint with (scheme as any) guarantees 
+    // the variant math is preserved for everything else!
+    if (colors.secondary) {
+      (scheme as any).secondaryPalette = TonalPalette.fromInt(argbFromHex(colors.secondary));
+    }
+    if (colors.tertiary) {
+      (scheme as any).tertiaryPalette = TonalPalette.fromInt(argbFromHex(colors.tertiary));
+    }
     if (colors.error) {
-      scheme.errorPalette = TonalPalette.fromInt(argbFromHex(colors.error));
+      (scheme as any).errorPalette = TonalPalette.fromInt(argbFromHex(colors.error));
     }
 
     return scheme;
   }
-}
-
-function sanitizeDegrees(degrees: number): number {
-  const normalized = degrees % 360;
-  return normalized < 0 ? normalized + 360 : normalized;
 }
