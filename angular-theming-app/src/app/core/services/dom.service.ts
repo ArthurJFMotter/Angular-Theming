@@ -18,19 +18,19 @@ export class DomService {
     // Ensure the SVG filters exist in the DOM
     this.ensureAccessibilitySvgExists();
 
-    // 1. Handle CVD (Color Vision Deficiency)
+    // Handle CVD (Color Vision Deficiency)
     if (cvd !== 'none' && cvdSeverity > 0) {
       this.updateDynamicCvdSvg(cvd, cvdSeverity, cvdIntent);
       filterCss += 'url(#dynamic-cvd-filter) ';
     }
 
-    // 2. Handle Environmental & Astigmatism Filters
+    // Handle Environmental & Astigmatism Filters
     if (screen !== 'none' && screenIntensity > 0) {
       const s = screenIntensity / 100;
       
       if (screen === 'astigmatism') {
         this.updateDynamicAstigmatismSvg(s);
-        filterCss += 'url(#dynamic-astigmatism-filter) '; // Chaining SVG filters!
+        filterCss += 'url(#dynamic-astigmatism-filter) ';
       } else if (screen === 'blur') {
         filterCss += `blur(${s * 2.5}px) contrast(${1 - (s * 0.15)}) `;
       } else if (screen === 'glare') {
@@ -44,7 +44,6 @@ export class DomService {
   }
 
   // --- SVG INJECTION & MATH ---
-
   private ensureAccessibilitySvgExists(): void {
     const svgId = 'accessibility-svg-filters';
     
