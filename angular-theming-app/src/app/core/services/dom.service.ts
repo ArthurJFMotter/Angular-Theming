@@ -11,13 +11,13 @@ import {
 export class DomService {
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
-  applyAccessibilityFilters(cvd: string, cvdSeverity: number, screen: string, screenIntensity: number): void {
+  applyAccessibilityFilters(cvd: string, cvdSeverity: number, cvdIntent: string, screen: string, screenIntensity: number): void {
     const root = this.document.documentElement;
     let filterCss = '';
 
-    // 1. Handle CVD (Color Vision Deficiency) Dynamic SVG Matrix
+    // Pass the intent to the SVG generator
     if (cvd !== 'none' && cvdSeverity > 0) {
-      this.updateDynamicCvdSvg(cvd, cvdSeverity);
+      this.updateDynamicCvdSvg(cvd, cvdSeverity, cvdIntent);
       filterCss += 'url(#dynamic-cvd-filter) ';
     }
 
@@ -36,10 +36,9 @@ export class DomService {
     root.style.filter = filterCss.trim();
   }
 
-  private updateDynamicCvdSvg(mode: string, severity: number): void {
+  private updateDynamicCvdSvg(mode: string, severity: number, intent: string): void {
     const svgId = 'accessibility-svg-filters';
     
-    // Create the SVG container if it doesn't exist
     if (!this.document.getElementById(svgId)) {
       const newSvg = this.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       newSvg.id = svgId;
@@ -51,15 +50,25 @@ export class DomService {
     const matrixEl = this.document.getElementById('dynamic-cvd-matrix');
     if (!matrixEl) return;
 
-    // Hardcoded target values for 100% total color blindness
-    const matrices: Record<string, number[]> = {
+    // 1. SIMULATION MATRICES (Loss of vision)
+    const simMatrices: Record<string, number[]> = {
       protanopia: [0.567, 0.433, 0, 0, 0, 0.558, 0.442, 0, 0, 0, 0, 0.242, 0.758, 0, 0, 0, 0, 0, 1, 0],
       deuteranopia: [0.625, 0.375, 0, 0, 0, 0.7, 0.3, 0, 0, 0, 0, 0.3, 0.7, 0, 0, 0, 0, 0, 1, 0],
       tritanopia: [0.95, 0.05, 0, 0, 0, 0, 0.433, 0.567, 0, 0, 0, 0.475, 0.525, 0, 0, 0, 0, 0, 1, 0],
       achromatopsia: [0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0, 0, 0, 1, 0]
     };
 
-    const target = matrices[mode] || matrices['achromatopsia'];
+    // 2. COMPENSATION MATRICES (Daltonization - Shifting unseen color differences into visible channels)
+    const compMatrices: Record<string, number[]> = {
+      protanopia: [1, 0, 0, 0, 0, 0.303, 0.697, 0, 0, 0, 0.303, -0.303, 1, 0, 0, 0, 0, 0, 1, 0],
+      deuteranopia: [0.51, 0.49, 0, 0, 0, 0, 1, 0, 0, 0, -0.49, 0.49, 1, 0, 0, 0, 0, 0, 1, 0],
+      tritanopia: [1, -0.332, 0.332, 0, 0, 0, 0.668, 0.332, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+      // Achromatopsia cannot be daltonized (no channels left to shift to). Fallback to standard greyscale.
+      achromatopsia: simMatrices['achromatopsia']
+    };
+
+    const targetMap = intent === 'compensate' ? compMatrices : simMatrices;
+    const target = targetMap[mode] || targetMap['achromatopsia'];
     
     // Normal 1:1 color vision
     const identity = [
@@ -69,8 +78,7 @@ export class DomService {
       0, 0, 0, 1, 0
     ];
 
-    // Mathematical Interpolation: Blends normal vision with the colorblind target 
-    // depending on severity (e.g. 50% slider = 50% colorblindness)
+    // Mathematical Interpolation
     const s = severity / 100;
     const values = identity.map((idVal, i) => idVal * (1 - s) + target[i] * s).join(' ');
     

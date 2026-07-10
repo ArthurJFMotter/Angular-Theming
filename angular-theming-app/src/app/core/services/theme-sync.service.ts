@@ -31,7 +31,7 @@ export class ThemeSyncService {
       this.storage.save(state);
 
       // Apply structural, layout, & motion styling
-      this.dom.applyAccessibilityFilters(state.cvd, state.cvdSeverity, state.screenFilter, state.screenFilterIntensity);
+      this.dom.applyAccessibilityFilters(state.cvd, state.cvdSeverity, state.cvdIntent, state.screenFilter, state.screenFilterIntensity);
       this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
       this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
       this.dom.applyShape(state.shapeScale);

@@ -392,6 +392,16 @@
         </mat-select>
       </mat-form-field>
 
+      <!-- CVD Intent Toggle -->
+      @if (prefs.cvd() !== 'none' && prefs.cvd() !== 'achromatopsia') {
+        <div class="field-row" style="margin-top: 4px; margin-bottom: 12px;">
+          <mat-button-toggle-group class="full-width-toggle" [value]="prefs.cvdIntent()" (change)="prefs.setCvdIntent($event.value)">
+            <mat-button-toggle value="simulate">Simulate</mat-button-toggle>
+            <mat-button-toggle value="compensate">Daltonize</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      }
+
       <!-- CVD Severity Slider -->
       @if (prefs.cvd() !== "none") {
         <div class="slider-group" style="margin-top: 8px; margin-bottom: 16px">

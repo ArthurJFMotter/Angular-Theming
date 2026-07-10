@@ -8,6 +8,7 @@ export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
 export type SchemeVariant = 'tonal-spot' | 'vibrant' | 'expressive' | 'neutral' | 'monochrome' | 'fidelity' | 'content';
 export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
+export type CvdIntent = 'simulate' | 'compensate';
 export type ScreenFilter = 'none' | 'blur' | 'glare' | 'nightshift';
 
 export interface ExtendedColor {
@@ -43,6 +44,7 @@ export interface PreferencesState {
   savedProfiles: CustomProfile[];
   cvd: CvdMode;
   cvdSeverity: number; // 0 to 100
+  cvdIntent: CvdIntent;
   screenFilter: ScreenFilter;
   screenFilterIntensity: number; // 0 to 100
   headingFontFamily: string;

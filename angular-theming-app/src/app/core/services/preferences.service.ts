@@ -9,6 +9,7 @@ import {
   PreferencesState,
   SchemeVariant,
   ScreenFilter,
+  CvdIntent,
 } from '../models/preferences.types';
 import {
   DEFAULT_PREFERENCES_STATE,
@@ -57,9 +58,15 @@ export class PreferencesService {
   private readonly cvdSeveritySignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.cvdSeverity,
   );
+
+  private readonly cvdIntentSignal = signal<CvdIntent>(
+    DEFAULT_PREFERENCES_STATE.cvdIntent,
+  );
+
   private readonly screenFilterSignal = signal<ScreenFilter>(
     DEFAULT_PREFERENCES_STATE.screenFilter,
   );
+
   private readonly screenFilterIntensitySignal = signal<number>(
     DEFAULT_PREFERENCES_STATE.screenFilterIntensity,
   );
@@ -106,6 +113,7 @@ export class PreferencesService {
   readonly savedProfiles = this.savedProfilesSignal.asReadonly();
   readonly cvd = this.cvdSignal.asReadonly();
   readonly cvdSeverity = this.cvdSeveritySignal.asReadonly();
+  readonly cvdIntent = this.cvdIntentSignal.asReadonly();
   readonly screenFilter = this.screenFilterSignal.asReadonly();
   readonly screenFilterIntensity =
     this.screenFilterIntensitySignal.asReadonly();
@@ -161,6 +169,7 @@ export class PreferencesService {
     savedProfiles: this.savedProfilesSignal(),
     cvd: this.cvdSignal(),
     cvdSeverity: this.cvdSeveritySignal(),
+    cvdIntent: this.cvdIntentSignal(),
     screenFilter: this.screenFilterSignal(),
     screenFilterIntensity: this.screenFilterIntensitySignal(),
     headingFontFamily: this.headingFontFamilySignal(),
@@ -196,6 +205,9 @@ export class PreferencesService {
   }
   setCvdSeverity(val: number): void {
     this.cvdSeveritySignal.set(val);
+  }
+  setCvdIntent(intent: CvdIntent): void {
+    this.cvdIntentSignal.set(intent);
   }
   setScreenFilter(val: ScreenFilter): void {
     this.screenFilterSignal.set(val);
@@ -399,6 +411,7 @@ export class PreferencesService {
     if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
     if (parsed.cvdSeverity !== undefined)
       this.cvdSeveritySignal.set(parsed.cvdSeverity);
+    if (parsed.cvdIntent) this.cvdIntentSignal.set(parsed.cvdIntent);
     if (parsed.screenFilter !== undefined)
       this.screenFilterSignal.set(parsed.screenFilter);
     if (parsed.screenFilterIntensity !== undefined)

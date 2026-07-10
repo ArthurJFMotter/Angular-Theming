@@ -23,6 +23,7 @@ export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
   savedProfiles: [],
   cvd: 'none',
   cvdSeverity: 100,
+  cvdIntent: 'simulate',
   screenFilter: 'none',
   screenFilterIntensity: 50,
   headingFontFamily: 'Roboto',
