@@ -15,16 +15,23 @@ export class DomService {
     const root = this.document.documentElement;
     let filterCss = '';
 
-    // Pass the intent to the SVG generator
+    // Ensure the SVG filters exist in the DOM
+    this.ensureAccessibilitySvgExists();
+
+    // 1. Handle CVD (Color Vision Deficiency)
     if (cvd !== 'none' && cvdSeverity > 0) {
       this.updateDynamicCvdSvg(cvd, cvdSeverity, cvdIntent);
       filterCss += 'url(#dynamic-cvd-filter) ';
     }
 
-    // 2. Handle Screen Filters (CSS based)
+    // 2. Handle Environmental & Astigmatism Filters
     if (screen !== 'none' && screenIntensity > 0) {
       const s = screenIntensity / 100;
-      if (screen === 'blur') {
+      
+      if (screen === 'astigmatism') {
+        this.updateDynamicAstigmatismSvg(s);
+        filterCss += 'url(#dynamic-astigmatism-filter) '; // Chaining SVG filters!
+      } else if (screen === 'blur') {
         filterCss += `blur(${s * 2.5}px) contrast(${1 - (s * 0.15)}) `;
       } else if (screen === 'glare') {
         filterCss += `contrast(${1 - (s * 0.45)}) brightness(${1 + (s * 0.35)}) sepia(${s * 0.2}) `;
@@ -36,21 +43,59 @@ export class DomService {
     root.style.filter = filterCss.trim();
   }
 
-  private updateDynamicCvdSvg(mode: string, severity: number, intent: string): void {
+  // --- SVG INJECTION & MATH ---
+
+  private ensureAccessibilitySvgExists(): void {
     const svgId = 'accessibility-svg-filters';
     
     if (!this.document.getElementById(svgId)) {
       const newSvg = this.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       newSvg.id = svgId;
       newSvg.setAttribute('style', 'display: none; width: 0; height: 0;');
-      newSvg.innerHTML = `<defs><filter id="dynamic-cvd-filter"><feColorMatrix id="dynamic-cvd-matrix" type="matrix" values="" /></filter></defs>`;
+      
+      // We declare BOTH the CVD filter and the Astigmatism filter here.
+      // For astigmatism, we use a High-Pass filter (feColorMatrix) to extract ONLY the bright pixels, 
+      // then we apply a directional blur (feGaussianBlur), and screen it back over the original image (feBlend).
+      newSvg.innerHTML = `
+        <defs>
+          <filter id="dynamic-cvd-filter">
+            <feColorMatrix id="dynamic-cvd-matrix" type="matrix" values="" />
+          </filter>
+          
+          <filter id="dynamic-astigmatism-filter" x="-50%" y="-50%" width="200%" height="200%">
+            <!-- Isolate the bright pixels (e.g. white text) -->
+            <feColorMatrix in="SourceGraphic" type="matrix" values="
+              2 0 0 0 -1  
+              0 2 0 0 -1  
+              0 0 2 0 -1  
+              0 0 0 1 0" result="highlights" />
+            <!-- Apply the astigmatic directional smear -->
+            <feGaussianBlur id="astigmatism-blur" in="highlights" stdDeviation="0 0" result="smeared" />
+            <!-- Blend the glowing smear back over the original UI -->
+            <feBlend mode="screen" in="smeared" in2="SourceGraphic" />
+          </filter>
+        </defs>
+      `;
       this.document.body.appendChild(newSvg);
     }
+  }
 
+  private updateDynamicAstigmatismSvg(severity: number): void {
+    const blurEl = this.document.getElementById('astigmatism-blur');
+    if (!blurEl) return;
+    
+    // Astigmatism often creates a vertical/diagonal streak.
+    // We increase the vertical blur dramatically based on the slider severity.
+    const blurX = severity * 2;
+    const blurY = severity * 16;
+    
+    blurEl.setAttribute('stdDeviation', `${blurX} ${blurY}`);
+  }
+
+  private updateDynamicCvdSvg(mode: string, severity: number, intent: string): void {
     const matrixEl = this.document.getElementById('dynamic-cvd-matrix');
     if (!matrixEl) return;
 
-    // 1. SIMULATION MATRICES (Loss of vision)
     const simMatrices: Record<string, number[]> = {
       protanopia: [0.567, 0.433, 0, 0, 0, 0.558, 0.442, 0, 0, 0, 0, 0.242, 0.758, 0, 0, 0, 0, 0, 1, 0],
       deuteranopia: [0.625, 0.375, 0, 0, 0, 0.7, 0.3, 0, 0, 0, 0, 0.3, 0.7, 0, 0, 0, 0, 0, 1, 0],
@@ -58,19 +103,16 @@ export class DomService {
       achromatopsia: [0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0, 0, 0, 1, 0]
     };
 
-    // 2. COMPENSATION MATRICES (Daltonization - Shifting unseen color differences into visible channels)
     const compMatrices: Record<string, number[]> = {
       protanopia: [1, 0, 0, 0, 0, 0.303, 0.697, 0, 0, 0, 0.303, -0.303, 1, 0, 0, 0, 0, 0, 1, 0],
       deuteranopia: [0.51, 0.49, 0, 0, 0, 0, 1, 0, 0, 0, -0.49, 0.49, 1, 0, 0, 0, 0, 0, 1, 0],
       tritanopia: [1, -0.332, 0.332, 0, 0, 0, 0.668, 0.332, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-      // Achromatopsia cannot be daltonized (no channels left to shift to). Fallback to standard greyscale.
       achromatopsia: simMatrices['achromatopsia']
     };
 
     const targetMap = intent === 'compensate' ? compMatrices : simMatrices;
     const target = targetMap[mode] || targetMap['achromatopsia'];
     
-    // Normal 1:1 color vision
     const identity = [
       1, 0, 0, 0, 0,
       0, 1, 0, 0, 0,
@@ -78,7 +120,6 @@ export class DomService {
       0, 0, 0, 1, 0
     ];
 
-    // Mathematical Interpolation
     const s = severity / 100;
     const values = identity.map((idVal, i) => idVal * (1 - s) + target[i] * s).join(' ');
     

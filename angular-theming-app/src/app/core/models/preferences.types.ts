@@ -9,7 +9,7 @@ export type ColorScheme = string; // Either 'custom' or a profile ID
 export type SchemeVariant = 'tonal-spot' | 'vibrant' | 'expressive' | 'neutral' | 'monochrome' | 'fidelity' | 'content';
 export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 export type CvdIntent = 'simulate' | 'compensate';
-export type ScreenFilter = 'none' | 'blur' | 'glare' | 'nightshift';
+export type ScreenFilter = 'none' | 'blur' | 'glare' | 'nightshift' | 'astigmatism';
 
 export interface ExtendedColor {
   id: string;
