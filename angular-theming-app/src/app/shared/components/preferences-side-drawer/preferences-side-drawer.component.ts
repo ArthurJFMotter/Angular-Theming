@@ -198,4 +198,24 @@ export class PreferencesSideDrawerComponent {
       this.screenFilterOptions.find((v) => v.value === value)?.label || value
     );
   }
+
+  increaseCvdSeverity(): void {
+    const c = this.prefs.cvdSeverity();
+    if (c < 100) this.prefs.setCvdSeverity(c + 10);
+  }
+
+  decreaseCvdSeverity(): void {
+    const c = this.prefs.cvdSeverity();
+    if (c > 10) this.prefs.setCvdSeverity(c - 10);
+  }
+
+  increaseScreenFilterIntensity(): void {
+    const c = this.prefs.screenFilterIntensity();
+    if (c < 100) this.prefs.setScreenFilterIntensity(c + 10);
+  }
+
+  decreaseScreenFilterIntensity(): void {
+    const c = this.prefs.screenFilterIntensity();
+    if (c > 10) this.prefs.setScreenFilterIntensity(c - 10);
+  }
 }

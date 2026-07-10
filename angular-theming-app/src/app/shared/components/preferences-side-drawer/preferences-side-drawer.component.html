@@ -351,7 +351,7 @@
 
     <!-- 5. ACCESSIBILITY -->
     <div class="settings-section">
-      <div class="section-title">Vision Simulator</div>
+      <div class="section-title">Accessibility</div>
 
       <!-- CVD Selector -->
       <mat-form-field
@@ -393,9 +393,13 @@
       </mat-form-field>
 
       <!-- CVD Intent Toggle -->
-      @if (prefs.cvd() !== 'none' && prefs.cvd() !== 'achromatopsia') {
-        <div class="field-row" style="margin-top: 4px; margin-bottom: 12px;">
-          <mat-button-toggle-group class="full-width-toggle" [value]="prefs.cvdIntent()" (change)="prefs.setCvdIntent($event.value)">
+      @if (prefs.cvd() !== "none" && prefs.cvd() !== "achromatopsia") {
+        <div class="field-row" style="margin-top: 4px; margin-bottom: 12px">
+          <mat-button-toggle-group
+            class="full-width-toggle"
+            [value]="prefs.cvdIntent()"
+            (change)="prefs.setCvdIntent($event.value)"
+          >
             <mat-button-toggle value="simulate">Simulate</mat-button-toggle>
             <mat-button-toggle value="compensate">Daltonize</mat-button-toggle>
           </mat-button-toggle-group>
@@ -407,24 +411,24 @@
         <div class="slider-group" style="margin-top: 8px; margin-bottom: 16px">
           <div class="slider-header">
             <label>Severity</label>
-            <span style="color: var(--mat-sys-primary)"
-              >{{ prefs.cvdSeverity() }}%</span
-            >
+            <span>{{ prefs.cvdSeverity() }}%</span>
           </div>
           <div class="slider-row">
-            <mat-slider
-              min="10"
-              max="100"
-              step="10"
-              discrete
-              style="margin-left: 8px; width: 100%"
-            >
+            <button mat-icon-button (click)="decreaseCvdSeverity()">
+              <mat-icon>remove</mat-icon>
+            </button>
+
+            <mat-slider min="10" max="100" step="10" discrete>
               <input
                 matSliderThumb
                 [ngModel]="prefs.cvdSeverity()"
                 (ngModelChange)="prefs.setCvdSeverity($event)"
               />
             </mat-slider>
+
+            <button mat-icon-button (click)="increaseCvdSeverity()">
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
         </div>
       }
@@ -474,24 +478,24 @@
         <div class="slider-group" style="margin-top: 8px">
           <div class="slider-header">
             <label>Intensity</label>
-            <span style="color: var(--mat-sys-primary)"
-              >{{ prefs.screenFilterIntensity() }}%</span
-            >
+            <span>{{ prefs.screenFilterIntensity() }}%</span>
           </div>
           <div class="slider-row">
-            <mat-slider
-              min="10"
-              max="100"
-              step="10"
-              discrete
-              style="margin-left: 8px; width: 100%"
-            >
+            <button mat-icon-button (click)="decreaseScreenFilterIntensity()">
+              <mat-icon>remove</mat-icon>
+            </button>
+
+            <mat-slider min="10" max="100" step="10" discrete>
               <input
                 matSliderThumb
                 [ngModel]="prefs.screenFilterIntensity()"
                 (ngModelChange)="prefs.setScreenFilterIntensity($event)"
               />
             </mat-slider>
+
+            <button mat-icon-button (click)="increaseScreenFilterIntensity()">
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
         </div>
       }

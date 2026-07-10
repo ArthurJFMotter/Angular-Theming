@@ -9,22 +9,23 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class DomService {
+  private fovOverlay: HTMLDivElement | null = null;
+  private mouseMoveHandler = (e: MouseEvent) => this.updateFovPosition(e.clientX, e.clientY);
+
   constructor(@Inject(DOCUMENT) private document: Document) {}
 
   applyAccessibilityFilters(cvd: string, cvdSeverity: number, cvdIntent: string, screen: string, screenIntensity: number): void {
     const root = this.document.documentElement;
     let filterCss = '';
+    let useFov = false;
 
-    // Ensure the SVG filters exist in the DOM
     this.ensureAccessibilitySvgExists();
 
-    // Handle CVD (Color Vision Deficiency)
     if (cvd !== 'none' && cvdSeverity > 0) {
       this.updateDynamicCvdSvg(cvd, cvdSeverity, cvdIntent);
       filterCss += 'url(#dynamic-cvd-filter) ';
     }
 
-    // Handle Environmental & Astigmatism Filters
     if (screen !== 'none' && screenIntensity > 0) {
       const s = screenIntensity / 100;
       
@@ -37,7 +38,15 @@ export class DomService {
         filterCss += `contrast(${1 - (s * 0.45)}) brightness(${1 + (s * 0.35)}) sepia(${s * 0.2}) `;
       } else if (screen === 'nightshift') {
         filterCss += `sepia(${s * 0.4}) hue-rotate(${-s * 20}deg) contrast(${1 - (s * 0.05)}) brightness(${1 - (s * 0.1)}) `;
+      } else if (screen === 'macular' || screen === 'glaucoma') {
+        useFov = true;
+        this.applyFovOverlay(screen, s);
       }
+    }
+
+    // Clean up the FOV overlay if a different filter was selected
+    if (!useFov) {
+      this.removeFovOverlay();
     }
 
     root.style.filter = filterCss.trim();
@@ -125,7 +134,58 @@ export class DomService {
     matrixEl.setAttribute('values', values);
   }
 
-  // Helper to load fonts from Google Fonts
+  // --- FIELD OF VISION OVERLAYS ---
+  private applyFovOverlay(type: 'macular' | 'glaucoma', severity: number): void {
+    if (!this.fovOverlay) {
+      this.fovOverlay = this.document.createElement('div');
+      this.fovOverlay.id = 'fov-overlay';
+      this.fovOverlay.style.position = 'fixed';
+      this.fovOverlay.style.top = '0';
+      this.fovOverlay.style.left = '0';
+      this.fovOverlay.style.width = '100vw';
+      this.fovOverlay.style.height = '100vh';
+      this.fovOverlay.style.pointerEvents = 'none';
+      this.fovOverlay.style.zIndex = '999999';
+      this.document.body.appendChild(this.fovOverlay);
+      
+      // Default to center of screen initially
+      this.fovOverlay.style.setProperty('--fov-x', '50vw');
+      this.fovOverlay.style.setProperty('--fov-y', '50vh');
+      
+      this.document.addEventListener('mousemove', this.mouseMoveHandler, { passive: true });
+    }
+
+    // Generate dynamic CSS gradients to create the "scotoma" (blind spot)
+    let bg = '';
+    if (type === 'glaucoma') {
+      // Tunnel vision: Transparent center, dark edges. High severity = tiny tunnel.
+      const clearRadius = 50 + (1 - severity) * 400; // 50px at worst, 450px at mildest
+      bg = `radial-gradient(circle at var(--fov-x) var(--fov-y), transparent ${clearRadius}px, rgba(0,0,0,0.95) ${clearRadius + 150}px)`;
+    } else {
+      // Macular: Dark center, transparent edges. High severity = giant blind spot.
+      const blockedRadius = 30 + severity * 120; // 150px at worst, 30px at mildest
+      bg = `radial-gradient(circle at var(--fov-x) var(--fov-y), rgba(0,0,0,0.95) ${blockedRadius}px, transparent ${blockedRadius + 100}px)`;
+    }
+
+    this.fovOverlay.style.background = bg;
+  }
+
+  private updateFovPosition(x: number, y: number): void {
+    if (this.fovOverlay) {
+      this.fovOverlay.style.setProperty('--fov-x', `${x}px`);
+      this.fovOverlay.style.setProperty('--fov-y', `${y}px`);
+    }
+  }
+
+  private removeFovOverlay(): void {
+    if (this.fovOverlay) {
+      this.document.removeEventListener('mousemove', this.mouseMoveHandler);
+      this.fovOverlay.remove();
+      this.fovOverlay = null;
+    }
+  }
+
+  // --- Typography Helpers ---
   private loadFont(family: string): void {
     // Extract just the primary font name (e.g. "'Fira Code', monospace" -> "Fira Code")
     const primaryFont = family.split(',')[0].replace(/['"]/g, '').trim();
@@ -137,6 +197,7 @@ export class DomService {
       const urlFamily = primaryFont.replace(/\s+/g, '+');
       const linkId = `font-${urlFamily.toLowerCase()}`;
       
+      // fetch fonts from Google Fonts
       if (!this.document.getElementById(linkId)) {
         const link = this.document.createElement('link');
         link.id = linkId; 
@@ -186,6 +247,7 @@ export class DomService {
     root.style.fontSize = `${scale * 100}%`;
   }
 
+  // --- Shape Helper ---
   applyShape(scale: number): void {
     const root = this.document.documentElement;
     for (const role of SHAPE_ROLES) {
@@ -196,6 +258,7 @@ export class DomService {
     }
   }
 
+  // --- Motion Helper ---
   applyMotion(scale: number): void {
     const root = this.document.documentElement;
     const styleId = 'theme-motion-override';
@@ -225,6 +288,7 @@ export class DomService {
     root.style.setProperty('--theme-motion-scale', scale.toString());
   }
 
+  // --- Other Helpers ---
   applyTokens<T extends object>(tokens: T): void {
     const root = this.document.documentElement;
 

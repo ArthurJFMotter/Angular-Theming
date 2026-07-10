@@ -63,6 +63,8 @@ export const SCREEN_FILTERS: { value: ScreenFilter; label: string; desc: string 
   { value: 'glare', label: 'Sunlight Glare', desc: 'Washed out, low-contrast screen' },
   { value: 'nightshift', label: 'Night Shift', desc: 'Warm blue-light reduction' },
   { value: 'astigmatism', label: 'Astigmatism', desc: 'Dark mode halation / streaking' },
+  { value: 'macular', label: 'Macular Degeneration', desc: 'Central vision loss (Mouse Tracked)' },
+  { value: 'glaucoma', label: 'Glaucoma', desc: 'Tunnel vision (Mouse Tracked)' },
 ];
 
 export const FONT_OPTIONS = [
