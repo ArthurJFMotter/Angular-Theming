@@ -19,6 +19,27 @@ body {
     color 200ms ease;
 }
 
+:root {
+  /* 
+    Fallback Semantic Tokens 
+    These ensure the UI doesn't break if the dynamic ColorEngine domain is omitted.
+  */
+  --mat-sys-success: #188038;
+  --mat-sys-on-success: #ffffff;
+  --mat-sys-success-container: #e6f4ea;
+  --mat-sys-on-success-container: #137333;
+  
+  --mat-sys-warning: #f29900;
+  --mat-sys-on-warning: #ffffff;
+  --mat-sys-warning-container: #fef7e0;
+  --mat-sys-on-warning-container: #b06000;
+  
+  --mat-sys-info: #1967d2;
+  --mat-sys-on-info: #ffffff;
+  --mat-sys-info-container: #e8f0fe;
+  --mat-sys-on-info-container: #174ea6;
+}
+
 // Smooth, non-jarring crossfade whenever the theme attributes change.
 * {
   transition:

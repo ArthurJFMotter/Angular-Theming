@@ -165,6 +165,7 @@
           </mat-card-header>
           <mat-card-content>
             <!-- Controls for spawn position -->
+             @if (prefs.hasNotifications) {
             <div class="snackbar-controls">
               <mat-form-field appearance="outline" subscriptSizing="dynamic">
                 <mat-label>Vertical Spawn</mat-label>
@@ -190,6 +191,7 @@
             </div>
 
             <mat-divider class="section-divider"></mat-divider>
+          }
 
             <!-- Triggers -->
             <div class="button-row">
