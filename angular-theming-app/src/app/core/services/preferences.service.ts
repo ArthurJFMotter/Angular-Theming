@@ -1,459 +1,381 @@
-import { Injectable, signal, computed } from '@angular/core';
-import {
-  ColorScheme,
-  CustomColors,
-  CustomProfile,
-  ThemeMode,
-  ContrastMode,
-  CvdMode,
-  PreferencesState,
-  SchemeVariant,
-  ScreenFilter,
-  CvdIntent,
-} from '../models/preferences.types';
+import { Injectable, Optional, computed } from '@angular/core';
+import { PreferencesState, CustomColors } from '../models/preferences.types';
 import {
   DEFAULT_PREFERENCES_STATE,
   isValidHexColor,
 } from '../models/preferences.constants';
-import { MediaQueryService } from './media-query.service';
-import { ColorEngine } from '../utils/engines/color-engine';
-import {
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
+import { AccessibilityPreferencesService } from './accessibility-preferences.service';
+import { ColorPreferencesService } from './color-preferences.service';
+import { LayoutPreferencesService } from './layout-preferences.service';
+import { NotificationPreferencesService } from './notification-preferences.service';
+import { TypographyPreferencesService } from './typography-preferences.service';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
-  // State Signals
-  private readonly modeSignal = signal<ThemeMode>(
-    DEFAULT_PREFERENCES_STATE.mode,
-  );
+  constructor(
+    @Optional() public color: ColorPreferencesService,
+    @Optional() public accessibility: AccessibilityPreferencesService,
+    @Optional() public typography: TypographyPreferencesService,
+    @Optional() public layout: LayoutPreferencesService,
+    @Optional() public notifications: NotificationPreferencesService,
+  ) {}
 
-  private readonly autoContrastSignal = signal<boolean>(
-    DEFAULT_PREFERENCES_STATE.autoContrast,
-  );
-
-  private readonly contrastLevelSignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.contrastLevel,
-  );
-
-  private readonly schemeSignal = signal<ColorScheme>(
-    DEFAULT_PREFERENCES_STATE.scheme,
-  );
-
-  private readonly variantSignal = signal<SchemeVariant>(
-    DEFAULT_PREFERENCES_STATE.variant,
-  );
-
-  private readonly customColorsSignal = signal<CustomColors>(
-    DEFAULT_PREFERENCES_STATE.customColors,
-  );
-
-  private readonly savedProfilesSignal = signal<CustomProfile[]>(
-    DEFAULT_PREFERENCES_STATE.savedProfiles,
-  );
-
-  private readonly cvdSignal = signal<CvdMode>(DEFAULT_PREFERENCES_STATE.cvd);
-
-  private readonly cvdSeveritySignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.cvdSeverity,
-  );
-
-  private readonly cvdIntentSignal = signal<CvdIntent>(
-    DEFAULT_PREFERENCES_STATE.cvdIntent,
-  );
-
-  private readonly screenFilterSignal = signal<ScreenFilter>(
-    DEFAULT_PREFERENCES_STATE.screenFilter,
-  );
-
-  private readonly screenFilterIntensitySignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.screenFilterIntensity,
-  );
-
-  private readonly headingFontFamilySignal = signal<string>(
-    DEFAULT_PREFERENCES_STATE.headingFontFamily,
-  );
-
-  private readonly bodyFontFamilySignal = signal<string>(
-    DEFAULT_PREFERENCES_STATE.bodyFontFamily,
-  );
-
-  private readonly fontScaleSignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.fontScale,
-  );
-
-  private readonly shapeScaleSignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.shapeScale,
-  );
-
-  private readonly densityScaleSignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.densityScale,
-  );
-
-  private readonly motionScaleSignal = signal<number>(
-    DEFAULT_PREFERENCES_STATE.motionScale,
-  );
-
-  private readonly snackbarHSignal = signal<MatSnackBarHorizontalPosition>(
-    DEFAULT_PREFERENCES_STATE.snackbarHPosition,
-  );
-
-  private readonly snackbarVSignal = signal<MatSnackBarVerticalPosition>(
-    DEFAULT_PREFERENCES_STATE.snackbarVPosition,
-  );
-
-  // Readonly exposures
-  readonly mode = this.modeSignal.asReadonly();
-  readonly autoContrast = this.autoContrastSignal.asReadonly();
-  readonly contrastLevel = this.contrastLevelSignal.asReadonly();
-  readonly scheme = this.schemeSignal.asReadonly();
-  readonly variant = this.variantSignal.asReadonly();
-  readonly customColors = this.customColorsSignal.asReadonly();
-  readonly savedProfiles = this.savedProfilesSignal.asReadonly();
-  readonly cvd = this.cvdSignal.asReadonly();
-  readonly cvdSeverity = this.cvdSeveritySignal.asReadonly();
-  readonly cvdIntent = this.cvdIntentSignal.asReadonly();
-  readonly screenFilter = this.screenFilterSignal.asReadonly();
-  readonly screenFilterIntensity =
-    this.screenFilterIntensitySignal.asReadonly();
-  readonly headingFontFamily = this.headingFontFamilySignal.asReadonly();
-  readonly bodyFontFamily = this.bodyFontFamilySignal.asReadonly();
-  readonly fontScale = this.fontScaleSignal.asReadonly();
-  readonly shapeScale = this.shapeScaleSignal.asReadonly();
-  readonly densityScale = this.densityScaleSignal.asReadonly();
-  readonly motionScale = this.motionScaleSignal.asReadonly();
-  readonly snackbarHPosition = this.snackbarHSignal.asReadonly();
-  readonly snackbarVPosition = this.snackbarVSignal.asReadonly();
-
-  // Computed state relying on MediaQueryService for 'auto' modes
-  readonly resolvedMode = computed<'light' | 'dark'>(() =>
-    this.modeSignal() === 'auto'
-      ? this.mediaQuery.prefersDark()
-        ? 'dark'
-        : 'light'
-      : (this.modeSignal() as 'light' | 'dark'),
-  );
-
-  readonly resolvedContrastLevel = computed<number>(() => {
-    if (this.autoContrastSignal()) {
-      // If OS prefers high contrast, jump to 1.0, otherwise 0
-      return this.mediaQuery.prefersHighContrast() ? 1.0 : 0.0;
-    }
-    return this.contrastLevelSignal();
+  // =========================================================
+  // THE MASTER STATE COMPUTED (For the ThemeSyncService effect)
+  // =========================================================
+  readonly preferences = computed<PreferencesState>(() => {
+    return {
+      ...(this.color && {
+        color: {
+          mode: this.color.mode(),
+          autoContrast: this.color.autoContrast(),
+          contrastLevel: this.color.contrastLevel(),
+          scheme: this.color.scheme(),
+          variant: this.color.variant(),
+          customColors: this.color.customColors(),
+          savedProfiles: this.color.savedProfiles(),
+        },
+      }),
+      ...(this.accessibility && {
+        accessibility: {
+          cvd: this.accessibility.cvd(),
+          cvdSeverity: this.accessibility.cvdSeverity(),
+          cvdIntent: this.accessibility.cvdIntent(),
+          screenFilter: this.accessibility.screenFilter(),
+          screenFilterIntensity: this.accessibility.screenFilterIntensity(),
+        },
+      }),
+      ...(this.typography && {
+        typography: {
+          headingFontFamily: this.typography.headingFontFamily(),
+          bodyFontFamily: this.typography.bodyFontFamily(),
+          fontScale: this.typography.fontScale(),
+        },
+      }),
+      ...(this.layout && {
+        layout: {
+          shapeScale: this.layout.shapeScale(),
+          densityScale: this.layout.densityScale(),
+          motionScale: this.layout.motionScale(),
+        },
+      }),
+      ...(this.notifications && {
+        notifications: {
+          snackbarHPosition: this.notifications.snackbarHPosition(),
+          snackbarVPosition: this.notifications.snackbarVPosition(),
+        },
+      }),
+    };
   });
 
-  readonly activeCustomColors = computed<CustomColors>(() => {
-    const scheme = this.schemeSignal();
-    if (scheme === 'custom') return this.customColorsSignal();
-    const profile = this.savedProfilesSignal().find((p) => p.id === scheme);
-    return profile ? profile.colors : this.customColorsSignal();
-  });
+  // =========================================================
+  // PROXIES FOR UI COMPONENTS (So templates don't break!)
+  // =========================================================
 
-  readonly activeProfile = computed<CustomProfile | undefined>(() =>
-    this.savedProfilesSignal().find((p) => p.id === this.schemeSignal()),
-  );
-
-  readonly canCreateColorProfile = computed(
-    () => this.savedProfilesSignal().length < 12,
-  );
-
-  // Full state payload getter for the ThemeSyncService
-  readonly preferences = computed<PreferencesState>(() => ({
-    mode: this.modeSignal(),
-    autoContrast: this.autoContrastSignal(),
-    contrastLevel: this.contrastLevelSignal(),
-    scheme: this.schemeSignal(),
-    variant: this.variantSignal(),
-    customColors: this.customColorsSignal(),
-    savedProfiles: this.savedProfilesSignal(),
-    cvd: this.cvdSignal(),
-    cvdSeverity: this.cvdSeveritySignal(),
-    cvdIntent: this.cvdIntentSignal(),
-    screenFilter: this.screenFilterSignal(),
-    screenFilterIntensity: this.screenFilterIntensitySignal(),
-    headingFontFamily: this.headingFontFamilySignal(),
-    bodyFontFamily: this.bodyFontFamilySignal(),
-    fontScale: this.fontScaleSignal(),
-    shapeScale: this.shapeScaleSignal(),
-    densityScale: this.densityScaleSignal(),
-    motionScale: this.motionScaleSignal(),
-    snackbarHPosition: this.snackbarHSignal(),
-    snackbarVPosition: this.snackbarVSignal(),
-  }));
-
-  constructor(private mediaQuery: MediaQueryService) {}
-
-  // Setters
-  setMode(mode: ThemeMode): void {
-    this.modeSignal.set(mode);
+  // -- Color Proxies --
+  get mode() {
+    return this.color.mode;
   }
-  setAutoContrast(auto: boolean): void {
-    this.autoContrastSignal.set(auto);
+  get autoContrast() {
+    return this.color.autoContrast;
   }
-  setContrastLevel(level: number): void {
-    this.contrastLevelSignal.set(level);
+  get contrastLevel() {
+    return this.color.contrastLevel;
   }
-  setScheme(scheme: ColorScheme): void {
-    this.schemeSignal.set(scheme);
+  get scheme() {
+    return this.color.scheme;
   }
-  setVariant(variant: SchemeVariant): void {
-    this.variantSignal.set(variant);
+  get variant() {
+    return this.color.variant;
   }
-  setCvdMode(mode: CvdMode): void {
-    this.cvdSignal.set(mode);
+  get customColors() {
+    return this.color.customColors;
   }
-  setCvdSeverity(val: number): void {
-    this.cvdSeveritySignal.set(val);
-  }
-  setCvdIntent(intent: CvdIntent): void {
-    this.cvdIntentSignal.set(intent);
-  }
-  setScreenFilter(val: ScreenFilter): void {
-    this.screenFilterSignal.set(val);
-  }
-  setScreenFilterIntensity(val: number): void {
-    this.screenFilterIntensitySignal.set(val);
-  }
-  setHeadingFontFamily(family: string): void {
-    this.headingFontFamilySignal.set(family);
-  }
-  setBodyFontFamily(family: string): void {
-    this.bodyFontFamilySignal.set(family);
-  }
-  setFontScale(scale: number): void {
-    this.fontScaleSignal.set(scale);
-  }
-  setShapeScale(scale: number): void {
-    this.shapeScaleSignal.set(scale);
-  }
-  setDensityScale(scale: number): void {
-    this.densityScaleSignal.set(scale);
-  }
-  setMotionScale(scale: number): void {
-    this.motionScaleSignal.set(scale);
-  }
-  setSnackbarHPosition(pos: MatSnackBarHorizontalPosition): void {
-    this.snackbarHSignal.set(pos);
-  }
-  setSnackbarVPosition(pos: MatSnackBarVerticalPosition): void {
-    this.snackbarVSignal.set(pos);
+  get savedProfiles() {
+    return this.color.savedProfiles;
   }
 
-  saveCurrentAsProfile(name: string): void {
-    const newId = 'profile-' + Date.now();
-    this.savedProfilesSignal.update((p) => [
-      ...p,
-      { id: newId, name, colors: { ...this.activeCustomColors() } },
-    ]);
-    this.schemeSignal.set(newId);
+  get resolvedMode() {
+    return this.color.resolvedMode;
+  }
+  get resolvedContrastLevel() {
+    return this.color.resolvedContrastLevel;
+  }
+  get activeCustomColors() {
+    return this.color.activeCustomColors;
+  }
+  get activeProfile() {
+    return this.color.activeProfile;
+  }
+  get canCreateColorProfile() {
+    return this.color.canCreateColorProfile;
   }
 
-  updateActiveProfileName(name: string): void {
-    const current = this.schemeSignal();
-    if (current.startsWith('profile-')) {
-      this.savedProfilesSignal.update((profiles) =>
-        profiles.map((p) => (p.id === current ? { ...p, name } : p)),
-      );
-    }
+  setMode(v: any) {
+    this.color?.setMode(v);
   }
-
-  deleteActiveProfile(): void {
-    const current = this.schemeSignal();
-    if (current.startsWith('profile-')) {
-      this.savedProfilesSignal.update((p) => p.filter((x) => x.id !== current));
-      this.schemeSignal.set('custom');
-    }
+  setAutoContrast(v: any) {
+    this.color?.setAutoContrast(v);
   }
-
-  setCustomColors(colors: Partial<CustomColors>): void {
-    if (
-      this.schemeSignal() !== 'custom' &&
-      !this.schemeSignal().startsWith('profile-')
-    )
-      this.schemeSignal.set('custom');
-    const nextColors = { ...this.activeCustomColors() };
-    if (colors.primary !== undefined && isValidHexColor(colors.primary))
-      nextColors.primary = colors.primary;
-
-    const ROLES = [
-      'secondary',
-      'tertiary',
-      'error',
-      'success',
-      'warning',
-      'info',
-    ] as const;
-    for (const role of ROLES) {
-      if (colors[role] !== undefined) {
-        const val = colors[role];
-        nextColors[role] = val && isValidHexColor(val) ? val : undefined;
-      }
-    }
-
-    if (this.schemeSignal() === 'custom')
-      this.customColorsSignal.set(nextColors);
-    else
-      this.savedProfilesSignal.update((p) =>
-        p.map((x) =>
-          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
-        ),
-      );
+  setContrastLevel(v: any) {
+    this.color?.setContrastLevel(v);
   }
-
-  clearCustomColorRole(
-    role: 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info',
-  ): void {
-    const nextColors = { ...this.activeCustomColors() };
-    delete nextColors[role];
-    if (this.schemeSignal() === 'custom')
-      this.customColorsSignal.set(nextColors);
-    else
-      this.savedProfilesSignal.update((p) =>
-        p.map((x) =>
-          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
-        ),
-      );
+  setScheme(v: any) {
+    this.color?.setScheme(v);
   }
-
-  addExtendedColor(label: string, hexColor: string): void {
-    const nextColors = { ...this.activeCustomColors() };
-    const currentExtended = nextColors.extended || [];
-
-    if (currentExtended.length >= 5) {
-      console.warn('Maximum of 5 extended colors reached per profile.');
-      return;
-    }
-
-    const id = label
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-');
-
-    nextColors.extended = [...currentExtended, { id, label, color: hexColor }];
-
-    if (this.schemeSignal() === 'custom')
-      this.customColorsSignal.set(nextColors);
-    else
-      this.savedProfilesSignal.update((p) =>
-        p.map((x) =>
-          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
-        ),
-      );
+  setVariant(v: any) {
+    this.color?.setVariant(v);
   }
-
-  updateExtendedColor(
-    id: string,
-    updates: { label?: string; color?: string },
-  ): void {
-    const nextColors = { ...this.activeCustomColors() };
-    if (!nextColors.extended) return;
-
-    nextColors.extended = nextColors.extended.map((c) =>
-      c.id === id ? { ...c, ...updates } : c,
-    );
-
-    if (this.schemeSignal() === 'custom')
-      this.customColorsSignal.set(nextColors);
-    else
-      this.savedProfilesSignal.update((p) =>
-        p.map((x) =>
-          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
-        ),
-      );
+  saveCurrentAsProfile(name: string) {
+    this.color?.saveCurrentAsProfile(name);
   }
-
-  removeExtendedColor(id: string): void {
-    const nextColors = { ...this.activeCustomColors() };
-    if (!nextColors.extended) return;
-
-    nextColors.extended = nextColors.extended.filter((c) => c.id !== id);
-
-    if (this.schemeSignal() === 'custom')
-      this.customColorsSignal.set(nextColors);
-    else
-      this.savedProfilesSignal.update((p) =>
-        p.map((x) =>
-          x.id === this.schemeSignal() ? { ...x, colors: nextColors } : x,
-        ),
-      );
+  updateActiveProfileName(name: string) {
+    this.color?.updateActiveProfileName(name);
   }
-
+  deleteActiveProfile() {
+    this.color?.deleteActiveProfile();
+  }
+  setCustomColors(colors: Partial<CustomColors>) {
+    this.color?.setCustomColors(colors);
+  }
+  clearCustomColorRole(role: any) {
+    this.color?.clearCustomColorRole(role);
+  }
+  addExtendedColor(label: string, hex: string) {
+    this.color?.addExtendedColor(label, hex);
+  }
+  updateExtendedColor(id: string, updates: any) {
+    this.color?.updateExtendedColor(id, updates);
+  }
+  removeExtendedColor(id: string) {
+    this.color?.removeExtendedColor(id);
+  }
   suggestedCustomDefaults() {
-    return ColorEngine.suggestDefaults(
-      this.activeCustomColors().primary,
-      this.variantSignal(),
+    return (
+      this.color?.suggestedCustomDefaults() || ({} as Required<CustomColors>)
     );
   }
 
+  // -- Accessibility Proxies --
+  get cvd() {
+    return this.accessibility.cvd;
+  }
+  get cvdSeverity() {
+    return this.accessibility.cvdSeverity;
+  }
+  get cvdIntent() {
+    return this.accessibility.cvdIntent;
+  }
+  get screenFilter() {
+    return this.accessibility.screenFilter;
+  }
+  get screenFilterIntensity() {
+    return this.accessibility.screenFilterIntensity;
+  }
+
+  setCvdMode(v: any) {
+    this.accessibility?.setCvdMode(v);
+  }
+  setCvdSeverity(v: any) {
+    this.accessibility?.setCvdSeverity(v);
+  }
+  setCvdIntent(v: any) {
+    this.accessibility?.setCvdIntent(v);
+  }
+  setScreenFilter(v: any) {
+    this.accessibility?.setScreenFilter(v);
+  }
+  setScreenFilterIntensity(v: any) {
+    this.accessibility?.setScreenFilterIntensity(v);
+  }
+
+  // -- Typography Proxies --
+  get headingFontFamily() {
+    return this.typography.headingFontFamily;
+  }
+  get bodyFontFamily() {
+    return this.typography.bodyFontFamily;
+  }
+  get fontScale() {
+    return this.typography.fontScale;
+  }
+
+  setHeadingFontFamily(v: any) {
+    this.typography?.setHeadingFontFamily(v);
+  }
+  setBodyFontFamily(v: any) {
+    this.typography?.setBodyFontFamily(v);
+  }
+  setFontScale(v: any) {
+    this.typography?.setFontScale(v);
+  }
+
+  // -- Layout Proxies --
+  get shapeScale() {
+    return this.layout.shapeScale;
+  }
+  get densityScale() {
+    return this.layout.densityScale;
+  }
+  get motionScale() {
+    return this.layout.motionScale;
+  }
+
+  setShapeScale(v: any) {
+    this.layout?.setShapeScale(v);
+  }
+  setDensityScale(v: any) {
+    this.layout?.setDensityScale(v);
+  }
+  setMotionScale(v: any) {
+    this.layout?.setMotionScale(v);
+  }
+
+  // -- Notification Proxies --
+  get snackbarHPosition() {
+    return this.notifications?.snackbarHPosition;
+  }
+  get snackbarVPosition() {
+    return this.notifications?.snackbarVPosition;
+  }
+
+  setSnackbarHPosition(v: any) {
+    this.notifications?.setSnackbarHPosition(v);
+  }
+  setSnackbarVPosition(v: any) {
+    this.notifications?.setSnackbarVPosition(v);
+  }
+
+  // =========================================================
+  // GLOBAL RESTORE & RESET
+  // =========================================================
   resetToDefaults(): void {
     this.patchState(DEFAULT_PREFERENCES_STATE);
   }
 
-  // Called once on app startup by ThemeSyncService
-  patchState(
-    parsed: Partial<PreferencesState> & { highContrast?: boolean },
-  ): void {
-    if (parsed.mode) this.modeSignal.set(parsed.mode);
-    if (parsed.scheme) this.schemeSignal.set(parsed.scheme);
-    if (parsed.variant) this.variantSignal.set(parsed.variant);
-    if (parsed.savedProfiles)
-      this.savedProfilesSignal.set(
-        parsed.savedProfiles.map((p) => ({
-          ...p,
-          name: p.name || 'Saved Profile',
-        })),
-      );
-    if (parsed.autoContrast !== undefined)
-      this.autoContrastSignal.set(parsed.autoContrast);
-    if (parsed.contrastLevel !== undefined)
-      this.contrastLevelSignal.set(parsed.contrastLevel);
-    if (parsed.cvd) this.cvdSignal.set(parsed.cvd);
-    if (parsed.cvdSeverity !== undefined)
-      this.cvdSeveritySignal.set(parsed.cvdSeverity);
-    if (parsed.cvdIntent) this.cvdIntentSignal.set(parsed.cvdIntent);
-    if (parsed.screenFilter !== undefined)
-      this.screenFilterSignal.set(parsed.screenFilter);
-    if (parsed.screenFilterIntensity !== undefined)
-      this.screenFilterIntensitySignal.set(parsed.screenFilterIntensity);
-    if (parsed.headingFontFamily)
-      this.headingFontFamilySignal.set(parsed.headingFontFamily);
-    if (parsed.bodyFontFamily)
-      this.bodyFontFamilySignal.set(parsed.bodyFontFamily);
+  patchState(parsed: any): void {
+    if (!parsed) return;
 
-    // Migration for legacy saves
-    if ((parsed as any).fontFamily && !parsed.headingFontFamily) {
-      this.headingFontFamilySignal.set((parsed as any).fontFamily);
-      this.bodyFontFamilySignal.set((parsed as any).fontFamily);
+    // Backward Compatibility Mapper for old flat LocalStorage payloads
+    const state: PreferencesState = parsed.color
+      ? parsed
+      : {
+          color: {
+            mode: parsed.mode,
+            autoContrast: parsed.autoContrast,
+            contrastLevel: parsed.contrastLevel,
+            scheme: parsed.scheme,
+            variant: parsed.variant,
+            customColors: parsed.customColors,
+            savedProfiles: parsed.savedProfiles,
+          },
+          accessibility: {
+            cvd: parsed.cvd,
+            cvdSeverity: parsed.cvdSeverity,
+            cvdIntent: parsed.cvdIntent,
+            screenFilter: parsed.screenFilter,
+            screenFilterIntensity: parsed.screenFilterIntensity,
+          },
+          typography: {
+            headingFontFamily: parsed.headingFontFamily || parsed.fontFamily,
+            bodyFontFamily: parsed.bodyFontFamily || parsed.fontFamily,
+            fontScale: parsed.fontScale,
+          },
+          layout: {
+            shapeScale: parsed.shapeScale,
+            densityScale: parsed.densityScale,
+            motionScale: parsed.motionScale,
+          },
+          notifications: {
+            snackbarHPosition: parsed.snackbarHPosition,
+            snackbarVPosition: parsed.snackbarVPosition,
+          },
+        };
+
+    // Safely route the nested objects to their respective sub-services
+    if (this.color && state.color) {
+      if (state.color.mode !== undefined) this.color.setMode(state.color.mode);
+      if (state.color.autoContrast !== undefined)
+        this.color.setAutoContrast(state.color.autoContrast);
+      if (state.color.contrastLevel !== undefined)
+        this.color.setContrastLevel(state.color.contrastLevel);
+      if (state.color.scheme !== undefined)
+        this.color.setScheme(state.color.scheme);
+      if (state.color.variant !== undefined)
+        this.color.setVariant(state.color.variant);
+      if (state.color.savedProfiles)
+        this.color.savedProfiles.set(state.color.savedProfiles);
+
+      // Strict Custom Colors restoration
+      if (
+        state.color.customColors &&
+        isValidHexColor(state.color.customColors.primary)
+      ) {
+        const restored: CustomColors = {
+          primary: state.color.customColors.primary,
+        };
+        const ROLES = [
+          'secondary',
+          'tertiary',
+          'error',
+          'success',
+          'warning',
+          'info',
+        ] as const;
+        for (const role of ROLES) {
+          const value = state.color.customColors[role];
+          if (isValidHexColor(value)) restored[role] = value;
+        }
+        if (state.color.customColors.extended)
+          restored.extended = state.color.customColors.extended;
+        this.color.customColors.set(restored);
+      }
     }
 
-    if (parsed.fontScale) this.fontScaleSignal.set(parsed.fontScale);
-    if (parsed.shapeScale !== undefined)
-      this.shapeScaleSignal.set(parsed.shapeScale);
-    if (parsed.densityScale !== undefined)
-      this.densityScaleSignal.set(parsed.densityScale);
-    if (parsed.motionScale !== undefined)
-      this.motionScaleSignal.set(parsed.motionScale);
-    if (parsed.snackbarHPosition)
-      this.snackbarHSignal.set(parsed.snackbarHPosition);
-    if (parsed.snackbarVPosition)
-      this.snackbarVSignal.set(parsed.snackbarVPosition);
+    if (this.accessibility && state.accessibility) {
+      if (state.accessibility.cvd !== undefined)
+        this.accessibility.setCvdMode(state.accessibility.cvd);
+      if (state.accessibility.cvdSeverity !== undefined)
+        this.accessibility.setCvdSeverity(state.accessibility.cvdSeverity);
+      if (state.accessibility.cvdIntent !== undefined)
+        this.accessibility.setCvdIntent(state.accessibility.cvdIntent);
+      if (state.accessibility.screenFilter !== undefined)
+        this.accessibility.setScreenFilter(state.accessibility.screenFilter);
+      if (state.accessibility.screenFilterIntensity !== undefined)
+        this.accessibility.setScreenFilterIntensity(
+          state.accessibility.screenFilterIntensity,
+        );
+    }
 
-    if (parsed.customColors && isValidHexColor(parsed.customColors.primary)) {
-      const restored: CustomColors = { primary: parsed.customColors.primary };
-      const ROLES = [
-        'secondary',
-        'tertiary',
-        'error',
-        'success',
-        'warning',
-        'info',
-      ] as const;
-      for (const role of ROLES) {
-        const value = parsed.customColors[role];
-        if (isValidHexColor(value)) restored[role] = value;
-      }
-      this.customColorsSignal.set(restored);
+    if (this.typography && state.typography) {
+      if (state.typography.headingFontFamily !== undefined)
+        this.typography.setHeadingFontFamily(
+          state.typography.headingFontFamily,
+        );
+      if (state.typography.bodyFontFamily !== undefined)
+        this.typography.setBodyFontFamily(state.typography.bodyFontFamily);
+      if (state.typography.fontScale !== undefined)
+        this.typography.setFontScale(state.typography.fontScale);
+    }
+
+    if (this.layout && state.layout) {
+      if (state.layout.shapeScale !== undefined)
+        this.layout.setShapeScale(state.layout.shapeScale);
+      if (state.layout.densityScale !== undefined)
+        this.layout.setDensityScale(state.layout.densityScale);
+      if (state.layout.motionScale !== undefined)
+        this.layout.setMotionScale(state.layout.motionScale);
+    }
+
+    if (this.notifications && state.notifications) {
+      if (state.notifications.snackbarHPosition !== undefined)
+        this.notifications.setSnackbarHPosition(
+          state.notifications.snackbarHPosition,
+        );
+      if (state.notifications.snackbarVPosition !== undefined)
+        this.notifications.setSnackbarVPosition(
+          state.notifications.snackbarVPosition,
+        );
     }
   }
 }

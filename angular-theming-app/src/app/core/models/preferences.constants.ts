@@ -13,27 +13,37 @@ export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
-export const DEFAULT_PREFERENCES_STATE: PreferencesState = {
-  mode: 'auto',
-  autoContrast: true,
-  contrastLevel: 0,
-  scheme: 'custom',
-  variant: 'tonal-spot',
-  customColors: DEFAULT_CUSTOM_COLORS,
-  savedProfiles: [],
-  cvd: 'none',
-  cvdSeverity: 100,
-  cvdIntent: 'simulate',
-  screenFilter: 'none',
-  screenFilterIntensity: 50,
-  headingFontFamily: 'Roboto',
-  bodyFontFamily: 'Roboto',
-  fontScale: 1,
-  shapeScale: 1,
-  densityScale: 0,
-  motionScale: 1,
-  snackbarHPosition: 'center',
-  snackbarVPosition: 'bottom',
+export const DEFAULT_PREFERENCES_STATE: Required<PreferencesState> = {
+  color: {
+    mode: 'auto',
+    autoContrast: true,
+    contrastLevel: 0,
+    scheme: 'custom',
+    variant: 'tonal-spot',
+    customColors: DEFAULT_CUSTOM_COLORS,
+    savedProfiles: [],
+  },
+  accessibility: {
+    cvd: 'none',
+    cvdSeverity: 100,
+    cvdIntent: 'simulate',
+    screenFilter: 'none',
+    screenFilterIntensity: 50,
+  },
+  typography: {
+    headingFontFamily: 'Roboto',
+    bodyFontFamily: 'Roboto',
+    fontScale: 1,
+  },
+  layout: {
+    shapeScale: 1,
+    densityScale: 0,
+    motionScale: 1,
+  },
+  notifications: {
+    snackbarHPosition: 'center',
+    snackbarVPosition: 'bottom',
+  }
 };
 
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];

@@ -24,35 +24,55 @@ export class ThemeSyncService {
     // Setup reactive side-effect to apply changes whenever state updates
     effect(() => {
       const state = this.prefs.preferences();
-      const activeMode = this.prefs.resolvedMode();
-      const contrastValue = this.prefs.resolvedContrastLevel();
       
-      // Save to persistence
+      // Save full state to persistence
       this.storage.save(state);
 
-      // Apply structural, layout, & motion styling
-      this.dom.applyAccessibilityFilters(state.cvd, state.cvdSeverity, state.cvdIntent, state.screenFilter, state.screenFilterIntensity);
-      this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
-      this.dom.applyTypography(state.headingFontFamily, state.bodyFontFamily, state.fontScale);
-      this.dom.applyShape(state.shapeScale);
-      this.dom.applyMotion(state.motionScale);
+      // --- COLOR DOMAIN ---
+      if (state.color) {
+        const activeMode = this.prefs.resolvedMode();
+        const contrastValue = this.prefs.resolvedContrastLevel();
+        
+        this.dom.setAttribute('data-theme-mode', activeMode);
+        this.dom.setAttribute('data-theme-scheme', state.color.scheme);
+        this.dom.setColorScheme(activeMode);
 
-      // Apply HTML data attributes for SCSS targeting
-      this.dom.setAttribute('data-theme-mode', activeMode);
-      this.dom.setAttribute('data-theme-scheme', state.scheme);
-      this.dom.setAttribute('data-theme-density', state.densityScale.toString());
-      this.dom.setColorScheme(activeMode);
-
-      // Handle high contrast data attribute
-      if (contrastValue >= 0.5) {
-        this.dom.setAttribute('data-theme-contrast', 'high');
-      } else {
-        this.dom.removeAttribute('data-theme-contrast');
+        if (contrastValue >= 0.5) {
+          this.dom.setAttribute('data-theme-contrast', 'high');
+        } else {
+          this.dom.removeAttribute('data-theme-contrast');
+        }
+        
+        const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, contrastValue, state.color.variant);
+        this.dom.applyTokens(tokens);
       }
-      
-      // Handle color variant data attribute
-      const tokens = ColorEngine.buildTokens(this.prefs.activeCustomColors(), activeMode, contrastValue, state.variant);
-      this.dom.applyTokens(tokens);
+
+      // --- ACCESSIBILITY DOMAIN ---
+      if (state.accessibility) {
+        this.dom.applyAccessibilityFilters(
+          state.accessibility.cvd, 
+          state.accessibility.cvdSeverity, 
+          state.accessibility.cvdIntent, 
+          state.accessibility.screenFilter, 
+          state.accessibility.screenFilterIntensity
+        );
+      }
+
+      // --- TYPOGRAPHY DOMAIN ---
+      if (state.typography) {
+        this.dom.applyTypography(
+          state.typography.headingFontFamily, 
+          state.typography.bodyFontFamily, 
+          state.typography.fontScale
+        );
+      }
+
+      // --- LAYOUT DOMAIN ---
+      if (state.layout) {
+        this.dom.setAttribute('data-theme-density', state.layout.densityScale.toString());
+        this.dom.applyShape(state.layout.shapeScale);
+        this.dom.applyMotion(state.layout.motionScale);
+      }
     });
   }
 }

@@ -34,25 +34,47 @@ export interface CustomProfile {
   colors: CustomColors;
 }
 
-export interface PreferencesState {
+// Domain Slices
+export interface ColorPreferences {
   mode: ThemeMode;
   autoContrast: boolean;
-  contrastLevel: number; // -1.0 to 1.0
+  contrastLevel: number;
   scheme: ColorScheme;
   variant: SchemeVariant;
   customColors: CustomColors;
   savedProfiles: CustomProfile[];
+}
+
+export interface AccessibilityPreferences {
   cvd: CvdMode;
-  cvdSeverity: number; // 0 to 100
+  cvdSeverity: number;
   cvdIntent: CvdIntent;
   screenFilter: ScreenFilter;
-  screenFilterIntensity: number; // 0 to 100
+  screenFilterIntensity: number;
+}
+
+export interface TypographyPreferences {
   headingFontFamily: string;
   bodyFontFamily: string;
   fontScale: number;
+}
+
+export interface LayoutPreferences {
   shapeScale: number;
   densityScale: number;
   motionScale: number;
+}
+
+export interface NotificationPreferences {
   snackbarHPosition: MatSnackBarHorizontalPosition;
   snackbarVPosition: MatSnackBarVerticalPosition;
+}
+
+// Master State Compose (EVERY domain is optional)
+export interface PreferencesState {
+  color?: ColorPreferences;
+  accessibility?: AccessibilityPreferences;
+  typography?: TypographyPreferences;
+  layout?: LayoutPreferences;
+  notifications?: NotificationPreferences;
 }
