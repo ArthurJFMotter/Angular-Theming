@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 import { CvdMode, CvdIntent, ScreenFilter } from '../models/preferences.types';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class AccessibilityPreferencesService {
   private defaults = DEFAULT_PREFERENCES_STATE.accessibility;
 

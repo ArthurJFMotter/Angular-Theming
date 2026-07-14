@@ -72,6 +72,7 @@ export interface NotificationPreferences {
 
 // Master State Compose (EVERY domain is optional)
 export interface PreferencesState {
+   _v?: number;
   color?: ColorPreferences;
   accessibility?: AccessibilityPreferences;
   typography?: TypographyPreferences;

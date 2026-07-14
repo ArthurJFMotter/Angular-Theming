@@ -14,6 +14,7 @@ export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_PREFERENCES_STATE: Required<PreferencesState> = {
+   _v: 2, // preferences Version (current: version 2.0)
   color: {
     mode: 'auto',
     autoContrast: true,

@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class LayoutPreferencesService {
   private defaults = DEFAULT_PREFERENCES_STATE.layout;
 

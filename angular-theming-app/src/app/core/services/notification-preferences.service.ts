@@ -5,7 +5,7 @@ import {
 } from '@angular/material/snack-bar';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class NotificationPreferencesService {
   private defaults = DEFAULT_PREFERENCES_STATE.notifications;
 

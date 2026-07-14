@@ -8,103 +8,382 @@
   <mat-divider></mat-divider>
 
   <div class="settings-content">
-    <!-- 1. COLORS -->
-    <div class="settings-section">
-      <div class="section-title">Color Scheme</div>
-      <div class="scheme-picker" role="group">
-        <!-- Saved Profiles -->
-        @for (profile of prefs.savedProfiles(); track profile.id) {
+    @if (prefs.hasColor) {
+      <!-- 1. COLORS -->
+      <div class="settings-section">
+        <div class="section-title">Color Scheme</div>
+        <div class="scheme-picker" role="group">
+          <!-- Saved Profiles -->
+          @for (profile of prefs.savedProfiles(); track profile.id) {
+            <button
+              type="button"
+              class="swatch"
+              [class.swatch--active]="prefs.scheme() === profile.id"
+              [style.--swatch-color]="profile.colors.primary"
+              [matTooltip]="
+                prefs.scheme() === profile.id
+                  ? 'Edit ' + profile.name
+                  : profile.name
+              "
+              (click)="onSchemeSelect(profile.id)"
+              [matMenuTriggerFor]="
+                prefs.scheme() === profile.id ? customMenu : null
+              "
+              (menuOpened)="onCustomMenuOpened(profile.id)"
+            >
+              @if (prefs.scheme() === profile.id) {
+                <mat-icon class="swatch__check">check</mat-icon>
+              }
+            </button>
+          }
+
+          <!-- Custom Scratchpad -->
           <button
             type="button"
-            class="swatch"
-            [class.swatch--active]="prefs.scheme() === profile.id"
-            [style.--swatch-color]="profile.colors.primary"
+            class="swatch swatch--custom"
+            [class.swatch--active]="prefs.scheme() === 'custom'"
+            [style.--swatch-color]="prefs.customColors().primary"
             [matTooltip]="
-              prefs.scheme() === profile.id
-                ? 'Edit ' + profile.name
-                : profile.name
+              prefs.scheme() === 'custom'
+                ? 'Edit custom colors'
+                : 'Custom colors'
             "
-            (click)="onSchemeSelect(profile.id)"
+            (click)="onSchemeSelect('custom')"
             [matMenuTriggerFor]="
-              prefs.scheme() === profile.id ? customMenu : null
+              prefs.scheme() === 'custom' ? customMenu : null
             "
-            (menuOpened)="onCustomMenuOpened(profile.id)"
+            (menuOpened)="onCustomMenuOpened('custom')"
           >
-            @if (prefs.scheme() === profile.id) {
+            @if (prefs.scheme() === "custom") {
               <mat-icon class="swatch__check">check</mat-icon>
+            } @else {
+              <mat-icon class="swatch__custom-icon">tune</mat-icon>
             }
           </button>
-        }
 
-        <!-- Custom Scratchpad -->
-        <button
-          type="button"
-          class="swatch swatch--custom"
-          [class.swatch--active]="prefs.scheme() === 'custom'"
-          [style.--swatch-color]="prefs.customColors().primary"
-          [matTooltip]="
-            prefs.scheme() === 'custom' ? 'Edit custom colors' : 'Custom colors'
-          "
-          (click)="onSchemeSelect('custom')"
-          [matMenuTriggerFor]="prefs.scheme() === 'custom' ? customMenu : null"
-          (menuOpened)="onCustomMenuOpened('custom')"
-        >
-          @if (prefs.scheme() === "custom") {
-            <mat-icon class="swatch__check">check</mat-icon>
-          } @else {
-            <mat-icon class="swatch__custom-icon">tune</mat-icon>
-          }
-        </button>
-
-        <mat-menu #customMenu="matMenu" class="custom-menu-panel">
-          <ng-template matMenuContent>
-            <div (click)="$event.stopPropagation()">
-              <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
-            </div>
-          </ng-template>
-        </mat-menu>
+          <mat-menu #customMenu="matMenu" class="custom-menu-panel">
+            <ng-template matMenuContent>
+              <div (click)="$event.stopPropagation()">
+                <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
+              </div>
+            </ng-template>
+          </mat-menu>
+        </div>
       </div>
-    </div>
-    <mat-divider></mat-divider>
+      <mat-divider></mat-divider>
 
-    <!-- 2. APPEARANCE -->
-    <div class="settings-section">
-      <div class="section-title">Appearance</div>
-      <div class="field-row">
-        <label>Theme Mode</label>
-        <mat-button-toggle-group
-          class="full-width-toggle"
-          [value]="prefs.mode()"
-          (change)="onModeChange($event.value)"
-        >
-          <mat-button-toggle value="light" matTooltip="Light mode"
-            ><mat-icon>light_mode</mat-icon></mat-button-toggle
+      <!-- 2. APPEARANCE -->
+      <div class="settings-section">
+        <div class="section-title">Appearance</div>
+        <div class="field-row">
+          <label>Theme Mode</label>
+          <mat-button-toggle-group
+            class="full-width-toggle"
+            [value]="prefs.mode()"
+            (change)="onModeChange($event.value)"
           >
-          <mat-button-toggle value="auto" matTooltip="System Default"
-            ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
+            <mat-button-toggle value="light" matTooltip="Light mode"
+              ><mat-icon>light_mode</mat-icon></mat-button-toggle
+            >
+            <mat-button-toggle value="auto" matTooltip="System Default"
+              ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
+            >
+            <mat-button-toggle value="dark" matTooltip="Dark mode"
+              ><mat-icon>dark_mode</mat-icon></mat-button-toggle
+            >
+          </mat-button-toggle-group>
+        </div>
+        <div class="field-row">
+          <label>Theme Variant</label>
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            class="full-width"
           >
-          <mat-button-toggle value="dark" matTooltip="Dark mode"
-            ><mat-icon>dark_mode</mat-icon></mat-button-toggle
+            <mat-select
+              [value]="prefs.variant()"
+              (selectionChange)="setVariant($event.value)"
+            >
+              <mat-select-trigger>
+                {{ getVariantLabel(prefs.variant()) }}
+              </mat-select-trigger>
+
+              @for (variant of variantOptions; track variant.value) {
+                <mat-option [value]="variant.value">
+                  <div
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      line-height: 1.2;
+                      padding: 6px 0;
+                    "
+                  >
+                    <span>{{ variant.label }}</span>
+                    <span
+                      style="
+                        font-size: 0.75rem;
+                        color: var(--mat-sys-on-surface-variant);
+                      "
+                      >{{ variant.desc }}</span
+                    >
+                  </div>
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Continuous Contrast Scale -->
+        <div class="slider-group" style="margin-top: 8px">
+          <div class="slider-header">
+            <label
+              >Contrast:
+              <span style="color: var(--mat-sys-primary)">{{
+                formatContrast(prefs.contrastLevel())
+              }}</span></label
+            >
+            <mat-slide-toggle
+              [checked]="prefs.autoContrast()"
+              (change)="prefs.setAutoContrast($event.checked)"
+            >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  font-weight: 400;
+                  color: var(--mat-sys-on-surface-variant);
+                "
+                >Auto (OS)</span
+              >
+            </mat-slide-toggle>
+          </div>
+
+          <div
+            class="slider-row"
+            [style.opacity]="prefs.autoContrast() ? '0.4' : '1'"
+            style="margin-top: 4px"
           >
-        </mat-button-toggle-group>
+            <button
+              mat-icon-button
+              (click)="decreaseContrast()"
+              [disabled]="prefs.autoContrast()"
+            >
+              <mat-icon>remove</mat-icon>
+            </button>
+
+            <mat-slider min="-1" max="1" step="0.5" discrete>
+              <input
+                matSliderThumb
+                [ngModel]="prefs.contrastLevel()"
+                (ngModelChange)="prefs.setContrastLevel($event)"
+                [disabled]="prefs.autoContrast()"
+              />
+            </mat-slider>
+
+            <button
+              mat-icon-button
+              (click)="increaseContrast()"
+              [disabled]="prefs.autoContrast()"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="field-row">
-        <label>Theme Variant</label>
+      <mat-divider></mat-divider>
+    }
+    @if (prefs.hasTypography) {
+      <!-- 3. TYPOGRAPHY -->
+      <div class="settings-section">
+        <div class="section-title">Typography</div>
+
+        <!-- Heading Font Picker -->
+        <div class="field-row">
+          <label>Heading Font (Display, Titles)</label>
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            class="full-width"
+          >
+            <!-- Text Input -->
+            <input
+              type="text"
+              matInput
+              [value]="prefs.headingFontFamily()"
+              (change)="setHeadingFontFamily($any($event.target).value)"
+              [matAutocomplete]="headingAuto"
+              placeholder="e.g. Oswald, serif"
+            />
+
+            <!-- Dropdown Options -->
+            <mat-autocomplete
+              #headingAuto="matAutocomplete"
+              (optionSelected)="setHeadingFontFamily($event.option.value)"
+            >
+              @for (font of fontOptions; track font.value) {
+                <mat-option
+                  [value]="font.value"
+                  [style.font-family]="font.value"
+                >
+                  {{ font.label }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- Body Font Picker -->
+        <div class="field-row" style="margin-top: 4px">
+          <label>Body Font (Text, Labels)</label>
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            class="full-width"
+          >
+            <!-- Text Input -->
+            <input
+              type="text"
+              matInput
+              [value]="prefs.bodyFontFamily()"
+              (change)="setBodyFontFamily($any($event.target).value)"
+              [matAutocomplete]="bodyAuto"
+              placeholder="e.g. Open Sans"
+            />
+
+            <!-- Dropdown Options -->
+            <mat-autocomplete
+              #bodyAuto="matAutocomplete"
+              (optionSelected)="setBodyFontFamily($event.option.value)"
+            >
+              @for (font of fontOptions; track font.value) {
+                <mat-option
+                  [value]="font.value"
+                  [style.font-family]="font.value"
+                >
+                  {{ font.label }}
+                </mat-option>
+              }
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- Size Scale Slider -->
+        <div class="slider-group" style="margin-top: 8px">
+          <div class="slider-header">
+            <label>Size Scale (Default: 100%)</label
+            ><span>{{ prefs.fontScale() | percent }}</span>
+          </div>
+          <div class="slider-row">
+            <button mat-icon-button (click)="scaleDown()">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <mat-slider min="0.8" max="1.3" step="0.05" discrete
+              ><input
+                matSliderThumb
+                [ngModel]="prefs.fontScale()"
+                (ngModelChange)="setFontScale($event)"
+            /></mat-slider>
+            <button mat-icon-button (click)="scaleUp()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    }
+    @if (prefs.hasLayout) {
+      <!-- 4. INTERFACE -->
+      <div class="settings-section">
+        <div class="section-title">Interface</div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <label>Corner Radius (Default: 100%)</label
+            ><span>{{ prefs.shapeScale() | percent }}</span>
+          </div>
+          <div class="slider-row">
+            <button mat-icon-button (click)="scaleShapeDown()">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <mat-slider min="0" max="3" step="0.25" discrete
+              ><input
+                matSliderThumb
+                [ngModel]="prefs.shapeScale()"
+                (ngModelChange)="setShapeScale($event)"
+            /></mat-slider>
+            <button mat-icon-button (click)="scaleShapeUp()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-header">
+            <label>Density (Default: 0)</label
+            ><span>{{ prefs.densityScale() }}</span>
+          </div>
+          <div class="slider-row">
+            <button mat-icon-button (click)="scaleDensityDown()">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <mat-slider min="-3" max="0" step="1" discrete
+              ><input
+                matSliderThumb
+                [ngModel]="prefs.densityScale()"
+                (ngModelChange)="setDensityScale($event)"
+            /></mat-slider>
+            <button mat-icon-button (click)="scaleDensityUp()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Motion Slider -->
+        <div class="slider-group">
+          <div class="slider-header">
+            <label>Motion (Default: Normal)</label>
+            <span style="color: var(--mat-sys-primary)">{{
+              formatMotion(prefs.motionScale())
+            }}</span>
+          </div>
+          <div class="slider-row">
+            <button mat-icon-button (click)="decreaseMotion()">
+              <mat-icon>remove</mat-icon>
+            </button>
+
+            <mat-slider min="0" max="1" step="0.5" discrete>
+              <input
+                matSliderThumb
+                [ngModel]="prefs.motionScale()"
+                (ngModelChange)="prefs.setMotionScale($event)"
+              />
+            </mat-slider>
+
+            <button mat-icon-button (click)="increaseMotion()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <mat-divider></mat-divider>
+    }
+    @if (prefs.hasAccessibility) {
+      <!-- 5. ACCESSIBILITY -->
+      <div class="settings-section">
+        <div class="section-title">Accessibility</div>
+
+        <!-- CVD Selector -->
         <mat-form-field
           appearance="outline"
           subscriptSizing="dynamic"
           class="full-width"
         >
+          <mat-label>Color Deficiency</mat-label>
           <mat-select
-            [value]="prefs.variant()"
-            (selectionChange)="setVariant($event.value)"
+            [value]="prefs.cvd()"
+            (selectionChange)="prefs.setCvdMode($event.value)"
           >
             <mat-select-trigger>
-              {{ getVariantLabel(prefs.variant()) }}
+              {{ getCvdLabel(prefs.cvd()) }}
             </mat-select-trigger>
 
-            @for (variant of variantOptions; track variant.value) {
-              <mat-option [value]="variant.value">
+            @for (option of cvdOptions; track option.value) {
+              <mat-option [value]="option.value">
                 <div
                   style="
                     display: flex;
@@ -113,393 +392,134 @@
                     padding: 6px 0;
                   "
                 >
-                  <span>{{ variant.label }}</span>
+                  <span>{{ option.label }}</span>
                   <span
                     style="
                       font-size: 0.75rem;
                       color: var(--mat-sys-on-surface-variant);
                     "
-                    >{{ variant.desc }}</span
+                    >{{ option.desc }}</span
                   >
                 </div>
               </mat-option>
             }
           </mat-select>
         </mat-form-field>
-      </div>
-      <!-- Continuous Contrast Scale -->
-      <div class="slider-group" style="margin-top: 8px">
-        <div class="slider-header">
-          <label
-            >Contrast:
-            <span style="color: var(--mat-sys-primary)">{{
-              formatContrast(prefs.contrastLevel())
-            }}</span></label
-          >
-          <mat-slide-toggle
-            [checked]="prefs.autoContrast()"
-            (change)="prefs.setAutoContrast($event.checked)"
-          >
-            <span
-              style="
-                font-size: 0.75rem;
-                font-weight: 400;
-                color: var(--mat-sys-on-surface-variant);
-              "
-              >Auto (OS)</span
+
+        <!-- CVD Intent Toggle -->
+        @if (prefs.cvd() !== "none" && prefs.cvd() !== "achromatopsia") {
+          <div class="field-row" style="margin-top: 4px; margin-bottom: 12px">
+            <mat-button-toggle-group
+              class="full-width-toggle"
+              [value]="prefs.cvdIntent()"
+              (change)="prefs.setCvdIntent($event.value)"
             >
-          </mat-slide-toggle>
-        </div>
+              <mat-button-toggle value="simulate">Simulate</mat-button-toggle>
+              <mat-button-toggle value="compensate"
+                >Daltonize</mat-button-toggle
+              >
+            </mat-button-toggle-group>
+          </div>
+        }
 
-        <div
-          class="slider-row"
-          [style.opacity]="prefs.autoContrast() ? '0.4' : '1'"
-          style="margin-top: 4px"
-        >
-          <button
-            mat-icon-button
-            (click)="decreaseContrast()"
-            [disabled]="prefs.autoContrast()"
+        <!-- CVD Severity Slider -->
+        @if (prefs.cvd() !== "none") {
+          <div
+            class="slider-group"
+            style="margin-top: 8px; margin-bottom: 16px"
           >
-            <mat-icon>remove</mat-icon>
-          </button>
+            <div class="slider-header">
+              <label>Severity</label>
+              <span>{{ prefs.cvdSeverity() }}%</span>
+            </div>
+            <div class="slider-row">
+              <button mat-icon-button (click)="decreaseCvdSeverity()">
+                <mat-icon>remove</mat-icon>
+              </button>
 
-          <mat-slider min="-1" max="1" step="0.5" discrete>
-            <input
-              matSliderThumb
-              [ngModel]="prefs.contrastLevel()"
-              (ngModelChange)="prefs.setContrastLevel($event)"
-              [disabled]="prefs.autoContrast()"
-            />
-          </mat-slider>
+              <mat-slider min="10" max="100" step="10" discrete>
+                <input
+                  matSliderThumb
+                  [ngModel]="prefs.cvdSeverity()"
+                  (ngModelChange)="prefs.setCvdSeverity($event)"
+                />
+              </mat-slider>
 
-          <button
-            mat-icon-button
-            (click)="increaseContrast()"
-            [disabled]="prefs.autoContrast()"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-    <mat-divider></mat-divider>
+              <button mat-icon-button (click)="increaseCvdSeverity()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
 
-    <!-- 3. TYPOGRAPHY -->
-    <div class="settings-section">
-      <div class="section-title">Typography</div>
-
-      <!-- Heading Font Picker -->
-      <div class="field-row">
-        <label>Heading Font (Display, Titles)</label>
+        <!-- Screen Filter Selector -->
         <mat-form-field
           appearance="outline"
           subscriptSizing="dynamic"
           class="full-width"
+          [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'"
         >
-          <!-- Text Input -->
-          <input
-            type="text"
-            matInput
-            [value]="prefs.headingFontFamily()"
-            (change)="setHeadingFontFamily($any($event.target).value)"
-            [matAutocomplete]="headingAuto"
-            placeholder="e.g. Oswald, serif"
-          />
-
-          <!-- Dropdown Options -->
-          <mat-autocomplete
-            #headingAuto="matAutocomplete"
-            (optionSelected)="setHeadingFontFamily($event.option.value)"
+          <mat-label>Environmental Overlay</mat-label>
+          <mat-select
+            [value]="prefs.screenFilter()"
+            (selectionChange)="prefs.setScreenFilter($event.value)"
           >
-            @for (font of fontOptions; track font.value) {
-              <mat-option [value]="font.value" [style.font-family]="font.value">
-                {{ font.label }}
+            <mat-select-trigger>
+              {{ getScreenFilterLabel(prefs.screenFilter()) }}
+            </mat-select-trigger>
+
+            @for (option of screenFilterOptions; track option.value) {
+              <mat-option [value]="option.value">
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: column;
+                    line-height: 1.2;
+                    padding: 6px 0;
+                  "
+                >
+                  <span>{{ option.label }}</span>
+                  <span
+                    style="
+                      font-size: 0.75rem;
+                      color: var(--mat-sys-on-surface-variant);
+                    "
+                    >{{ option.desc }}</span
+                  >
+                </div>
               </mat-option>
             }
-          </mat-autocomplete>
+          </mat-select>
         </mat-form-field>
-      </div>
 
-      <!-- Body Font Picker -->
-      <div class="field-row" style="margin-top: 4px">
-        <label>Body Font (Text, Labels)</label>
-        <mat-form-field
-          appearance="outline"
-          subscriptSizing="dynamic"
-          class="full-width"
-        >
-          <!-- Text Input -->
-          <input
-            type="text"
-            matInput
-            [value]="prefs.bodyFontFamily()"
-            (change)="setBodyFontFamily($any($event.target).value)"
-            [matAutocomplete]="bodyAuto"
-            placeholder="e.g. Open Sans"
-          />
+        <!-- Screen Filter Intensity Slider -->
+        @if (prefs.screenFilter() !== "none") {
+          <div class="slider-group" style="margin-top: 8px">
+            <div class="slider-header">
+              <label>Intensity</label>
+              <span>{{ prefs.screenFilterIntensity() }}%</span>
+            </div>
+            <div class="slider-row">
+              <button mat-icon-button (click)="decreaseScreenFilterIntensity()">
+                <mat-icon>remove</mat-icon>
+              </button>
 
-          <!-- Dropdown Options -->
-          <mat-autocomplete
-            #bodyAuto="matAutocomplete"
-            (optionSelected)="setBodyFontFamily($event.option.value)"
-          >
-            @for (font of fontOptions; track font.value) {
-              <mat-option [value]="font.value" [style.font-family]="font.value">
-                {{ font.label }}
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
+              <mat-slider min="10" max="100" step="10" discrete>
+                <input
+                  matSliderThumb
+                  [ngModel]="prefs.screenFilterIntensity()"
+                  (ngModelChange)="prefs.setScreenFilterIntensity($event)"
+                />
+              </mat-slider>
 
-      <!-- Size Scale Slider -->
-      <div class="slider-group" style="margin-top: 8px">
-        <div class="slider-header">
-          <label>Size Scale (Default: 100%)</label
-          ><span>{{ prefs.fontScale() | percent }}</span>
-        </div>
-        <div class="slider-row">
-          <button mat-icon-button (click)="scaleDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="0.8" max="1.3" step="0.05" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.fontScale()"
-              (ngModelChange)="setFontScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleUp()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-    <mat-divider></mat-divider>
-
-    <!-- 4. INTERFACE -->
-    <div class="settings-section">
-      <div class="section-title">Interface</div>
-      <div class="slider-group">
-        <div class="slider-header">
-          <label>Corner Radius (Default: 100%)</label
-          ><span>{{ prefs.shapeScale() | percent }}</span>
-        </div>
-        <div class="slider-row">
-          <button mat-icon-button (click)="scaleShapeDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="0" max="3" step="0.25" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.shapeScale()"
-              (ngModelChange)="setShapeScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleShapeUp()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div class="slider-group">
-        <div class="slider-header">
-          <label>Density (Default: 0)</label
-          ><span>{{ prefs.densityScale() }}</span>
-        </div>
-        <div class="slider-row">
-          <button mat-icon-button (click)="scaleDensityDown()">
-            <mat-icon>remove</mat-icon>
-          </button>
-          <mat-slider min="-3" max="0" step="1" discrete
-            ><input
-              matSliderThumb
-              [ngModel]="prefs.densityScale()"
-              (ngModelChange)="setDensityScale($event)"
-          /></mat-slider>
-          <button mat-icon-button (click)="scaleDensityUp()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-      <!-- Motion Slider -->
-      <div class="slider-group">
-        <div class="slider-header">
-          <label>Motion (Default: Normal)</label>
-          <span style="color: var(--mat-sys-primary)">{{
-            formatMotion(prefs.motionScale())
-          }}</span>
-        </div>
-        <div class="slider-row">
-          <button mat-icon-button (click)="decreaseMotion()">
-            <mat-icon>remove</mat-icon>
-          </button>
-
-          <mat-slider min="0" max="1" step="0.5" discrete>
-            <input
-              matSliderThumb
-              [ngModel]="prefs.motionScale()"
-              (ngModelChange)="prefs.setMotionScale($event)"
-            />
-          </mat-slider>
-
-          <button mat-icon-button (click)="increaseMotion()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-    <mat-divider></mat-divider>
-
-    <!-- 5. ACCESSIBILITY -->
-    <div class="settings-section">
-      <div class="section-title">Accessibility</div>
-
-      <!-- CVD Selector -->
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="full-width"
-      >
-        <mat-label>Color Deficiency</mat-label>
-        <mat-select
-          [value]="prefs.cvd()"
-          (selectionChange)="prefs.setCvdMode($event.value)"
-        >
-          <mat-select-trigger>
-            {{ getCvdLabel(prefs.cvd()) }}
-          </mat-select-trigger>
-
-          @for (option of cvdOptions; track option.value) {
-            <mat-option [value]="option.value">
-              <div
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  line-height: 1.2;
-                  padding: 6px 0;
-                "
-              >
-                <span>{{ option.label }}</span>
-                <span
-                  style="
-                    font-size: 0.75rem;
-                    color: var(--mat-sys-on-surface-variant);
-                  "
-                  >{{ option.desc }}</span
-                >
-              </div>
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <!-- CVD Intent Toggle -->
-      @if (prefs.cvd() !== "none" && prefs.cvd() !== "achromatopsia") {
-        <div class="field-row" style="margin-top: 4px; margin-bottom: 12px">
-          <mat-button-toggle-group
-            class="full-width-toggle"
-            [value]="prefs.cvdIntent()"
-            (change)="prefs.setCvdIntent($event.value)"
-          >
-            <mat-button-toggle value="simulate">Simulate</mat-button-toggle>
-            <mat-button-toggle value="compensate">Daltonize</mat-button-toggle>
-          </mat-button-toggle-group>
-        </div>
-      }
-
-      <!-- CVD Severity Slider -->
-      @if (prefs.cvd() !== "none") {
-        <div class="slider-group" style="margin-top: 8px; margin-bottom: 16px">
-          <div class="slider-header">
-            <label>Severity</label>
-            <span>{{ prefs.cvdSeverity() }}%</span>
+              <button mat-icon-button (click)="increaseScreenFilterIntensity()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
           </div>
-          <div class="slider-row">
-            <button mat-icon-button (click)="decreaseCvdSeverity()">
-              <mat-icon>remove</mat-icon>
-            </button>
-
-            <mat-slider min="10" max="100" step="10" discrete>
-              <input
-                matSliderThumb
-                [ngModel]="prefs.cvdSeverity()"
-                (ngModelChange)="prefs.setCvdSeverity($event)"
-              />
-            </mat-slider>
-
-            <button mat-icon-button (click)="increaseCvdSeverity()">
-              <mat-icon>add</mat-icon>
-            </button>
-          </div>
-        </div>
-      }
-
-      <!-- Screen Filter Selector -->
-      <mat-form-field
-        appearance="outline"
-        subscriptSizing="dynamic"
-        class="full-width"
-        [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'"
-      >
-        <mat-label>Environmental Overlay</mat-label>
-        <mat-select
-          [value]="prefs.screenFilter()"
-          (selectionChange)="prefs.setScreenFilter($event.value)"
-        >
-          <mat-select-trigger>
-            {{ getScreenFilterLabel(prefs.screenFilter()) }}
-          </mat-select-trigger>
-
-          @for (option of screenFilterOptions; track option.value) {
-            <mat-option [value]="option.value">
-              <div
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  line-height: 1.2;
-                  padding: 6px 0;
-                "
-              >
-                <span>{{ option.label }}</span>
-                <span
-                  style="
-                    font-size: 0.75rem;
-                    color: var(--mat-sys-on-surface-variant);
-                  "
-                  >{{ option.desc }}</span
-                >
-              </div>
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <!-- Screen Filter Intensity Slider -->
-      @if (prefs.screenFilter() !== "none") {
-        <div class="slider-group" style="margin-top: 8px">
-          <div class="slider-header">
-            <label>Intensity</label>
-            <span>{{ prefs.screenFilterIntensity() }}%</span>
-          </div>
-          <div class="slider-row">
-            <button mat-icon-button (click)="decreaseScreenFilterIntensity()">
-              <mat-icon>remove</mat-icon>
-            </button>
-
-            <mat-slider min="10" max="100" step="10" discrete>
-              <input
-                matSliderThumb
-                [ngModel]="prefs.screenFilterIntensity()"
-                (ngModelChange)="prefs.setScreenFilterIntensity($event)"
-              />
-            </mat-slider>
-
-            <button mat-icon-button (click)="increaseScreenFilterIntensity()">
-              <mat-icon>add</mat-icon>
-            </button>
-          </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    }
 
     <!-- GLOBAL RESET -->
     <div class="settings-section" style="padding-top: 0">

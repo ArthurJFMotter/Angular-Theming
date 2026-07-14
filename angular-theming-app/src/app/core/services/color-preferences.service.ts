@@ -13,7 +13,7 @@ import {
 import { ColorEngine } from '../utils/engines/color-engine';
 import { MediaQueryService } from './media-query.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class ColorPreferencesService {
   private mediaQuery = inject(MediaQueryService);
   private defaults = DEFAULT_PREFERENCES_STATE.color;

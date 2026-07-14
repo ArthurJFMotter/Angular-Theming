@@ -1,4 +1,4 @@
-import { Injectable, Optional, computed } from '@angular/core';
+import { Injectable, Optional, computed, signal } from '@angular/core';
 import { PreferencesState, CustomColors } from '../models/preferences.types';
 import {
   DEFAULT_PREFERENCES_STATE,
@@ -25,6 +25,7 @@ export class PreferencesService {
   // =========================================================
   readonly preferences = computed<PreferencesState>(() => {
     return {
+      _v: 2,
       ...(this.color && {
         color: {
           mode: this.color.mode(),
@@ -69,46 +70,74 @@ export class PreferencesService {
   });
 
   // =========================================================
+  // CAPABILITY FLAGS (For the UI to *ngIf sections)
+  // =========================================================
+  get hasColor() {
+    return !!this.color;
+  }
+  get hasAccessibility() {
+    return !!this.accessibility;
+  }
+  get hasTypography() {
+    return !!this.typography;
+  }
+  get hasLayout() {
+    return !!this.layout;
+  }
+  get hasNotifications() {
+    return !!this.notifications;
+  }
+
+  // =========================================================
+  // PROXIES FOR UI COMPONENTS (Null-Safe!)
+  // =========================================================
+
+  // =========================================================
   // PROXIES FOR UI COMPONENTS (So templates don't break!)
   // =========================================================
 
   // -- Color Proxies --
   get mode() {
-    return this.color.mode;
+    return this.color?.mode ?? signal('auto');
   }
   get autoContrast() {
-    return this.color.autoContrast;
+    return this.color?.autoContrast ?? signal(true);
   }
   get contrastLevel() {
-    return this.color.contrastLevel;
+    return this.color?.contrastLevel ?? signal(0);
   }
   get scheme() {
-    return this.color.scheme;
+    return this.color?.scheme ?? signal('custom');
   }
   get variant() {
-    return this.color.variant;
+    return this.color?.variant ?? signal('tonal-spot');
   }
   get customColors() {
-    return this.color.customColors;
+    return (
+      this.color?.customColors ??
+      signal(DEFAULT_PREFERENCES_STATE.color.customColors)
+    );
   }
   get savedProfiles() {
-    return this.color.savedProfiles;
+    return this.color?.savedProfiles ?? signal([]);
   }
-
   get resolvedMode() {
-    return this.color.resolvedMode;
+    return this.color?.resolvedMode ?? computed(() => 'light');
   }
   get resolvedContrastLevel() {
-    return this.color.resolvedContrastLevel;
+    return this.color?.resolvedContrastLevel ?? computed(() => 0);
   }
   get activeCustomColors() {
-    return this.color.activeCustomColors;
+    return (
+      this.color?.activeCustomColors ??
+      computed(() => DEFAULT_PREFERENCES_STATE.color.customColors)
+    );
   }
   get activeProfile() {
-    return this.color.activeProfile;
+    return this.color?.activeProfile ?? computed(() => undefined);
   }
   get canCreateColorProfile() {
-    return this.color.canCreateColorProfile;
+    return this.color?.canCreateColorProfile ?? computed(() => false);
   }
 
   setMode(v: any) {
@@ -158,19 +187,19 @@ export class PreferencesService {
 
   // -- Accessibility Proxies --
   get cvd() {
-    return this.accessibility.cvd;
+    return this.accessibility?.cvd ?? signal('none');
   }
   get cvdSeverity() {
-    return this.accessibility.cvdSeverity;
+    return this.accessibility?.cvdSeverity ?? signal(100);
   }
   get cvdIntent() {
-    return this.accessibility.cvdIntent;
+    return this.accessibility?.cvdIntent ?? signal('simulate');
   }
   get screenFilter() {
-    return this.accessibility.screenFilter;
+    return this.accessibility?.screenFilter ?? signal('none');
   }
   get screenFilterIntensity() {
-    return this.accessibility.screenFilterIntensity;
+    return this.accessibility?.screenFilterIntensity ?? signal(50);
   }
 
   setCvdMode(v: any) {
@@ -191,13 +220,13 @@ export class PreferencesService {
 
   // -- Typography Proxies --
   get headingFontFamily() {
-    return this.typography.headingFontFamily;
+    return this.typography?.headingFontFamily ?? signal('Roboto');
   }
   get bodyFontFamily() {
-    return this.typography.bodyFontFamily;
+    return this.typography?.bodyFontFamily ?? signal('Roboto');
   }
   get fontScale() {
-    return this.typography.fontScale;
+    return this.typography?.fontScale ?? signal(1);
   }
 
   setHeadingFontFamily(v: any) {
@@ -212,13 +241,13 @@ export class PreferencesService {
 
   // -- Layout Proxies --
   get shapeScale() {
-    return this.layout.shapeScale;
+    return this.layout?.shapeScale ?? signal(1);
   }
   get densityScale() {
-    return this.layout.densityScale;
+    return this.layout?.densityScale ?? signal(0);
   }
   get motionScale() {
-    return this.layout.motionScale;
+    return this.layout?.motionScale ?? signal(1);
   }
 
   setShapeScale(v: any) {
@@ -233,10 +262,10 @@ export class PreferencesService {
 
   // -- Notification Proxies --
   get snackbarHPosition() {
-    return this.notifications?.snackbarHPosition;
+    return this.notifications?.snackbarHPosition ?? signal('center');
   }
   get snackbarVPosition() {
-    return this.notifications?.snackbarVPosition;
+    return this.notifications?.snackbarVPosition ?? signal('bottom');
   }
 
   setSnackbarHPosition(v: any) {
@@ -254,12 +283,15 @@ export class PreferencesService {
   }
 
   patchState(parsed: any): void {
-    if (!parsed) return;
+     if (!parsed) return;
 
-    // Backward Compatibility Mapper for old flat LocalStorage payloads
-    const state: PreferencesState = parsed.color
+    // Check explicit version tag OR if it already has the nested 'color' object
+    const isV2 = parsed._v === 2 || !!parsed.color;
+
+    const state: PreferencesState = isV2
       ? parsed
       : {
+          _v: 2,
           color: {
             mode: parsed.mode,
             autoContrast: parsed.autoContrast,
