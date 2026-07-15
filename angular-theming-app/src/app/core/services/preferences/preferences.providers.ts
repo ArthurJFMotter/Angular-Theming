@@ -5,6 +5,8 @@ import { ColorPreferencesService } from './color-preferences.service';
 import { LayoutPreferencesService } from './layout-preferences.service';
 import { NotificationPreferencesService } from './notification-preferences.service';
 import { TypographyPreferencesService } from './typography-preferences.service';
+import { PREFERENCES_STORAGE_KEY_TOKEN } from '../../storage/preferences-storage.interface';
+import { FONT_LOADER_STRATEGY, NoopFontLoaderStrategy, GoogleFontLoaderStrategy } from './font-loader.strategy';
 
 // Individual Domain Providers
 export function provideColorPreferences(): Provider[] {
@@ -39,21 +41,41 @@ export function provideAllThemingPreferences(): Provider[] {
 }
 
 export interface ThemingConfig {
+  // Domain toggles
   color?: boolean;
   accessibility?: boolean;
   typography?: boolean;
   layout?: boolean;
   notifications?: boolean;
+
+  // Side-effect Boundaries
+  /** Custom key for localStorage. Defaults to 'ng-material-theming.prefs' */
+  storageKey?: string;
+  /** Set to true to prevent the library from reaching out to fonts.googleapis.com */
+  disableRemoteFonts?: boolean;
 }
 
-/** Configurable provider wrapper for cleaner app.config.ts */
 export function providePreferences(config: ThemingConfig = {}): Provider[] {
   const providers: Provider[] = [];
-  // Default to true if undefined
+  
+  // Register Domains
   if (config.color !== false) providers.push(...provideColorPreferences());
   if (config.accessibility !== false) providers.push(...provideAccessibilityPreferences());
   if (config.typography !== false) providers.push(...provideTypographyPreferences());
   if (config.layout !== false) providers.push(...provideLayoutPreferences());
   if (config.notifications !== false) providers.push(...provideNotificationPreferences());
+
+  // Configure Storage Boundary
+  if (config.storageKey) {
+    providers.push({ provide: PREFERENCES_STORAGE_KEY_TOKEN, useValue: config.storageKey });
+  }
+
+  // Configure Font Loading Strategy
+  if (config.disableRemoteFonts) {
+    providers.push({ provide: FONT_LOADER_STRATEGY, useClass: NoopFontLoaderStrategy });
+  } else {
+    providers.push({ provide: FONT_LOADER_STRATEGY, useClass: GoogleFontLoaderStrategy });
+  }
+
   return providers;
 }

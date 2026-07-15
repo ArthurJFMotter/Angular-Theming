@@ -5,7 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { PREFERENCES_STORAGE_TOKEN } from './core/storage/preferences-storage.interface';
 import { LocalPreferencesStorageService } from './core/storage/local-preferences-storage.service';
-import { provideAllThemingPreferences } from './core/services/preferences/preferences.providers';
+import { providePreferences } from './core/services/preferences/preferences.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +16,9 @@ export const appConfig: ApplicationConfig = {
       provide: PREFERENCES_STORAGE_TOKEN,
       useClass: LocalPreferencesStorageService,
     },
-    provideAllThemingPreferences(),
+    providePreferences({
+      storageKey: 'my-awesome-app.preferences', 
+      disableRemoteFonts: false                 
+    }),
   ],
 };

@@ -8,9 +8,7 @@ import {
   ScreenFilter,
 } from './preferences.types';
 
-export const PREFERENCES_STORAGE_KEY = 'angular-theming-app.prefs';
 export const HEX_COLOR_PATTERN = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-
 export const DEFAULT_CUSTOM_COLORS: CustomColors = { primary: '#3b6fd6' };
 
 export const DEFAULT_PREFERENCES_STATE: Required<PreferencesState> = {

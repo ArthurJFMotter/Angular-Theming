@@ -6,5 +6,5 @@ export interface IPreferencesStorage {
   save(state: PreferencesState): void;
 }
 
-export const PREFERENCES_STORAGE_TOKEN =
-  new InjectionToken<IPreferencesStorage>('PREFERENCES_STORAGE_TOKEN');
+export const PREFERENCES_STORAGE_TOKEN = new InjectionToken<IPreferencesStorage>('PREFERENCES_STORAGE_TOKEN');
+export const PREFERENCES_STORAGE_KEY_TOKEN = new InjectionToken<string>('PREFERENCES_STORAGE_KEY_TOKEN');

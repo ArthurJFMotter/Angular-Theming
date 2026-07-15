@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, Inject, Optional } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CvdMode } from '../models/preferences.types';
 import {
@@ -6,13 +6,25 @@ import {
   TYPOGRAPHY_ROLES,
   SHAPE_ROLES,
 } from '../models/design-tokens.constants';
+import { FONT_LOADER_STRATEGY, FontLoaderStrategy } from './preferences/font-loader.strategy';
 
+/**
+ * DOM Service
+ * 
+ * V1 ARCHITECTURAL CONSTRAINT (Global Mutation):
+ * This service explicitly mutates `document.documentElement` and `document.body`.
+ * It injects SVG filters, <style> tags (for motion control), and CSS Custom Properties
+ * at the root level. Because of this, it only supports ONE instance per page.
+ */
 @Injectable({ providedIn: 'root' })
 export class DomService {
   private fovOverlay: HTMLDivElement | null = null;
   private mouseMoveHandler = (e: MouseEvent) => this.updateFovPosition(e.clientX, e.clientY);
 
-  constructor(@Inject(DOCUMENT) private document: Document) {}
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    @Optional() @Inject(FONT_LOADER_STRATEGY) private fontLoader: FontLoaderStrategy | null
+  ) {}
 
   applyAccessibilityFilters(cvd: string, cvdSeverity: number, cvdIntent: string, screen: string, screenIntensity: number): void {
     const root = this.document.documentElement;
@@ -185,64 +197,27 @@ export class DomService {
     }
   }
 
-  // --- Typography Helpers ---
-  private loadFont(family: string): void {
-    // Extract just the primary font name (e.g. "'Fira Code', monospace" -> "Fira Code")
-    const primaryFont = family.split(',')[0].replace(/['"]/g, '').trim();
-
-    if (!primaryFont.toLowerCase().includes('system') && 
-        !primaryFont.toLowerCase().includes('monospace') && 
-        primaryFont.toLowerCase() !== 'roboto') {
-          
-      const urlFamily = primaryFont.replace(/\s+/g, '+');
-      const linkId = `font-${urlFamily.toLowerCase()}`;
-      
-      // fetch fonts from Google Fonts
-      if (!this.document.getElementById(linkId)) {
-        const link = this.document.createElement('link');
-        link.id = linkId; 
-        link.rel = 'stylesheet';
-        // Ask Google Fonts for the 400, 500, and 700 weights
-        link.href = `https://fonts.googleapis.com/css2?family=${urlFamily}:wght@400;500;700&display=swap`;
-        this.document.head.appendChild(link);
+  // --- Typography Helper ---
+  applyTypography(headingFamily: string, bodyFamily: string, scale: number): void {
+    // 1. Delegate to the injected Strategy (if provided)
+    if (this.fontLoader) {
+      this.fontLoader.loadFont(headingFamily, this.document);
+      if (headingFamily !== bodyFamily) {
+        this.fontLoader.loadFont(bodyFamily, this.document);
       }
-    }
-  }
-
-  applyTypography(
-    headingFamily: string,
-    bodyFamily: string,
-    scale: number,
-  ): void {
-    // Load fonts if needed
-    this.loadFont(headingFamily);
-    if (headingFamily !== bodyFamily) {
-      this.loadFont(bodyFamily);
     }
 
     const root = this.document.documentElement;
 
-    // Map roles to the correct font family
     for (const role of TYPOGRAPHY_ROLES) {
-      // Display, Headline, and Title use the Heading Font. Body and Label use the Body Font.
-      const isHeading =
-        role.name.includes('display') ||
-        role.name.includes('headline') ||
-        role.name.includes('title');
+      const isHeading = role.name.includes('display') || role.name.includes('headline') || role.name.includes('title');
       const family = isHeading ? headingFamily : bodyFamily;
 
       root.style.setProperty(`--mat-sys-${role.name}-font`, family);
-      root.style.setProperty(
-        `--mat-sys-${role.name}-size`,
-        `calc(${role.size}px * ${scale})`,
-      );
-      root.style.setProperty(
-        `--mat-sys-${role.name}-line-height`,
-        `calc(${role.lh}px * ${scale})`,
-      );
+      root.style.setProperty(`--mat-sys-${role.name}-size`, `calc(${role.size}px * ${scale})`);
+      root.style.setProperty(`--mat-sys-${role.name}-line-height`, `calc(${role.lh}px * ${scale})`);
     }
 
-    // Default base body font
     this.document.body.style.fontFamily = bodyFamily;
     root.style.fontSize = `${scale * 100}%`;
   }

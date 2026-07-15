@@ -1,13 +1,19 @@
-import { Injectable } from '@angular/core';
-import { IPreferencesStorage } from './preferences-storage.interface';
+import { Injectable, Inject, Optional } from '@angular/core';
+import { IPreferencesStorage, PREFERENCES_STORAGE_KEY_TOKEN } from './preferences-storage.interface';
 import { PreferencesState } from '../models/preferences.types';
-import { PREFERENCES_STORAGE_KEY } from '../models/preferences.constants';
 
 @Injectable({ providedIn: 'root' })
 export class LocalPreferencesStorageService implements IPreferencesStorage {
+  private readonly storageKey: string;
+
+  // Inject the token, fallback to a safe default if not provided
+  constructor(@Optional() @Inject(PREFERENCES_STORAGE_KEY_TOKEN) key: string | null) {
+    this.storageKey = key || 'ng-material-theming.prefs'; 
+  }
+
   load(): Partial<PreferencesState> | null {
     try {
-      const raw = localStorage.getItem(PREFERENCES_STORAGE_KEY);
+      const raw = localStorage.getItem(this.storageKey);
       if (!raw) return null;
       return JSON.parse(raw) as Partial<PreferencesState>;
     } catch {
@@ -17,7 +23,7 @@ export class LocalPreferencesStorageService implements IPreferencesStorage {
 
   save(state: PreferencesState): void {
     try {
-      localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(this.storageKey, JSON.stringify(state));
     } catch (e) {
       console.warn('Failed to save preferences to localStorage', e);
     }
