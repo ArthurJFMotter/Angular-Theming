@@ -1,17 +1,57 @@
-<mat-nav-list>
-  <div mat-subheader style="color: var(--mat-sys-primary); font-weight: 500">
-    Export & Share Profile
+<div class="bottom-sheet-container">
+  <div class="sheet-header">
+    <div class="title-group">
+      <mat-icon color="primary">palette</mat-icon>
+      <h2>{{ isExportMode() ? 'Share Profile' : 'Import Profile' }}</h2>
+    </div>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
-  <a mat-list-item (click)="close()">
-    <mat-icon matListItemIcon>link</mat-icon>
-    <span matListItemTitle>Copy URL Link</span>
-  </a>
-  <a mat-list-item (click)="close()">
-    <mat-icon matListItemIcon>code</mat-icon>
-    <span matListItemTitle>Export to SCSS / CSS</span>
-  </a>
-  <a mat-list-item (click)="close()">
-    <mat-icon matListItemIcon>data_object</mat-icon>
-    <span matListItemTitle>Download JSON</span>
-  </a>
-</mat-nav-list>
+
+  <!-- Toggle Modes -->
+  <div class="mode-toggle">
+    <button mat-stroked-button [class.active-mode]="isExportMode()" (click)="isExportMode.set(true)">
+      <mat-icon>ios_share</mat-icon> Export
+    </button>
+    <button mat-stroked-button [class.active-mode]="!isExportMode()" (click)="isExportMode.set(false)">
+      <mat-icon>file_download</mat-icon> Import
+    </button>
+  </div>
+
+  @if (isExportMode()) {
+    <div class="sheet-body">
+      <p>Copy this code to share your current color configuration with your team.</p>
+      
+      <div class="code-box">
+        <code>{{ shareableCode }}</code>
+      </div>
+
+      <div class="action-row">
+        <button mat-flat-button color="primary" class="full-width" (click)="copyToClipboard()">
+          <mat-icon>content_copy</mat-icon> Copy Code
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="sheet-body">
+      <p>Paste a profile code below to generate a new theme profile.</p>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width" style="margin-bottom: 12px;">
+        <mat-label>Profile Name</mat-label>
+        <input matInput [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" placeholder="e.g. Acme Corp Branding">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width">
+        <mat-label>Theme Code</mat-label>
+        <textarea matInput rows="3" [ngModel]="importCode()" (ngModelChange)="importCode.set($event)" placeholder="Paste Base64 code here..."></textarea>
+      </mat-form-field>
+
+      <div class="action-row" style="margin-top: 16px;">
+        <button mat-flat-button color="primary" class="full-width" [disabled]="!importCode()" (click)="importProfile()">
+          <mat-icon>save_alt</mat-icon> Import & Save
+        </button>
+      </div>
+    </div>
+  }
+</div>

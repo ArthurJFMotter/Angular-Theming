@@ -1,7 +1,9 @@
 import { InjectionToken } from '@angular/core';
 
+export type PreferenceDomainKey = 'color' | 'accessibility' | 'typography' | 'layout' | 'notifications';
+
 export interface PreferenceDomain<T = any> {
-  readonly key: string;
+  readonly key: PreferenceDomainKey;
   getSnapshot(): T;
   patchState(state: Partial<T>): void;
   reset(): void;

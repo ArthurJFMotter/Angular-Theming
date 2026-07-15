@@ -1,5 +1,5 @@
-import { Injectable, Inject, Optional, computed, signal } from '@angular/core';
-import { PreferencesState, CustomColors } from '../models/preferences.types';
+import { Injectable, Inject, Optional, computed, signal, isDevMode } from '@angular/core';
+import { PreferencesState, CustomColors, ColorScheme, CvdIntent, CvdMode, SchemeVariant, ScreenFilter, ThemeMode } from '../models/preferences.types';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 import {
   PREFERENCE_DOMAINS,
@@ -16,11 +16,15 @@ import type { TypographyPreferencesService } from './preferences/typography-pref
 export class PreferencesService {
   private registry = new Map<string, PreferenceDomain>();
 
-  constructor(
-    @Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[],
-  ) {
+  constructor(@Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[]) {
     if (domains) {
-      domains.forEach((domain) => this.registry.set(domain.key, domain));
+      domains.forEach(domain => {
+        // Warn if a consumer accidentally provides the same domain twice
+        if (isDevMode() && this.registry.has(domain.key)) {
+          console.warn(`[PreferencesService] Duplicate domain registered for key: ${domain.key}`);
+        }
+        this.registry.set(domain.key, domain);
+      });
     }
   }
 
@@ -124,21 +128,11 @@ export class PreferencesService {
     return this.color?.canCreateColorProfile ?? computed(() => false);
   }
 
-  setMode(v: any) {
-    this.color?.setMode(v);
-  }
-  setAutoContrast(v: any) {
-    this.color?.setAutoContrast(v);
-  }
-  setContrastLevel(v: any) {
-    this.color?.setContrastLevel(v);
-  }
-  setScheme(v: any) {
-    this.color?.setScheme(v);
-  }
-  setVariant(v: any) {
-    this.color?.setVariant(v);
-  }
+  setMode(v: ThemeMode) { this.color?.setMode(v); }
+  setAutoContrast(v: boolean) { this.color?.setAutoContrast(v); }
+  setContrastLevel(v: number) { this.color?.setContrastLevel(v); }
+  setScheme(v: ColorScheme) { this.color?.setScheme(v); }
+  setVariant(v: SchemeVariant) { this.color?.setVariant(v); }
   saveCurrentAsProfile(n: string) {
     this.color?.saveCurrentAsProfile(n);
   }
@@ -186,21 +180,11 @@ export class PreferencesService {
     return this.accessibility?.screenFilterIntensity ?? signal(50);
   }
 
-  setCvdMode(v: any) {
-    this.accessibility?.setCvdMode(v);
-  }
-  setCvdSeverity(v: any) {
-    this.accessibility?.setCvdSeverity(v);
-  }
-  setCvdIntent(v: any) {
-    this.accessibility?.setCvdIntent(v);
-  }
-  setScreenFilter(v: any) {
-    this.accessibility?.setScreenFilter(v);
-  }
-  setScreenFilterIntensity(v: any) {
-    this.accessibility?.setScreenFilterIntensity(v);
-  }
+  setCvdMode(v: CvdMode) { this.accessibility?.setCvdMode(v); }
+  setCvdSeverity(v: number) { this.accessibility?.setCvdSeverity(v); }
+  setCvdIntent(v: CvdIntent) { this.accessibility?.setCvdIntent(v); }
+  setScreenFilter(v: ScreenFilter) { this.accessibility?.setScreenFilter(v); }
+  setScreenFilterIntensity(v: number) { this.accessibility?.setScreenFilterIntensity(v); }
 
   // -- Typography Proxies --
   get headingFontFamily() {
@@ -213,15 +197,9 @@ export class PreferencesService {
     return this.typography?.fontScale ?? signal(1);
   }
 
-  setHeadingFontFamily(v: any) {
-    this.typography?.setHeadingFontFamily(v);
-  }
-  setBodyFontFamily(v: any) {
-    this.typography?.setBodyFontFamily(v);
-  }
-  setFontScale(v: any) {
-    this.typography?.setFontScale(v);
-  }
+  setHeadingFontFamily(v: string) { this.typography?.setHeadingFontFamily(v); }
+  setBodyFontFamily(v: string) { this.typography?.setBodyFontFamily(v); }
+  setFontScale(v: number) { this.typography?.setFontScale(v); }
 
   // -- Layout Proxies --
   get shapeScale() {
@@ -234,15 +212,9 @@ export class PreferencesService {
     return this.layout?.motionScale ?? signal(1);
   }
 
-  setShapeScale(v: any) {
-    this.layout?.setShapeScale(v);
-  }
-  setDensityScale(v: any) {
-    this.layout?.setDensityScale(v);
-  }
-  setMotionScale(v: any) {
-    this.layout?.setMotionScale(v);
-  }
+  setShapeScale(v: number) { this.layout?.setShapeScale(v); }
+  setDensityScale(v: number) { this.layout?.setDensityScale(v); }
+  setMotionScale(v: number) { this.layout?.setMotionScale(v); }
 
   // -- Notification Proxies --
   get snackbarHPosition() {
@@ -252,12 +224,8 @@ export class PreferencesService {
     return this.notifications?.snackbarVPosition ?? signal('bottom');
   }
 
-  setSnackbarHPosition(v: any) {
-    this.notifications?.setSnackbarHPosition(v);
-  }
-  setSnackbarVPosition(v: any) {
-    this.notifications?.setSnackbarVPosition(v);
-  }
+  setSnackbarHPosition(v: any) { this.notifications?.setSnackbarHPosition(v); }
+  setSnackbarVPosition(v: any) { this.notifications?.setSnackbarVPosition(v); }
 
   // =========================================================
   // GLOBAL RESTORE & RESET

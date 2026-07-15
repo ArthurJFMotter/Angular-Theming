@@ -37,3 +37,23 @@ export function provideAllThemingPreferences(): Provider[] {
     provideNotificationPreferences()
   ];
 }
+
+export interface ThemingConfig {
+  color?: boolean;
+  accessibility?: boolean;
+  typography?: boolean;
+  layout?: boolean;
+  notifications?: boolean;
+}
+
+/** Configurable provider wrapper for cleaner app.config.ts */
+export function providePreferences(config: ThemingConfig = {}): Provider[] {
+  const providers: Provider[] = [];
+  // Default to true if undefined
+  if (config.color !== false) providers.push(...provideColorPreferences());
+  if (config.accessibility !== false) providers.push(...provideAccessibilityPreferences());
+  if (config.typography !== false) providers.push(...provideTypographyPreferences());
+  if (config.layout !== false) providers.push(...provideLayoutPreferences());
+  if (config.notifications !== false) providers.push(...provideNotificationPreferences());
+  return providers;
+}
