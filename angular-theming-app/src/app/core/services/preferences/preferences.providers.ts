@@ -6,27 +6,67 @@ import { LayoutPreferencesService } from './layout-preferences.service';
 import { NotificationPreferencesService } from './notification-preferences.service';
 import { TypographyPreferencesService } from './typography-preferences.service';
 import { PREFERENCES_STORAGE_KEY_TOKEN } from '../../storage/preferences-storage.interface';
-import { FONT_LOADER_STRATEGY, NoopFontLoaderStrategy, GoogleFontLoaderStrategy } from './font-loader.strategy';
+import {
+  FONT_LOADER_STRATEGY,
+  NoopFontLoaderStrategy,
+  GoogleFontLoaderStrategy,
+} from './font-loader.strategy';
 
 // Individual Domain Providers
 export function provideColorPreferences(): Provider[] {
-  return [ColorPreferencesService, { provide: PREFERENCE_DOMAINS, useExisting: ColorPreferencesService, multi: true }];
+  return [
+    ColorPreferencesService,
+    {
+      provide: PREFERENCE_DOMAINS,
+      useExisting: ColorPreferencesService,
+      multi: true,
+    },
+  ];
 }
 
 export function provideAccessibilityPreferences(): Provider[] {
-  return [AccessibilityPreferencesService, { provide: PREFERENCE_DOMAINS, useExisting: AccessibilityPreferencesService, multi: true }];
+  return [
+    AccessibilityPreferencesService,
+    {
+      provide: PREFERENCE_DOMAINS,
+      useExisting: AccessibilityPreferencesService,
+      multi: true,
+    },
+  ];
 }
 
 export function provideTypographyPreferences(): Provider[] {
-  return [TypographyPreferencesService, { provide: PREFERENCE_DOMAINS, useExisting: TypographyPreferencesService, multi: true }];
+  return [
+    TypographyPreferencesService,
+    {
+      provide: PREFERENCE_DOMAINS,
+      useExisting: TypographyPreferencesService,
+      multi: true,
+    },
+    { provide: FONT_LOADER_STRATEGY, useClass: GoogleFontLoaderStrategy },
+  ];
 }
 
 export function provideLayoutPreferences(): Provider[] {
-  return [LayoutPreferencesService, { provide: PREFERENCE_DOMAINS, useExisting: LayoutPreferencesService, multi: true }];
+  return [
+    LayoutPreferencesService,
+    {
+      provide: PREFERENCE_DOMAINS,
+      useExisting: LayoutPreferencesService,
+      multi: true,
+    },
+  ];
 }
 
 export function provideNotificationPreferences(): Provider[] {
-  return [NotificationPreferencesService, { provide: PREFERENCE_DOMAINS, useExisting: NotificationPreferencesService, multi: true }];
+  return [
+    NotificationPreferencesService,
+    {
+      provide: PREFERENCE_DOMAINS,
+      useExisting: NotificationPreferencesService,
+      multi: true,
+    },
+  ];
 }
 
 // Master Provider (For apps that want everything)
@@ -36,7 +76,7 @@ export function provideAllThemingPreferences(): Provider[] {
     provideAccessibilityPreferences(),
     provideTypographyPreferences(),
     provideLayoutPreferences(),
-    provideNotificationPreferences()
+    provideNotificationPreferences(),
   ];
 }
 
@@ -70,11 +110,9 @@ export function providePreferences(config: ThemingConfig = {}): Provider[] {
     providers.push({ provide: PREFERENCES_STORAGE_KEY_TOKEN, useValue: config.storageKey });
   }
 
-  // Configure Font Loading Strategy
+  // Configure Font Loading Strategy Override
   if (config.disableRemoteFonts) {
     providers.push({ provide: FONT_LOADER_STRATEGY, useClass: NoopFontLoaderStrategy });
-  } else {
-    providers.push({ provide: FONT_LOADER_STRATEGY, useClass: GoogleFontLoaderStrategy });
   }
 
   return providers;
