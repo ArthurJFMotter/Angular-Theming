@@ -1,100 +1,83 @@
-import { Injectable, Optional, computed, signal } from '@angular/core';
+import { Injectable, Inject, Optional, computed, signal } from '@angular/core';
 import { PreferencesState, CustomColors } from '../models/preferences.types';
+import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 import {
-  DEFAULT_PREFERENCES_STATE,
-  isValidHexColor,
-} from '../models/preferences.constants';
-import { AccessibilityPreferencesService } from './accessibility-preferences.service';
-import { ColorPreferencesService } from './color-preferences.service';
-import { LayoutPreferencesService } from './layout-preferences.service';
-import { NotificationPreferencesService } from './notification-preferences.service';
-import { TypographyPreferencesService } from './typography-preferences.service';
+  PREFERENCE_DOMAINS,
+  PreferenceDomain,
+} from './preferences/preference-domain.token';
+
+import type { AccessibilityPreferencesService } from './preferences/accessibility-preferences.service';
+import type { ColorPreferencesService } from './preferences/color-preferences.service';
+import type { LayoutPreferencesService } from './preferences/layout-preferences.service';
+import type { NotificationPreferencesService } from './preferences/notification-preferences.service';
+import type { TypographyPreferencesService } from './preferences/typography-preferences.service';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
+  private registry = new Map<string, PreferenceDomain>();
+
   constructor(
-    @Optional() public color: ColorPreferencesService,
-    @Optional() public accessibility: AccessibilityPreferencesService,
-    @Optional() public typography: TypographyPreferencesService,
-    @Optional() public layout: LayoutPreferencesService,
-    @Optional() public notifications: NotificationPreferencesService,
-  ) {}
+    @Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[],
+  ) {
+    if (domains) {
+      domains.forEach((domain) => this.registry.set(domain.key, domain));
+    }
+  }
+
+  // Type-safe lookup helper
+  private getService<T extends PreferenceDomain>(key: string): T | null {
+    return (this.registry.get(key) as T) || null;
+  }
 
   // =========================================================
-  // THE MASTER STATE COMPUTED (For the ThemeSyncService effect)
+  // THE MASTER STATE COMPUTED (Dynamically built from registry!)
   // =========================================================
   readonly preferences = computed<PreferencesState>(() => {
-    return {
-      _v: 2,
-      ...(this.color && {
-        color: {
-          mode: this.color.mode(),
-          autoContrast: this.color.autoContrast(),
-          contrastLevel: this.color.contrastLevel(),
-          scheme: this.color.scheme(),
-          variant: this.color.variant(),
-          customColors: this.color.customColors(),
-          savedProfiles: this.color.savedProfiles(),
-        },
-      }),
-      ...(this.accessibility && {
-        accessibility: {
-          cvd: this.accessibility.cvd(),
-          cvdSeverity: this.accessibility.cvdSeverity(),
-          cvdIntent: this.accessibility.cvdIntent(),
-          screenFilter: this.accessibility.screenFilter(),
-          screenFilterIntensity: this.accessibility.screenFilterIntensity(),
-        },
-      }),
-      ...(this.typography && {
-        typography: {
-          headingFontFamily: this.typography.headingFontFamily(),
-          bodyFontFamily: this.typography.bodyFontFamily(),
-          fontScale: this.typography.fontScale(),
-        },
-      }),
-      ...(this.layout && {
-        layout: {
-          shapeScale: this.layout.shapeScale(),
-          densityScale: this.layout.densityScale(),
-          motionScale: this.layout.motionScale(),
-        },
-      }),
-      ...(this.notifications && {
-        notifications: {
-          snackbarHPosition: this.notifications.snackbarHPosition(),
-          snackbarVPosition: this.notifications.snackbarVPosition(),
-        },
-      }),
-    };
+    const state: PreferencesState = { _v: 2 };
+    this.registry.forEach((domain, key) => {
+      (state as any)[key] = domain.getSnapshot();
+    });
+    return state;
   });
 
   // =========================================================
-  // CAPABILITY FLAGS (For the UI to *ngIf sections)
+  // CAPABILITY FLAGS
   // =========================================================
   get hasColor() {
-    return !!this.color;
+    return this.registry.has('color');
   }
   get hasAccessibility() {
-    return !!this.accessibility;
+    return this.registry.has('accessibility');
   }
   get hasTypography() {
-    return !!this.typography;
+    return this.registry.has('typography');
   }
   get hasLayout() {
-    return !!this.layout;
+    return this.registry.has('layout');
   }
   get hasNotifications() {
-    return !!this.notifications;
+    return this.registry.has('notifications');
   }
 
   // =========================================================
-  // PROXIES FOR UI COMPONENTS (Null-Safe!)
+  // PROXIES (Null-Safe & Tree-Shakeable)
   // =========================================================
 
-  // =========================================================
-  // PROXIES FOR UI COMPONENTS (So templates don't break!)
-  // =========================================================
+  private get color() {
+    return this.getService<ColorPreferencesService>('color');
+  }
+  private get accessibility() {
+    return this.getService<AccessibilityPreferencesService>('accessibility');
+  }
+  private get typography() {
+    return this.getService<TypographyPreferencesService>('typography');
+  }
+  private get layout() {
+    return this.getService<LayoutPreferencesService>('layout');
+  }
+  private get notifications() {
+    return this.getService<NotificationPreferencesService>('notifications');
+  }
 
   // -- Color Proxies --
   get mode() {
@@ -121,6 +104,7 @@ export class PreferencesService {
   get savedProfiles() {
     return this.color?.savedProfiles ?? signal([]);
   }
+
   get resolvedMode() {
     return this.color?.resolvedMode ?? computed(() => 'light');
   }
@@ -155,29 +139,29 @@ export class PreferencesService {
   setVariant(v: any) {
     this.color?.setVariant(v);
   }
-  saveCurrentAsProfile(name: string) {
-    this.color?.saveCurrentAsProfile(name);
+  saveCurrentAsProfile(n: string) {
+    this.color?.saveCurrentAsProfile(n);
   }
-  updateActiveProfileName(name: string) {
-    this.color?.updateActiveProfileName(name);
+  updateActiveProfileName(n: string) {
+    this.color?.updateActiveProfileName(n);
   }
   deleteActiveProfile() {
     this.color?.deleteActiveProfile();
   }
-  setCustomColors(colors: Partial<CustomColors>) {
-    this.color?.setCustomColors(colors);
+  setCustomColors(c: Partial<CustomColors>) {
+    this.color?.setCustomColors(c);
   }
-  clearCustomColorRole(role: any) {
-    this.color?.clearCustomColorRole(role);
+  clearCustomColorRole(r: any) {
+    this.color?.clearCustomColorRole(r);
   }
-  addExtendedColor(label: string, hex: string) {
-    this.color?.addExtendedColor(label, hex);
+  addExtendedColor(l: string, h: string) {
+    this.color?.addExtendedColor(l, h);
   }
-  updateExtendedColor(id: string, updates: any) {
-    this.color?.updateExtendedColor(id, updates);
+  updateExtendedColor(i: string, u: any) {
+    this.color?.updateExtendedColor(i, u);
   }
-  removeExtendedColor(id: string) {
-    this.color?.removeExtendedColor(id);
+  removeExtendedColor(i: string) {
+    this.color?.removeExtendedColor(i);
   }
   suggestedCustomDefaults() {
     return (
@@ -279,13 +263,12 @@ export class PreferencesService {
   // GLOBAL RESTORE & RESET
   // =========================================================
   resetToDefaults(): void {
-    this.patchState(DEFAULT_PREFERENCES_STATE);
+    this.registry.forEach((domain) => domain.reset());
   }
 
   patchState(parsed: any): void {
-     if (!parsed) return;
+    if (!parsed) return;
 
-    // Check explicit version tag OR if it already has the nested 'color' object
     const isV2 = parsed._v === 2 || !!parsed.color;
 
     const state: PreferencesState = isV2
@@ -324,90 +307,10 @@ export class PreferencesService {
           },
         };
 
-    // Safely route the nested objects to their respective sub-services
-    if (this.color && state.color) {
-      if (state.color.mode !== undefined) this.color.setMode(state.color.mode);
-      if (state.color.autoContrast !== undefined)
-        this.color.setAutoContrast(state.color.autoContrast);
-      if (state.color.contrastLevel !== undefined)
-        this.color.setContrastLevel(state.color.contrastLevel);
-      if (state.color.scheme !== undefined)
-        this.color.setScheme(state.color.scheme);
-      if (state.color.variant !== undefined)
-        this.color.setVariant(state.color.variant);
-      if (state.color.savedProfiles)
-        this.color.savedProfiles.set(state.color.savedProfiles);
-
-      // Strict Custom Colors restoration
-      if (
-        state.color.customColors &&
-        isValidHexColor(state.color.customColors.primary)
-      ) {
-        const restored: CustomColors = {
-          primary: state.color.customColors.primary,
-        };
-        const ROLES = [
-          'secondary',
-          'tertiary',
-          'error',
-          'success',
-          'warning',
-          'info',
-        ] as const;
-        for (const role of ROLES) {
-          const value = state.color.customColors[role];
-          if (isValidHexColor(value)) restored[role] = value;
-        }
-        if (state.color.customColors.extended)
-          restored.extended = state.color.customColors.extended;
-        this.color.customColors.set(restored);
-      }
-    }
-
-    if (this.accessibility && state.accessibility) {
-      if (state.accessibility.cvd !== undefined)
-        this.accessibility.setCvdMode(state.accessibility.cvd);
-      if (state.accessibility.cvdSeverity !== undefined)
-        this.accessibility.setCvdSeverity(state.accessibility.cvdSeverity);
-      if (state.accessibility.cvdIntent !== undefined)
-        this.accessibility.setCvdIntent(state.accessibility.cvdIntent);
-      if (state.accessibility.screenFilter !== undefined)
-        this.accessibility.setScreenFilter(state.accessibility.screenFilter);
-      if (state.accessibility.screenFilterIntensity !== undefined)
-        this.accessibility.setScreenFilterIntensity(
-          state.accessibility.screenFilterIntensity,
-        );
-    }
-
-    if (this.typography && state.typography) {
-      if (state.typography.headingFontFamily !== undefined)
-        this.typography.setHeadingFontFamily(
-          state.typography.headingFontFamily,
-        );
-      if (state.typography.bodyFontFamily !== undefined)
-        this.typography.setBodyFontFamily(state.typography.bodyFontFamily);
-      if (state.typography.fontScale !== undefined)
-        this.typography.setFontScale(state.typography.fontScale);
-    }
-
-    if (this.layout && state.layout) {
-      if (state.layout.shapeScale !== undefined)
-        this.layout.setShapeScale(state.layout.shapeScale);
-      if (state.layout.densityScale !== undefined)
-        this.layout.setDensityScale(state.layout.densityScale);
-      if (state.layout.motionScale !== undefined)
-        this.layout.setMotionScale(state.layout.motionScale);
-    }
-
-    if (this.notifications && state.notifications) {
-      if (state.notifications.snackbarHPosition !== undefined)
-        this.notifications.setSnackbarHPosition(
-          state.notifications.snackbarHPosition,
-        );
-      if (state.notifications.snackbarVPosition !== undefined)
-        this.notifications.setSnackbarVPosition(
-          state.notifications.snackbarVPosition,
-        );
-    }
+    // Dynamically patch all registered domains
+    this.registry.forEach((domain, key) => {
+      const slice = (state as any)[key];
+      if (slice) domain.patchState(slice);
+    });
   }
 }

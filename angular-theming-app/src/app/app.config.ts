@@ -5,11 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { PREFERENCES_STORAGE_TOKEN } from './core/storage/preferences-storage.interface';
 import { LocalPreferencesStorageService } from './core/storage/local-preferences-storage.service';
-import { AccessibilityPreferencesService } from './core/services/accessibility-preferences.service';
-import { ColorPreferencesService } from './core/services/color-preferences.service';
-import { LayoutPreferencesService } from './core/services/layout-preferences.service';
-import { NotificationPreferencesService } from './core/services/notification-preferences.service';
-import { TypographyPreferencesService } from './core/services/typography-preferences.service';
+import { provideAllThemingPreferences } from './core/services/preferences/preferences.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,10 +16,6 @@ export const appConfig: ApplicationConfig = {
       provide: PREFERENCES_STORAGE_TOKEN,
       useClass: LocalPreferencesStorageService,
     },
-    ColorPreferencesService,
-    AccessibilityPreferencesService,
-    TypographyPreferencesService,
-    LayoutPreferencesService,
-    NotificationPreferencesService,
+    provideAllThemingPreferences(),
   ],
 };

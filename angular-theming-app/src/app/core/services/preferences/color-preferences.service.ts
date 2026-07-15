@@ -2,19 +2,23 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import {
   DEFAULT_PREFERENCES_STATE,
   isValidHexColor,
-} from '../models/preferences.constants';
+} from '../../models/preferences.constants';
 import {
   ThemeMode,
   ColorScheme,
   SchemeVariant,
   CustomColors,
   CustomProfile,
-} from '../models/preferences.types';
-import { ColorEngine } from '../utils/engines/color-engine';
-import { MediaQueryService } from './media-query.service';
+  ColorPreferences,
+} from '../../models/preferences.types';
+import { ColorEngine } from '../../utils/engines/color-engine';
+import { MediaQueryService } from '../media-query.service';
+import { PreferenceDomain } from './preference-domain.token';
 
 @Injectable()
-export class ColorPreferencesService {
+export class ColorPreferencesService implements PreferenceDomain<ColorPreferences> {
+  readonly key = 'color';
+
   private mediaQuery = inject(MediaQueryService);
   private defaults = DEFAULT_PREFERENCES_STATE.color;
 
@@ -176,5 +180,33 @@ export class ColorPreferencesService {
       this.activeCustomColors().primary,
       this.variant(),
     );
+  }
+
+  getSnapshot(): ColorPreferences {
+    return {
+      mode: this.mode(),
+      autoContrast: this.autoContrast(),
+      contrastLevel: this.contrastLevel(),
+      scheme: this.scheme(),
+      variant: this.variant(),
+      customColors: this.customColors(),
+      savedProfiles: this.savedProfiles(),
+    };
+  }
+
+  patchState(state: Partial<ColorPreferences>): void {
+    if (state.mode !== undefined) this.setMode(state.mode);
+    if (state.autoContrast !== undefined)
+      this.setAutoContrast(state.autoContrast);
+    if (state.contrastLevel !== undefined)
+      this.setContrastLevel(state.contrastLevel);
+    if (state.scheme !== undefined) this.setScheme(state.scheme);
+    if (state.variant !== undefined) this.setVariant(state.variant);
+    if (state.savedProfiles) this.savedProfiles.set(state.savedProfiles);
+    if (state.customColors) this.setCustomColors(state.customColors); // Includes extended colors logic natively
+  }
+
+  reset(): void {
+    this.patchState(DEFAULT_PREFERENCES_STATE.color);
   }
 }
