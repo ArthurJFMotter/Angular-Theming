@@ -246,9 +246,11 @@
               <button mat-flat-button color="primary" (click)="openDialog()">
                 <mat-icon>settings</mat-icon> Advanced Preferences
               </button>
-              <button mat-stroked-button (click)="openBottomSheet()">
-                <mat-icon>share</mat-icon> Share Profile
-              </button>
+              @if (prefs.hasColor) {
+                <button mat-stroked-button (click)="openBottomSheet()">
+                  <mat-icon>share</mat-icon> Share Profile
+                </button>
+              }
             </div>
           </mat-card-content>
         </mat-card>

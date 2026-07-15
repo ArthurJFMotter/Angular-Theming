@@ -1,5 +1,21 @@
-import { Injectable, Inject, Optional, computed, signal, isDevMode } from '@angular/core';
-import { PreferencesState, CustomColors, ColorScheme, CvdIntent, CvdMode, SchemeVariant, ScreenFilter, ThemeMode } from '../models/preferences.types';
+import {
+  Injectable,
+  Inject,
+  Optional,
+  computed,
+  signal,
+  isDevMode,
+} from '@angular/core';
+import {
+  PreferencesState,
+  CustomColors,
+  ColorScheme,
+  CvdIntent,
+  CvdMode,
+  SchemeVariant,
+  ScreenFilter,
+  ThemeMode,
+} from '../models/preferences.types';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 import {
   PREFERENCE_DOMAINS,
@@ -11,17 +27,25 @@ import type { ColorPreferencesService } from './preferences/color-preferences.se
 import type { LayoutPreferencesService } from './preferences/layout-preferences.service';
 import type { NotificationPreferencesService } from './preferences/notification-preferences.service';
 import type { TypographyPreferencesService } from './preferences/typography-preferences.service';
+import {
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
   private registry = new Map<string, PreferenceDomain>();
 
-  constructor(@Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[]) {
+  constructor(
+    @Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[],
+  ) {
     if (domains) {
-      domains.forEach(domain => {
+      domains.forEach((domain) => {
         // Warn if a consumer accidentally provides the same domain twice
         if (isDevMode() && this.registry.has(domain.key)) {
-          console.warn(`[PreferencesService] Duplicate domain registered for key: ${domain.key}`);
+          console.warn(
+            `[PreferencesService] Duplicate domain registered for key: ${domain.key}`,
+          );
         }
         this.registry.set(domain.key, domain);
       });
@@ -128,11 +152,21 @@ export class PreferencesService {
     return this.color?.canCreateColorProfile ?? computed(() => false);
   }
 
-  setMode(v: ThemeMode) { this.color?.setMode(v); }
-  setAutoContrast(v: boolean) { this.color?.setAutoContrast(v); }
-  setContrastLevel(v: number) { this.color?.setContrastLevel(v); }
-  setScheme(v: ColorScheme) { this.color?.setScheme(v); }
-  setVariant(v: SchemeVariant) { this.color?.setVariant(v); }
+  setMode(v: ThemeMode) {
+    this.color?.setMode(v);
+  }
+  setAutoContrast(v: boolean) {
+    this.color?.setAutoContrast(v);
+  }
+  setContrastLevel(v: number) {
+    this.color?.setContrastLevel(v);
+  }
+  setScheme(v: ColorScheme) {
+    this.color?.setScheme(v);
+  }
+  setVariant(v: SchemeVariant) {
+    this.color?.setVariant(v);
+  }
   saveCurrentAsProfile(n: string) {
     this.color?.saveCurrentAsProfile(n);
   }
@@ -145,13 +179,15 @@ export class PreferencesService {
   setCustomColors(c: Partial<CustomColors>) {
     this.color?.setCustomColors(c);
   }
-  clearCustomColorRole(r: any) {
+  clearCustomColorRole(
+    r: 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info',
+  ) {
     this.color?.clearCustomColorRole(r);
   }
   addExtendedColor(l: string, h: string) {
     this.color?.addExtendedColor(l, h);
   }
-  updateExtendedColor(i: string, u: any) {
+  updateExtendedColor(i: string, u: { label?: string; color?: string }) {
     this.color?.updateExtendedColor(i, u);
   }
   removeExtendedColor(i: string) {
@@ -180,11 +216,21 @@ export class PreferencesService {
     return this.accessibility?.screenFilterIntensity ?? signal(50);
   }
 
-  setCvdMode(v: CvdMode) { this.accessibility?.setCvdMode(v); }
-  setCvdSeverity(v: number) { this.accessibility?.setCvdSeverity(v); }
-  setCvdIntent(v: CvdIntent) { this.accessibility?.setCvdIntent(v); }
-  setScreenFilter(v: ScreenFilter) { this.accessibility?.setScreenFilter(v); }
-  setScreenFilterIntensity(v: number) { this.accessibility?.setScreenFilterIntensity(v); }
+  setCvdMode(v: CvdMode) {
+    this.accessibility?.setCvdMode(v);
+  }
+  setCvdSeverity(v: number) {
+    this.accessibility?.setCvdSeverity(v);
+  }
+  setCvdIntent(v: CvdIntent) {
+    this.accessibility?.setCvdIntent(v);
+  }
+  setScreenFilter(v: ScreenFilter) {
+    this.accessibility?.setScreenFilter(v);
+  }
+  setScreenFilterIntensity(v: number) {
+    this.accessibility?.setScreenFilterIntensity(v);
+  }
 
   // -- Typography Proxies --
   get headingFontFamily() {
@@ -197,9 +243,15 @@ export class PreferencesService {
     return this.typography?.fontScale ?? signal(1);
   }
 
-  setHeadingFontFamily(v: string) { this.typography?.setHeadingFontFamily(v); }
-  setBodyFontFamily(v: string) { this.typography?.setBodyFontFamily(v); }
-  setFontScale(v: number) { this.typography?.setFontScale(v); }
+  setHeadingFontFamily(v: string) {
+    this.typography?.setHeadingFontFamily(v);
+  }
+  setBodyFontFamily(v: string) {
+    this.typography?.setBodyFontFamily(v);
+  }
+  setFontScale(v: number) {
+    this.typography?.setFontScale(v);
+  }
 
   // -- Layout Proxies --
   get shapeScale() {
@@ -212,9 +264,15 @@ export class PreferencesService {
     return this.layout?.motionScale ?? signal(1);
   }
 
-  setShapeScale(v: number) { this.layout?.setShapeScale(v); }
-  setDensityScale(v: number) { this.layout?.setDensityScale(v); }
-  setMotionScale(v: number) { this.layout?.setMotionScale(v); }
+  setShapeScale(v: number) {
+    this.layout?.setShapeScale(v);
+  }
+  setDensityScale(v: number) {
+    this.layout?.setDensityScale(v);
+  }
+  setMotionScale(v: number) {
+    this.layout?.setMotionScale(v);
+  }
 
   // -- Notification Proxies --
   get snackbarHPosition() {
@@ -224,8 +282,12 @@ export class PreferencesService {
     return this.notifications?.snackbarVPosition ?? signal('bottom');
   }
 
-  setSnackbarHPosition(v: any) { this.notifications?.setSnackbarHPosition(v); }
-  setSnackbarVPosition(v: any) { this.notifications?.setSnackbarVPosition(v); }
+  setSnackbarHPosition(v: MatSnackBarHorizontalPosition) {
+    this.notifications?.setSnackbarHPosition(v);
+  }
+  setSnackbarVPosition(v: MatSnackBarVerticalPosition) {
+    this.notifications?.setSnackbarVPosition(v);
+  }
 
   // =========================================================
   // GLOBAL RESTORE & RESET

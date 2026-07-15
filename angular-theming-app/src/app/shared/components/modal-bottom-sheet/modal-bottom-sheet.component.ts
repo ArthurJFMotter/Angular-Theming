@@ -18,8 +18,8 @@ import { NotificationService } from '../../../core/services/notification.service
 })
 export class ModalBottomSheetComponent {
   private sheetRef = inject(MatBottomSheetRef);
-  private prefs = inject(PreferencesService);
   private notify = inject(NotificationService);
+  readonly prefs = inject(PreferencesService);
 
   readonly isExportMode = signal(true); // Toggle between Share / Import
   readonly importCode = signal('');
