@@ -131,13 +131,13 @@
 // overrides below point at --mat-sys-* tokens, so they keep updating live
 // with every theme change, the same as everything else on this page.
 .tertiary-fab {
-  --mdc-fab-container-color: var(--mat-sys-tertiary-container);
+  --mat-fab-container-color: var(--mat-sys-tertiary-container);
   --mat-fab-foreground-color: var(--mat-sys-on-tertiary-container);
 }
 
 .secondary-button {
-  --mdc-filled-button-container-color: var(--mat-sys-secondary-container);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-button-filled-container-color: var(--mat-sys-secondary-container);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-secondary-container);
 }
 
 .full-width {
@@ -235,18 +235,18 @@
 
 // Styling the trigger buttons to match their semantic roles
 .btn-success {
-  --mdc-filled-button-container-color: var(--mat-sys-success);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-success);
+  --mat-button-filled-container-color: var(--mat-sys-success);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-success);
 }
 .btn-warning {
-  --mdc-filled-button-container-color: var(--mat-sys-warning);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-warning);
+  --mat-button-filled-container-color: var(--mat-sys-warning);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-warning);
 }
 .btn-info {
-  --mdc-filled-button-container-color: var(--mat-sys-info);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-info);
+  --mat-button-filled-container-color: var(--mat-sys-info);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-info);
 }
 .btn-error {
-  --mdc-filled-button-container-color: var(--mat-sys-error);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-error);
+  --mat-button-filled-container-color: var(--mat-sys-error);
+  --mat-button-filled-label-text-color: var(--mat-sys-on-error);
 }

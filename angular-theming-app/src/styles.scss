@@ -68,26 +68,26 @@ body {
 
 // Override default colors with our semantic container tokens
 .snackbar-success {
-  --mdc-snackbar-container-color: var(--mat-sys-success-container);
-  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
+  --mat-snackbar-container-color: var(--mat-sys-success-container);
+  --mat-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
   --mat-snack-bar-button-color: var(--mat-sys-on-success-container);
 }
 
 .snackbar-warning {
-  --mdc-snackbar-container-color: var(--mat-sys-warning-container);
-  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
+  --mat-snackbar-container-color: var(--mat-sys-warning-container);
+  --mat-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
   --mat-snack-bar-button-color: var(--mat-sys-on-warning-container);
 }
 
 .snackbar-info {
-  --mdc-snackbar-container-color: var(--mat-sys-info-container);
-  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
+  --mat-snackbar-container-color: var(--mat-sys-info-container);
+  --mat-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
   --mat-snack-bar-button-color: var(--mat-sys-on-info-container);
 }
 
 .snackbar-error {
-  --mdc-snackbar-container-color: var(--mat-sys-error-container);
-  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
+  --mat-snackbar-container-color: var(--mat-sys-error-container);
+  --mat-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
   --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
 }
 
