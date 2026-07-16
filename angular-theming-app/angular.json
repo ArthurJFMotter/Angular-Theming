@@ -100,6 +100,36 @@
           }
         }
       }
+    },
+    "ng-material-preferences": {
+      "projectType": "library",
+      "root": "projects/ng-material-preferences",
+      "sourceRoot": "projects/ng-material-preferences/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ng-material-preferences/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ng-material-preferences/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ng-material-preferences/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
     }
   },
   "schematics": {

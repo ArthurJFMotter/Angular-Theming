@@ -9,6 +9,11 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "paths": {
+      "ng-material-preferences": [
+        "./dist/ng-material-preferences"
+      ]
+    },
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "isolatedModules": true,
@@ -24,5 +29,13 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "references": [
+    {
+      "path": "./projects/ng-material-preferences/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ng-material-preferences/tsconfig.spec.json"
+    }
+  ]
 }

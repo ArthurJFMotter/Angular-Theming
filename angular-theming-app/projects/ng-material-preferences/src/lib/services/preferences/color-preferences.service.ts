@@ -152,9 +152,7 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
   ): void {
     const nextColors = { ...this.activeCustomColors() };
     if (nextColors.extended) {
-      nextColors.extended = nextColors.extended.map((c) =>
-        c.id === id ? { ...c, ...updates } : c,
-      );
+      nextColors.extended = nextColors.extended.map((c: any) => c.id === id ? { ...c, ...updates } : c);
       this.saveColors(nextColors);
     }
   }
@@ -162,7 +160,7 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
   removeExtendedColor(id: string): void {
     const nextColors = { ...this.activeCustomColors() };
     if (nextColors.extended) {
-      nextColors.extended = nextColors.extended.filter((c) => c.id !== id);
+      nextColors.extended = nextColors.extended.filter((c: any) => c.id !== id);
       this.saveColors(nextColors);
     }
   }

@@ -6,7 +6,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { isValidHexColor } from '../../../core/models/preferences.constants';
+import { isValidHexColor } from '../../models/preferences.constants';
 
 type OptionalRole = 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info';
 

@@ -23,13 +23,13 @@ import {
   ContrastMode,
   CvdMode,
   SchemeVariant,
-} from '../../../core/models/preferences.types';
+} from '../../models/preferences.types';
 import {
   CVD_MODES,
   FONT_OPTIONS,
   SCHEME_VARIANTS,
   SCREEN_FILTERS,
-} from '../../../core/models/preferences.constants';
+} from '../../models/preferences.constants';
 import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';

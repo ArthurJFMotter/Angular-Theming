@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { CustomColors } from '../../../core/models/preferences.types';
+import { CustomColors } from '../../models/preferences.types';
 import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({

@@ -1,4 +1,4 @@
-import { Provider } from '@angular/core';
+import { ENVIRONMENT_INITIALIZER, inject, Provider } from '@angular/core';
 import { PREFERENCE_DOMAINS } from './preference-domain.token';
 import { AccessibilityPreferencesService } from './accessibility-preferences.service';
 import { ColorPreferencesService } from './color-preferences.service';
@@ -11,6 +11,7 @@ import {
   NoopFontLoaderStrategy,
   GoogleFontLoaderStrategy,
 } from './font-loader.strategy';
+import { ThemeSyncService } from '../theme-sync.service';
 
 // Individual Domain Providers
 export function provideColorPreferences(): Provider[] {
@@ -114,6 +115,13 @@ export function providePreferences(config: ThemingConfig = {}): Provider[] {
   if (config.disableRemoteFonts) {
     providers.push({ provide: FONT_LOADER_STRATEGY, useClass: NoopFontLoaderStrategy });
   }
+
+  // This automatically wakes up the ThemeSyncService so the consumer doesn't have to!
+  providers.push({
+    provide: ENVIRONMENT_INITIALIZER,
+    multi: true,
+    useValue: () => inject(ThemeSyncService)
+  });
 
   return providers;
 }
