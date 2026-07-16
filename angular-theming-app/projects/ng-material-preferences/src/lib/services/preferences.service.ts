@@ -31,6 +31,10 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
+import {
+  PREFERENCES_MIGRATION_TOKEN,
+  PreferencesMigrationFn,
+} from '../storage/preferences-migration.token';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
@@ -38,6 +42,9 @@ export class PreferencesService {
 
   constructor(
     @Optional() @Inject(PREFERENCE_DOMAINS) domains: PreferenceDomain[],
+    @Optional()
+    @Inject(PREFERENCES_MIGRATION_TOKEN)
+    private migrationFn: PreferencesMigrationFn | null,
   ) {
     if (domains) {
       domains.forEach((domain) => {
@@ -299,43 +306,11 @@ export class PreferencesService {
   patchState(parsed: any): void {
     if (!parsed) return;
 
-    const isV2 = parsed._v === 2 || !!parsed.color;
-
-    const state: PreferencesState = isV2
-      ? parsed
-      : {
-          _v: 2,
-          color: {
-            mode: parsed.mode,
-            autoContrast: parsed.autoContrast,
-            contrastLevel: parsed.contrastLevel,
-            scheme: parsed.scheme,
-            variant: parsed.variant,
-            customColors: parsed.customColors,
-            savedProfiles: parsed.savedProfiles,
-          },
-          accessibility: {
-            cvd: parsed.cvd,
-            cvdSeverity: parsed.cvdSeverity,
-            cvdIntent: parsed.cvdIntent,
-            screenFilter: parsed.screenFilter,
-            screenFilterIntensity: parsed.screenFilterIntensity,
-          },
-          typography: {
-            headingFontFamily: parsed.headingFontFamily || parsed.fontFamily,
-            bodyFontFamily: parsed.bodyFontFamily || parsed.fontFamily,
-            fontScale: parsed.fontScale,
-          },
-          layout: {
-            shapeScale: parsed.shapeScale,
-            densityScale: parsed.densityScale,
-            motionScale: parsed.motionScale,
-          },
-          notifications: {
-            snackbarHPosition: parsed.snackbarHPosition,
-            snackbarVPosition: parsed.snackbarVPosition,
-          },
-        };
+    /* If the consumer provided a migration strategy, run the data through it!
+     Otherwise, assume the data is already in the correct format. */
+    const state: PreferencesState = this.migrationFn
+      ? this.migrationFn(parsed)
+      : parsed;
 
     // Dynamically patch all registered domains
     this.registry.forEach((domain, key) => {

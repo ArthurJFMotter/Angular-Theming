@@ -6,6 +6,7 @@ import { LayoutPreferencesService } from './layout-preferences.service';
 import { NotificationPreferencesService } from './notification-preferences.service';
 import { TypographyPreferencesService } from './typography-preferences.service';
 import { PREFERENCES_STORAGE_KEY_TOKEN } from '../../storage/preferences-storage.interface';
+import { PREFERENCES_MIGRATION_TOKEN, PreferencesMigrationFn } from '../../storage/preferences-migration.token';
 import {
   FONT_LOADER_STRATEGY,
   NoopFontLoaderStrategy,
@@ -90,10 +91,11 @@ export interface ThemingConfig {
   notifications?: boolean;
 
   // Side-effect Boundaries
-  /** Custom key for localStorage. Defaults to 'ng-material-theming.prefs' */
   storageKey?: string;
-  /** Set to true to prevent the library from reaching out to fonts.googleapis.com */
   disableRemoteFonts?: boolean;
+  
+  /** Provide a function to migrate legacy local storage data to the current schema */
+  migrationStrategy?: PreferencesMigrationFn;
 }
 
 export function providePreferences(config: ThemingConfig = {}): Provider[] {
@@ -105,6 +107,10 @@ export function providePreferences(config: ThemingConfig = {}): Provider[] {
   if (config.typography !== false) providers.push(...provideTypographyPreferences());
   if (config.layout !== false) providers.push(...provideLayoutPreferences());
   if (config.notifications !== false) providers.push(...provideNotificationPreferences());
+
+  if (config.migrationStrategy) {
+    providers.push({ provide: PREFERENCES_MIGRATION_TOKEN, useValue: config.migrationStrategy });
+  }
 
   // Configure Storage Boundary
   if (config.storageKey) {

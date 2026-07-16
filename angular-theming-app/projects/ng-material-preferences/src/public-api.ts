@@ -12,6 +12,7 @@ export * from './lib/services/preferences/font-loader.strategy';
 // 3. Storage Abstractions (For consumers who want to sync with a Database)
 export * from './lib/storage/preferences-storage.interface';
 export * from './lib/storage/local-preferences-storage.service';
+export * from './lib/storage/preferences-migration.token';
 
 // 4. Types & Constants (For type-safety in consumer apps)
 export * from './lib/models/preferences.types';
