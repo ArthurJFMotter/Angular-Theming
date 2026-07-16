@@ -1,5 +1,4 @@
-import { Injectable, Inject, Optional } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Injectable, Inject, Optional, DOCUMENT } from '@angular/core';
 import { CvdMode } from '../models/preferences.types';
 import {
   CVD_FILTERS_SVG,
