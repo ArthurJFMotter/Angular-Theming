@@ -1,14 +1,29 @@
-import { Component, computed, inject, signal, effect, untracked, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  effect,
+  untracked,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDividerModule } from '@angular/material/divider';
-import { PreferencesService } from '../../../core/services/preferences.service';
-import { isValidHexColor } from '../../models/preferences.constants';
 
-type OptionalRole = 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info';
+import { PreferencesService, isValidHexColor } from 'ng-material-preferences';
+
+type OptionalRole =
+  | 'secondary'
+  | 'tertiary'
+  | 'error'
+  | 'success'
+  | 'warning'
+  | 'info';
 
 interface RoleField {
   role: OptionalRole;
@@ -19,9 +34,16 @@ interface RoleField {
 @Component({
   selector: 'app-custom-color-picker',
   standalone: true,
-  imports: [FormsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatSlideToggleModule, MatDividerModule],
+  imports: [
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatSlideToggleModule,
+    MatDividerModule,
+  ],
   templateUrl: './custom-color-picker.component.html',
-  styleUrl: './custom-color-picker.component.scss'
+  styleUrl: './custom-color-picker.component.scss',
 })
 export class CustomColorPickerComponent {
   readonly preferencesService = inject(PreferencesService);
@@ -30,7 +52,9 @@ export class CustomColorPickerComponent {
 
   readonly activeCustomColors = this.preferencesService.activeCustomColors;
   readonly activeProfile = this.preferencesService.activeProfile;
-  readonly isProfileMode = computed(() => this.preferencesService.scheme().startsWith('profile-'));
+  readonly isProfileMode = computed(() =>
+    this.preferencesService.scheme().startsWith('profile-'),
+  );
 
   readonly confirmDelete = signal(false);
 
@@ -38,24 +62,53 @@ export class CustomColorPickerComponent {
   readonly primaryDraft = signal('');
   readonly profileNameDraft = signal('');
   readonly roleDrafts = signal<Record<OptionalRole, string>>({
-    secondary: '', tertiary: '', error: '', success: '', warning: '', info: ''
+    secondary: '',
+    tertiary: '',
+    error: '',
+    success: '',
+    warning: '',
+    info: '',
   });
 
   // Extended Colors signals
-  readonly extendedColors = computed(() => this.activeCustomColors().extended || []);
-  readonly canAddExtendedColor = computed(() => this.extendedColors().length < 5);
+  readonly extendedColors = computed(
+    () => this.activeCustomColors().extended || [],
+  );
+  readonly canAddExtendedColor = computed(
+    () => this.extendedColors().length < 5,
+  );
 
   readonly roleFields: RoleField[] = [
     { role: 'secondary', label: 'Secondary', hint: 'Supporting accents.' },
     { role: 'tertiary', label: 'Tertiary', hint: 'Contrasting highlights.' },
-    { role: 'error', label: 'Error', hint: 'Validation messages, destructive actions.' },
-    { role: 'success', label: 'Success', hint: 'Completion messages, positive trends.' },
-    { role: 'warning', label: 'Warning', hint: 'Cautionary messages, non-blocking issues.' },
-    { role: 'info', label: 'Info', hint: 'Neutral tips, informational banners.' }
+    {
+      role: 'error',
+      label: 'Error',
+      hint: 'Validation messages, destructive actions.',
+    },
+    {
+      role: 'success',
+      label: 'Success',
+      hint: 'Completion messages, positive trends.',
+    },
+    {
+      role: 'warning',
+      label: 'Warning',
+      hint: 'Cautionary messages, non-blocking issues.',
+    },
+    {
+      role: 'info',
+      label: 'Info',
+      hint: 'Neutral tips, informational banners.',
+    },
   ];
 
-  readonly suggested = computed(() => this.preferencesService.suggestedCustomDefaults());
-  readonly primaryInvalid = computed(() => !isValidHexColor(this.primaryDraft()));
+  readonly suggested = computed(() =>
+    this.preferencesService.suggestedCustomDefaults(),
+  );
+  readonly primaryInvalid = computed(
+    () => !isValidHexColor(this.primaryDraft()),
+  );
 
   constructor() {
     effect(() => {
@@ -63,7 +116,7 @@ export class CustomColorPickerComponent {
 
       untracked(() => {
         const currentColors = this.activeCustomColors();
-        
+
         this.primaryDraft.set(currentColors.primary);
         this.profileNameDraft.set(this.activeProfile()?.name || '');
         this.roleDrafts.set({
@@ -72,14 +125,16 @@ export class CustomColorPickerComponent {
           error: currentColors.error ?? '',
           success: currentColors.success ?? '',
           warning: currentColors.warning ?? '',
-          info: currentColors.info ?? ''
+          info: currentColors.info ?? '',
         });
       });
     });
   }
 
   getRoleDisplayValue(role: OptionalRole): string {
-    return this.isRoleCustom(role) ? this.roleDrafts()[role] : this.suggested()[role];
+    return this.isRoleCustom(role)
+      ? this.roleDrafts()[role]
+      : this.suggested()[role];
   }
 
   isRoleCustom(role: OptionalRole): boolean {
@@ -102,7 +157,7 @@ export class CustomColorPickerComponent {
   onRoleToggle(role: OptionalRole, useCustom: boolean): void {
     if (useCustom) {
       const lockedColor = this.suggested()[role];
-      this.roleDrafts.update(drafts => ({ ...drafts, [role]: lockedColor }));
+      this.roleDrafts.update((drafts) => ({ ...drafts, [role]: lockedColor }));
       this.preferencesService.setCustomColors({ [role]: lockedColor });
     } else {
       this.preferencesService.clearCustomColorRole(role);
@@ -110,7 +165,7 @@ export class CustomColorPickerComponent {
   }
 
   onRoleChange(role: OptionalRole, value: string): void {
-    this.roleDrafts.update(drafts => ({ ...drafts, [role]: value }));
+    this.roleDrafts.update((drafts) => ({ ...drafts, [role]: value }));
     if (isValidHexColor(value)) {
       this.preferencesService.setCustomColors({ [role]: value });
     }
@@ -120,8 +175,15 @@ export class CustomColorPickerComponent {
   addExtendedRole() {
     if (!this.canAddExtendedColor()) return;
     const nextNumber = this.extendedColors().length + 1;
-    const randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-    this.preferencesService.addExtendedColor(`Custom Role ${nextNumber}`, randomHex);
+    const randomHex =
+      '#' +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, '0');
+    this.preferencesService.addExtendedColor(
+      `Custom Role ${nextNumber}`,
+      randomHex,
+    );
   }
 
   updateExtendedColorHex(id: string, value: string) {
@@ -144,9 +206,16 @@ export class CustomColorPickerComponent {
     const defaultPrimary = '#3b6fd6';
     this.primaryDraft.set(defaultPrimary);
     this.profileNameDraft.set('');
-    
+
     this.preferencesService.setCustomColors({ primary: defaultPrimary });
-    const roles: OptionalRole[] = ['secondary', 'tertiary', 'error', 'success', 'warning', 'info'];
+    const roles: OptionalRole[] = [
+      'secondary',
+      'tertiary',
+      'error',
+      'success',
+      'warning',
+      'info',
+    ];
     for (const role of roles) {
       this.preferencesService.clearCustomColorRole(role);
     }

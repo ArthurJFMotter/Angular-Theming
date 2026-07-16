@@ -12,12 +12,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
-import { PreferencesSideDrawerComponent } from '../../shared/components/preferences-side-drawer/preferences-side-drawer.component';
-import { NotificationService } from '../../core/services/notification.service';
-import { ModalService } from '../../core/services/modal.service';
-
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { PreferencesService } from '../../core/services/preferences.service';
+
+import { PreferencesSideDrawerComponent } from '../../shared/components/preferences-side-drawer/preferences-side-drawer.component';
+import { ModalService } from '../../core/services/modal.service';
+import { NotificationService } from '../../core/services/notification.service';
+
+import { PreferencesService } from 'ng-material-preferences';
 
 @Component({
   selector: 'app-home',

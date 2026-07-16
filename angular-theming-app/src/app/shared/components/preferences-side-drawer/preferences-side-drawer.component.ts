@@ -17,23 +17,22 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { PreferencesService } from '../../../core/services/preferences.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
+
 import {
+  PreferencesService,
   ThemeMode,
-  ContrastMode,
   CvdMode,
   SchemeVariant,
-} from '../../models/preferences.types';
-import {
   CVD_MODES,
   FONT_OPTIONS,
   SCHEME_VARIANTS,
   SCREEN_FILTERS,
-} from '../../models/preferences.constants';
-import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+} from 'ng-material-preferences';
 
 @Component({
   selector: 'app-preferences-side-drawer',

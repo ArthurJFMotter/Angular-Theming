@@ -5,9 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PreferencesService } from '../../../core/services/preferences.service';
-import { CustomColors } from '../../models/preferences.types';
+
 import { NotificationService } from '../../../core/services/notification.service';
+
+import { PreferencesService, CustomColors } from 'ng-material-preferences';
 
 @Component({
   selector: 'app-modal-bottom-sheet',

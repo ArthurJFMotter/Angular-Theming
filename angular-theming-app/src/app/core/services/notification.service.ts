@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomSnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
-import { PreferencesService } from './preferences.service';
+import { PreferencesService } from 'ng-material-preferences';
 
 export type NotificationType = 'default' | 'success' | 'warning' | 'info' | 'error';
 
