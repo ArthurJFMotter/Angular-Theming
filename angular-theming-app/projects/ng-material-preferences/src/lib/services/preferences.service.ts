@@ -15,6 +15,7 @@ import {
   SchemeVariant,
   ScreenFilter,
   ThemeMode,
+  CustomProfile,
 } from '../models/preferences.types';
 import { DEFAULT_PREFERENCES_STATE } from '../models/preferences.constants';
 import {
@@ -95,68 +96,88 @@ export class PreferencesService {
   }
 
   // =========================================================
-  // PROXIES (Null-Safe & Tree-Shakeable)
+  // FALLBACK SIGNALS (Instantiated once to prevent GC thrashing)
   // =========================================================
+  private readonly fbMode = signal<ThemeMode>('auto');
+  private readonly fbAutoContrast = signal<boolean>(true);
+  private readonly fbContrastLevel = signal<number>(0);
+  private readonly fbScheme = signal<ColorScheme>('custom');
+  private readonly fbVariant = signal<SchemeVariant>('tonal-spot');
+  private readonly fbCustomColors = signal<CustomColors>(
+    DEFAULT_PREFERENCES_STATE.color.customColors,
+  );
+  private readonly fbSavedProfiles = signal<CustomProfile[]>([]);
 
-  private get color() {
-    return this.getService<ColorPreferencesService>('color');
-  }
-  private get accessibility() {
-    return this.getService<AccessibilityPreferencesService>('accessibility');
-  }
-  private get typography() {
-    return this.getService<TypographyPreferencesService>('typography');
-  }
-  private get layout() {
-    return this.getService<LayoutPreferencesService>('layout');
-  }
-  private get notifications() {
-    return this.getService<NotificationPreferencesService>('notifications');
-  }
+  private readonly fbResolvedMode = computed<'light' | 'dark'>(() => 'light');
+  private readonly fbResolvedContrastLevel = computed<number>(() => 0);
+  private readonly fbActiveCustomColors = computed<CustomColors>(
+    () => DEFAULT_PREFERENCES_STATE.color.customColors,
+  );
+  private readonly fbActiveProfile = computed<CustomProfile | undefined>(
+    () => undefined,
+  );
+  private readonly fbCanCreateColorProfile = computed<boolean>(() => false);
+
+  private readonly fbCvd = signal<CvdMode>('none');
+  private readonly fbCvdSeverity = signal<number>(100);
+  private readonly fbCvdIntent = signal<CvdIntent>('simulate');
+  private readonly fbScreenFilter = signal<ScreenFilter>('none');
+  private readonly fbScreenFilterIntensity = signal<number>(50);
+
+  private readonly fbHeadingFontFamily = signal<string>('Roboto');
+  private readonly fbBodyFontFamily = signal<string>('Roboto');
+  private readonly fbFontScale = signal<number>(1);
+
+  private readonly fbShapeScale = signal<number>(1);
+  private readonly fbDensityScale = signal<number>(0);
+  private readonly fbMotionScale = signal<number>(1);
+
+  private readonly fbSnackbarHPosition =
+    signal<MatSnackBarHorizontalPosition>('center');
+  private readonly fbSnackbarVPosition =
+    signal<MatSnackBarVerticalPosition>('bottom');
+
+  // =========================================================
+  // PROXIES FOR UI COMPONENTS (Null-Safe & Performant)
+  // =========================================================
 
   // -- Color Proxies --
   get mode() {
-    return this.color?.mode ?? signal('auto');
+    return this.color?.mode ?? this.fbMode;
   }
   get autoContrast() {
-    return this.color?.autoContrast ?? signal(true);
+    return this.color?.autoContrast ?? this.fbAutoContrast;
   }
   get contrastLevel() {
-    return this.color?.contrastLevel ?? signal(0);
+    return this.color?.contrastLevel ?? this.fbContrastLevel;
   }
   get scheme() {
-    return this.color?.scheme ?? signal('custom');
+    return this.color?.scheme ?? this.fbScheme;
   }
   get variant() {
-    return this.color?.variant ?? signal('tonal-spot');
+    return this.color?.variant ?? this.fbVariant;
   }
   get customColors() {
-    return (
-      this.color?.customColors ??
-      signal(DEFAULT_PREFERENCES_STATE.color.customColors)
-    );
+    return this.color?.customColors ?? this.fbCustomColors;
   }
   get savedProfiles() {
-    return this.color?.savedProfiles ?? signal([]);
+    return this.color?.savedProfiles ?? this.fbSavedProfiles;
   }
 
   get resolvedMode() {
-    return this.color?.resolvedMode ?? computed(() => 'light');
+    return this.color?.resolvedMode ?? this.fbResolvedMode;
   }
   get resolvedContrastLevel() {
-    return this.color?.resolvedContrastLevel ?? computed(() => 0);
+    return this.color?.resolvedContrastLevel ?? this.fbResolvedContrastLevel;
   }
   get activeCustomColors() {
-    return (
-      this.color?.activeCustomColors ??
-      computed(() => DEFAULT_PREFERENCES_STATE.color.customColors)
-    );
+    return this.color?.activeCustomColors ?? this.fbActiveCustomColors;
   }
   get activeProfile() {
-    return this.color?.activeProfile ?? computed(() => undefined);
+    return this.color?.activeProfile ?? this.fbActiveProfile;
   }
   get canCreateColorProfile() {
-    return this.color?.canCreateColorProfile ?? computed(() => false);
+    return this.color?.canCreateColorProfile ?? this.fbCanCreateColorProfile;
   }
 
   setMode(v: ThemeMode) {
@@ -174,31 +195,31 @@ export class PreferencesService {
   setVariant(v: SchemeVariant) {
     this.color?.setVariant(v);
   }
-  saveCurrentAsProfile(n: string) {
-    this.color?.saveCurrentAsProfile(n);
+  saveCurrentAsProfile(name: string) {
+    this.color?.saveCurrentAsProfile(name);
   }
-  updateActiveProfileName(n: string) {
-    this.color?.updateActiveProfileName(n);
+  updateActiveProfileName(name: string) {
+    this.color?.updateActiveProfileName(name);
   }
   deleteActiveProfile() {
     this.color?.deleteActiveProfile();
   }
-  setCustomColors(c: Partial<CustomColors>) {
-    this.color?.setCustomColors(c);
+  setCustomColors(colors: Partial<CustomColors>) {
+    this.color?.setCustomColors(colors);
   }
   clearCustomColorRole(
-    r: 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info',
+    role: 'secondary' | 'tertiary' | 'error' | 'success' | 'warning' | 'info',
   ) {
-    this.color?.clearCustomColorRole(r);
+    this.color?.clearCustomColorRole(role);
   }
-  addExtendedColor(l: string, h: string) {
-    this.color?.addExtendedColor(l, h);
+  addExtendedColor(label: string, hex: string) {
+    this.color?.addExtendedColor(label, hex);
   }
-  updateExtendedColor(i: string, u: { label?: string; color?: string }) {
-    this.color?.updateExtendedColor(i, u);
+  updateExtendedColor(id: string, updates: { label?: string; color?: string }) {
+    this.color?.updateExtendedColor(id, updates);
   }
-  removeExtendedColor(i: string) {
-    this.color?.removeExtendedColor(i);
+  removeExtendedColor(id: string) {
+    this.color?.removeExtendedColor(id);
   }
   suggestedCustomDefaults() {
     return (
@@ -208,19 +229,21 @@ export class PreferencesService {
 
   // -- Accessibility Proxies --
   get cvd() {
-    return this.accessibility?.cvd ?? signal('none');
+    return this.accessibility?.cvd ?? this.fbCvd;
   }
   get cvdSeverity() {
-    return this.accessibility?.cvdSeverity ?? signal(100);
+    return this.accessibility?.cvdSeverity ?? this.fbCvdSeverity;
   }
   get cvdIntent() {
-    return this.accessibility?.cvdIntent ?? signal('simulate');
+    return this.accessibility?.cvdIntent ?? this.fbCvdIntent;
   }
   get screenFilter() {
-    return this.accessibility?.screenFilter ?? signal('none');
+    return this.accessibility?.screenFilter ?? this.fbScreenFilter;
   }
   get screenFilterIntensity() {
-    return this.accessibility?.screenFilterIntensity ?? signal(50);
+    return (
+      this.accessibility?.screenFilterIntensity ?? this.fbScreenFilterIntensity
+    );
   }
 
   setCvdMode(v: CvdMode) {
@@ -241,13 +264,13 @@ export class PreferencesService {
 
   // -- Typography Proxies --
   get headingFontFamily() {
-    return this.typography?.headingFontFamily ?? signal('Roboto');
+    return this.typography?.headingFontFamily ?? this.fbHeadingFontFamily;
   }
   get bodyFontFamily() {
-    return this.typography?.bodyFontFamily ?? signal('Roboto');
+    return this.typography?.bodyFontFamily ?? this.fbBodyFontFamily;
   }
   get fontScale() {
-    return this.typography?.fontScale ?? signal(1);
+    return this.typography?.fontScale ?? this.fbFontScale;
   }
 
   setHeadingFontFamily(v: string) {
@@ -262,13 +285,13 @@ export class PreferencesService {
 
   // -- Layout Proxies --
   get shapeScale() {
-    return this.layout?.shapeScale ?? signal(1);
+    return this.layout?.shapeScale ?? this.fbShapeScale;
   }
   get densityScale() {
-    return this.layout?.densityScale ?? signal(0);
+    return this.layout?.densityScale ?? this.fbDensityScale;
   }
   get motionScale() {
-    return this.layout?.motionScale ?? signal(1);
+    return this.layout?.motionScale ?? this.fbMotionScale;
   }
 
   setShapeScale(v: number) {
@@ -283,10 +306,10 @@ export class PreferencesService {
 
   // -- Notification Proxies --
   get snackbarHPosition() {
-    return this.notifications?.snackbarHPosition ?? signal('center');
+    return this.notifications?.snackbarHPosition ?? this.fbSnackbarHPosition;
   }
   get snackbarVPosition() {
-    return this.notifications?.snackbarVPosition ?? signal('bottom');
+    return this.notifications?.snackbarVPosition ?? this.fbSnackbarVPosition;
   }
 
   setSnackbarHPosition(v: MatSnackBarHorizontalPosition) {
@@ -294,6 +317,26 @@ export class PreferencesService {
   }
   setSnackbarVPosition(v: MatSnackBarVerticalPosition) {
     this.notifications?.setSnackbarVPosition(v);
+  }
+
+  // =========================================================
+  // DOMAIN LOOKUP HELPERS
+  // =========================================================
+
+  private get color() {
+    return this.getService<ColorPreferencesService>('color');
+  }
+  private get accessibility() {
+    return this.getService<AccessibilityPreferencesService>('accessibility');
+  }
+  private get typography() {
+    return this.getService<TypographyPreferencesService>('typography');
+  }
+  private get layout() {
+    return this.getService<LayoutPreferencesService>('layout');
+  }
+  private get notifications() {
+    return this.getService<NotificationPreferencesService>('notifications');
   }
 
   // =========================================================
