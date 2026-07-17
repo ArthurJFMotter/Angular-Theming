@@ -1,227 +1,231 @@
-<div class="custom-picker">
-  <header class="custom-picker__header">
-    <h3>{{ isProfileMode() ? "Edit profile" : "Custom theme colors" }}</h3>
-    @if (!isProfileMode()) {
-      <button mat-button (click)="resetToDefault()">
-        <mat-icon>restart_alt</mat-icon> Reset to default
-      </button>
-    }
-  </header>
+@if (preferencesService.hasColor) {
+  <div class="custom-picker">
+    <header class="custom-picker__header">
+      <h3>{{ isProfileMode() ? "Edit profile" : "Custom theme colors" }}</h3>
+      @if (!isProfileMode()) {
+        <button mat-button (click)="resetToDefault()">
+          <mat-icon>restart_alt</mat-icon> Reset to default
+        </button>
+      }
+    </header>
 
-  <!-- Descriptive text -->
-  <p class="custom-picker__note">
-    Pick a primary color. Other colors automatically adapt to maintain perfect
-    contrast, or switch them to custom to lock in your own choices.
-  </p>
+    <!-- Descriptive text -->
+    <p class="custom-picker__note">
+      Pick a primary color. Other colors automatically adapt to maintain perfect
+      contrast, or switch them to custom to lock in your own choices.
+    </p>
 
-  <!-- Primary: required -->
-  <section class="role-row role-row--required">
-    <div class="role-row__swatch-input">
-      <input
-        type="color"
-        class="color-swatch-input"
-        [value]="primaryDraft()"
-        (input)="onPrimaryChange($any($event.target).value)"
-        aria-label="Pick primary color"
-      />
-    </div>
-    <div class="role-row__fields">
-      <label class="role-row__label" for="primary-hex"
-        >Primary <span class="required-tag">required</span></label
-      >
-      <input
-        id="primary-hex"
-        class="hex-input"
-        type="text"
-        spellcheck="false"
-        [class.hex-input--invalid]="primaryInvalid()"
-        [ngModel]="primaryDraft()"
-        (ngModelChange)="onPrimaryChange($event)"
-        placeholder="#3b6fd6"
-      />
-      @if (primaryInvalid()) {
-        <span class="role-row__error"
-          >Enter a valid hex color (e.g. #3b6fd6).</span
+    <!-- Primary: required -->
+    <section class="role-row role-row--required">
+      <div class="role-row__swatch-input">
+        <input
+          type="color"
+          class="color-swatch-input"
+          [value]="primaryDraft()"
+          (input)="onPrimaryChange($any($event.target).value)"
+          aria-label="Pick primary color"
+        />
+      </div>
+      <div class="role-row__fields">
+        <label class="role-row__label" for="primary-hex"
+          >Primary <span class="required-tag">required</span></label
         >
+        <input
+          id="primary-hex"
+          class="hex-input"
+          type="text"
+          spellcheck="false"
+          [class.hex-input--invalid]="primaryInvalid()"
+          [ngModel]="primaryDraft()"
+          (ngModelChange)="onPrimaryChange($event)"
+          placeholder="#3b6fd6"
+        />
+        @if (primaryInvalid()) {
+          <span class="role-row__error"
+            >Enter a valid hex color (e.g. #3b6fd6).</span
+          >
+        }
+      </div>
+    </section>
+
+    <!-- Secondary / Tertiary / Error / etc -->
+    @for (field of roleFields; track field.role) {
+      <section class="role-row">
+        <div class="role-row__swatch-input">
+          <input
+            type="color"
+            class="color-swatch-input"
+            [class.color-swatch-input--disabled]="!isRoleCustom(field.role)"
+            [disabled]="!isRoleCustom(field.role)"
+            [value]="getRoleDisplayValue(field.role)"
+            (input)="onRoleChange(field.role, $any($event.target).value)"
+            [attr.aria-label]="'Pick ' + field.label + ' color'"
+          />
+        </div>
+        <div class="role-row__fields">
+          <div class="role-row__label-line">
+            <label class="role-row__label" [for]="field.role + '-hex'">{{
+              field.label
+            }}</label>
+            <mat-slide-toggle
+              [checked]="isRoleCustom(field.role)"
+              (change)="onRoleToggle(field.role, $event.checked)"
+              [matTooltip]="field.hint"
+            >
+              {{ isRoleCustom(field.role) ? "Custom" : "Auto" }}
+            </mat-slide-toggle>
+          </div>
+          <input
+            [id]="field.role + '-hex'"
+            class="hex-input"
+            type="text"
+            spellcheck="false"
+            [disabled]="!isRoleCustom(field.role)"
+            [class.hex-input--invalid]="roleDraftInvalid(field.role)"
+            [ngModel]="getRoleDisplayValue(field.role)"
+            (ngModelChange)="onRoleChange(field.role, $event)"
+            placeholder="Auto from primary"
+          />
+          @if (roleDraftInvalid(field.role)) {
+            <span class="role-row__error">Enter a valid hex color.</span>
+          }
+          <span class="role-row__hint">{{ field.hint }}</span>
+        </div>
+      </section>
+    }
+
+    <!-- Extended Custom Roles Section -->
+    <div class="extended-colors-header">
+      <div class="header-text">
+        <h4>Custom Roles</h4>
+        <p>Create up to 5 custom token pairs.</p>
+      </div>
+      <button
+        mat-stroked-button
+        (click)="addExtendedRole()"
+        [disabled]="!canAddExtendedColor()"
+      >
+        <mat-icon>add</mat-icon> Add ({{ extendedColors().length }}/5)
+      </button>
+    </div>
+
+    @for (ext of extendedColors(); track ext.id) {
+      <section class="role-row">
+        <div class="role-row__swatch-input">
+          <input
+            type="color"
+            class="color-swatch-input"
+            [value]="ext.color"
+            (input)="updateExtendedColorHex(ext.id, $any($event.target).value)"
+            [attr.aria-label]="'Pick ' + ext.label + ' color'"
+          />
+        </div>
+        <div class="role-row__fields">
+          <div class="role-row__label-line" style="margin-bottom: 6px">
+            <!-- Editable Label -->
+            <input
+              type="text"
+              class="extended-label-input"
+              [value]="ext.label"
+              (change)="
+                updateExtendedColorLabel(ext.id, $any($event.target).value)
+              "
+              placeholder="Role Name"
+            />
+
+            <!-- Delete button -->
+            <button
+              mat-icon-button
+              color="warn"
+              class="delete-ext-btn"
+              (click)="removeExtendedRole(ext.id)"
+              matTooltip="Delete custom role"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+          <!-- Hex Input -->
+          <input
+            class="hex-input"
+            type="text"
+            spellcheck="false"
+            [ngModel]="ext.color"
+            (ngModelChange)="updateExtendedColorHex(ext.id, $event)"
+            placeholder="#000000"
+          />
+        </div>
+      </section>
+    }
+
+    <mat-divider style="margin: 8px 0"></mat-divider>
+
+    <!-- Profile Interactions -->
+    <div class="custom-picker__footer">
+      <!-- ... Rest of your existing footer code ... -->
+      @if (confirmDelete()) {
+        <div class="confirm-delete-box">
+          <p>
+            Are you sure you want to delete
+            <strong>{{ activeProfile()?.name }}</strong
+            >?
+          </p>
+          <div class="confirm-delete-actions">
+            <button mat-button (click)="confirmDelete.set(false)">
+              Cancel
+            </button>
+            <button
+              mat-flat-button
+              color="warn"
+              (click)="onDeleteProfileConfirm()"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- New Profile Name Input -->
+        <div class="profile-name-field">
+          <label class="role-row__label" for="profile-name">Profile name</label>
+          <input
+            id="profile-name"
+            class="hex-input"
+            type="text"
+            spellcheck="false"
+            [ngModel]="profileNameDraft()"
+            (ngModelChange)="profileNameDraft.set($event)"
+            placeholder="e.g. Midnight Blue"
+          />
+        </div>
+
+        <div class="custom-picker__actions">
+          @if (isProfileMode()) {
+            <button
+              mat-stroked-button
+              color="warn"
+              (click)="confirmDelete.set(true)"
+            >
+              Delete
+            </button>
+            <button mat-flat-button color="primary" (click)="onSaveProfile()">
+              Save changes
+            </button>
+          } @else if (preferencesService.canCreateColorProfile()) {
+            <!-- Only shows if under 12 profiles -->
+            <button
+              mat-flat-button
+              color="primary"
+              class="full-width"
+              (click)="onSaveProfile()"
+            >
+              Save as profile
+            </button>
+          } @else {
+            <p class="role-row__hint" style="text-align: center; width: 100%">
+              Max 12 profiles reached. Delete one to create a new one.
+            </p>
+          }
+        </div>
       }
     </div>
-  </section>
-
-  <!-- Secondary / Tertiary / Error / etc -->
-  @for (field of roleFields; track field.role) {
-    <section class="role-row">
-      <div class="role-row__swatch-input">
-        <input
-          type="color"
-          class="color-swatch-input"
-          [class.color-swatch-input--disabled]="!isRoleCustom(field.role)"
-          [disabled]="!isRoleCustom(field.role)"
-          [value]="getRoleDisplayValue(field.role)"
-          (input)="onRoleChange(field.role, $any($event.target).value)"
-          [attr.aria-label]="'Pick ' + field.label + ' color'"
-        />
-      </div>
-      <div class="role-row__fields">
-        <div class="role-row__label-line">
-          <label class="role-row__label" [for]="field.role + '-hex'">{{
-            field.label
-          }}</label>
-          <mat-slide-toggle
-            [checked]="isRoleCustom(field.role)"
-            (change)="onRoleToggle(field.role, $event.checked)"
-            [matTooltip]="field.hint"
-          >
-            {{ isRoleCustom(field.role) ? "Custom" : "Auto" }}
-          </mat-slide-toggle>
-        </div>
-        <input
-          [id]="field.role + '-hex'"
-          class="hex-input"
-          type="text"
-          spellcheck="false"
-          [disabled]="!isRoleCustom(field.role)"
-          [class.hex-input--invalid]="roleDraftInvalid(field.role)"
-          [ngModel]="getRoleDisplayValue(field.role)"
-          (ngModelChange)="onRoleChange(field.role, $event)"
-          placeholder="Auto from primary"
-        />
-        @if (roleDraftInvalid(field.role)) {
-          <span class="role-row__error">Enter a valid hex color.</span>
-        }
-        <span class="role-row__hint">{{ field.hint }}</span>
-      </div>
-    </section>
-  }
-
-  <!-- Extended Custom Roles Section -->
-  <div class="extended-colors-header">
-    <div class="header-text">
-      <h4>Custom Roles</h4>
-      <p>Create up to 5 custom token pairs.</p>
-    </div>
-    <button
-      mat-stroked-button
-      (click)="addExtendedRole()"
-      [disabled]="!canAddExtendedColor()"
-    >
-      <mat-icon>add</mat-icon> Add ({{ extendedColors().length }}/5)
-    </button>
   </div>
-
-  @for (ext of extendedColors(); track ext.id) {
-    <section class="role-row">
-      <div class="role-row__swatch-input">
-        <input
-          type="color"
-          class="color-swatch-input"
-          [value]="ext.color"
-          (input)="updateExtendedColorHex(ext.id, $any($event.target).value)"
-          [attr.aria-label]="'Pick ' + ext.label + ' color'"
-        />
-      </div>
-      <div class="role-row__fields">
-        <div class="role-row__label-line" style="margin-bottom: 6px">
-          <!-- Editable Label -->
-          <input
-            type="text"
-            class="extended-label-input"
-            [value]="ext.label"
-            (change)="
-              updateExtendedColorLabel(ext.id, $any($event.target).value)
-            "
-            placeholder="Role Name"
-          />
-
-          <!-- Delete button -->
-          <button
-            mat-icon-button
-            color="warn"
-            class="delete-ext-btn"
-            (click)="removeExtendedRole(ext.id)"
-            matTooltip="Delete custom role"
-          >
-            <mat-icon>delete_outline</mat-icon>
-          </button>
-        </div>
-        <!-- Hex Input -->
-        <input
-          class="hex-input"
-          type="text"
-          spellcheck="false"
-          [ngModel]="ext.color"
-          (ngModelChange)="updateExtendedColorHex(ext.id, $event)"
-          placeholder="#000000"
-        />
-      </div>
-    </section>
-  }
-
-  <mat-divider style="margin: 8px 0"></mat-divider>
-
-  <!-- Profile Interactions -->
-  <div class="custom-picker__footer">
-    <!-- ... Rest of your existing footer code ... -->
-    @if (confirmDelete()) {
-      <div class="confirm-delete-box">
-        <p>
-          Are you sure you want to delete
-          <strong>{{ activeProfile()?.name }}</strong
-          >?
-        </p>
-        <div class="confirm-delete-actions">
-          <button mat-button (click)="confirmDelete.set(false)">Cancel</button>
-          <button
-            mat-flat-button
-            color="warn"
-            (click)="onDeleteProfileConfirm()"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    } @else {
-      <!-- New Profile Name Input -->
-      <div class="profile-name-field">
-        <label class="role-row__label" for="profile-name">Profile name</label>
-        <input
-          id="profile-name"
-          class="hex-input"
-          type="text"
-          spellcheck="false"
-          [ngModel]="profileNameDraft()"
-          (ngModelChange)="profileNameDraft.set($event)"
-          placeholder="e.g. Midnight Blue"
-        />
-      </div>
-
-      <div class="custom-picker__actions">
-        @if (isProfileMode()) {
-          <button
-            mat-stroked-button
-            color="warn"
-            (click)="confirmDelete.set(true)"
-          >
-            Delete
-          </button>
-          <button mat-flat-button color="primary" (click)="onSaveProfile()">
-            Save changes
-          </button>
-        } @else if (preferencesService.canCreateColorProfile()) {
-          <!-- Only shows if under 12 profiles -->
-          <button
-            mat-flat-button
-            color="primary"
-            class="full-width"
-            (click)="onSaveProfile()"
-          >
-            Save as profile
-          </button>
-        } @else {
-          <p class="role-row__hint" style="text-align: center; width: 100%">
-            Max 12 profiles reached. Delete one to create a new one.
-          </p>
-        }
-      </div>
-    }
-  </div>
-</div>
+}
