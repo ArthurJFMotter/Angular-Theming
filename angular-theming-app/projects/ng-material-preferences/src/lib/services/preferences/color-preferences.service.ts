@@ -193,15 +193,16 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
   }
 
   patchState(state: Partial<ColorPreferences>): void {
-    if (state.mode !== undefined) this.setMode(state.mode);
-    if (state.autoContrast !== undefined)
-      this.setAutoContrast(state.autoContrast);
-    if (state.contrastLevel !== undefined)
-      this.setContrastLevel(state.contrastLevel);
-    if (state.scheme !== undefined) this.setScheme(state.scheme);
-    if (state.variant !== undefined) this.setVariant(state.variant);
+    if (state.mode !== undefined) this.mode.set(state.mode);
+    if (state.autoContrast !== undefined) this.autoContrast.set(state.autoContrast);
+    if (state.contrastLevel !== undefined) this.contrastLevel.set(state.contrastLevel);
+    if (state.scheme !== undefined) this.scheme.set(state.scheme);
+    if (state.variant !== undefined) this.variant.set(state.variant);
     if (state.savedProfiles) this.savedProfiles.set(state.savedProfiles);
-    if (state.customColors) this.setCustomColors(state.customColors); // Includes extended colors logic natively
+    
+    if (state.customColors) {
+      this.customColors.set(state.customColors);
+    }
   }
 
   reset(): void {
