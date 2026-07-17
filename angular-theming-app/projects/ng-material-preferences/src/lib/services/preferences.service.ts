@@ -304,13 +304,39 @@ export class PreferencesService {
   }
 
   patchState(parsed: any): void {
-    if (!parsed) return;
+    if (!parsed || typeof parsed !== 'object') return;
 
-    /* If the consumer provided a migration strategy, run the data through it!
-     Otherwise, assume the data is already in the correct format. */
-    const state: PreferencesState = this.migrationFn
-      ? this.migrationFn(parsed)
-      : parsed;
+    let state: PreferencesState;
+
+    // Defensively try to run the consumer's migration strategy
+    try {
+      state = this.migrationFn ? this.migrationFn(parsed) : parsed;
+    } catch (e) {
+      if (isDevMode()) {
+        console.error(
+          '[ng-material-preferences] migrationStrategy threw an error. Falling back to defaults.',
+          e,
+        );
+      }
+      state = {};
+    }
+
+    /* Heuristic check to warn developers of silent data loss
+     If they didn't provide a migration function, but the data exists and doesn't match our domains... */
+    if (isDevMode() && !this.migrationFn && Object.keys(state).length > 0) {
+      let hasAtLeastOneDomain = false;
+      this.registry.forEach((_, key) => {
+        if ((state as any)[key] !== undefined) hasAtLeastOneDomain = true;
+      });
+
+      if (!hasAtLeastOneDomain) {
+        console.warn(
+          `[ng-material-preferences] Loaded preferences do not match the expected nested schema. ` +
+            `If you are upgrading from a previous flat-storage version, you must provide a 'migrationStrategy' ` +
+            `in your 'providePreferences()' config to map the old data, otherwise it will be ignored.`,
+        );
+      }
+    }
 
     // Dynamically patch all registered domains
     this.registry.forEach((domain, key) => {
