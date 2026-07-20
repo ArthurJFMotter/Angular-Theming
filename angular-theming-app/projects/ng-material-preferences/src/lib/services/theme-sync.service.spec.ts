@@ -1,58 +1,68 @@
-import { TestBed } from '@angular/core/testing';
+import { Component, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ThemeSyncService } from './theme-sync.service';
 import { PreferencesService } from './preferences.service';
 import { DomService } from './dom.service';
 import { PREFERENCES_STORAGE_TOKEN } from '../storage/preferences-storage.interface';
-import { signal } from '@angular/core';
+
+// Dummy component to trigger Angular's effect() execution
+@Component({ template: '' })
+class DummyComponent { constructor(public sync: ThemeSyncService) {} }
 
 describe('ThemeSyncService', () => {
   let mockStorage: any;
   let mockPrefs: any;
   let mockDom: any;
+  let fixture: ComponentFixture<DummyComponent>;
 
   beforeEach(() => {
-    // Mock the dependencies so we aren't triggering real DOM/Storage changes
-    mockStorage = {
-      load: jasmine.createSpy('load').and.returnValue({ _v: 2, color: { mode: 'dark' } }),
-      save: jasmine.createSpy('save')
-    };
-
+    mockStorage = { load: jasmine.createSpy(), save: jasmine.createSpy() };
+    
+    // We mock the state to ONLY include the "color" domain
     mockPrefs = {
-      patchState: jasmine.createSpy('patchState'),
-      preferences: signal({}), // Dummy state
-      resolvedMode: signal('dark'),
+      patchState: jasmine.createSpy(),
+      preferences: signal({ color: { scheme: 'custom', variant: 'vibrant' } }),
+      resolvedMode: signal('light'),
       resolvedContrastLevel: signal(0),
       activeCustomColors: signal({ primary: '#000' })
     };
 
     mockDom = {
-      injectCvdFilters: jasmine.createSpy('injectCvdFilters'),
-      applyAccessibilityFilters: jasmine.createSpy('applyAccessibilityFilters'),
-      applyTypography: jasmine.createSpy('applyTypography'),
-      applyShape: jasmine.createSpy('applyShape'),
-      applyMotion: jasmine.createSpy('applyMotion'),
-      setAttribute: jasmine.createSpy('setAttribute'),
-      removeAttribute: jasmine.createSpy('removeAttribute'),
-      setColorScheme: jasmine.createSpy('setColorScheme'),
-      applyTokens: jasmine.createSpy('applyTokens')
+      injectCvdFilters: jasmine.createSpy(),
+      applyAccessibilityFilters: jasmine.createSpy(),
+      applyTypography: jasmine.createSpy(),
+      applyShape: jasmine.createSpy(),
+      applyMotion: jasmine.createSpy(),
+      setAttribute: jasmine.createSpy(),
+      removeAttribute: jasmine.createSpy(),
+      setColorScheme: jasmine.createSpy(),
+      applyTokens: jasmine.createSpy()
     };
 
     TestBed.configureTestingModule({
+      imports: [DummyComponent],
       providers: [
-        ThemeSyncService,
         { provide: PreferencesService, useValue: mockPrefs },
         { provide: DomService, useValue: mockDom },
         { provide: PREFERENCES_STORAGE_TOKEN, useValue: mockStorage }
       ]
     });
+
+    fixture = TestBed.createComponent(DummyComponent);
   });
 
-  it('should load state from storage and patch it during initialization', () => {
-    TestBed.inject(ThemeSyncService);
-    expect(mockStorage.load).toHaveBeenCalled();
-    expect(mockPrefs.patchState).toHaveBeenCalledWith({ _v: 2, color: { mode: 'dark' } });
-  });
+  it('should strictly branch DOM calls based on active domains', () => {
+    fixture.detectChanges(); // Flushes the effect()!
 
-  // Note: Testing the exact effect() execution requires Angular's ComponentFixture/flush 
-  // but just verifying the initialization dependencies is the most crucial structural test.
+    // Color domain WAS present, so Color-related DOM methods should have been called
+    expect(mockDom.setAttribute).toHaveBeenCalledWith('data-theme-scheme', 'custom');
+    expect(mockDom.applyTokens).toHaveBeenCalled();
+
+    // Typography & Layout domains were NOT present in the signal state.
+    // They MUST NOT be called!
+    expect(mockDom.applyTypography).not.toHaveBeenCalled();
+    expect(mockDom.applyShape).not.toHaveBeenCalled();
+    expect(mockDom.applyMotion).not.toHaveBeenCalled();
+    expect(mockDom.applyAccessibilityFilters).not.toHaveBeenCalled();
+  });
 });

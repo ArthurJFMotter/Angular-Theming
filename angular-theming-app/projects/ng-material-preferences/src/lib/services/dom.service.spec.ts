@@ -43,4 +43,28 @@ describe('DomService', () => {
     const root = document.documentElement;
     expect(root.style.getPropertyValue('--mat-sys-corner-small')).toBe('calc(8px * 2)');
   });
+
+  it('should inject dynamic CVD SVGs and chain Astigmatism', () => {
+    service.applyAccessibilityFilters('protanopia', 100, 'simulate', 'astigmatism', 50);
+    
+    expect(document.getElementById('accessibility-svg-filters')).toBeTruthy();
+    const cvdMatrix = document.getElementById('dynamic-cvd-matrix');
+    expect(cvdMatrix?.getAttribute('values')).toContain('0.567');
+
+    const root = document.documentElement;
+    // Should chain both SVG filters in the CSS
+    expect(root.style.filter).toContain('dynamic-cvd-filter');
+    expect(root.style.filter).toContain('dynamic-astigmatism-filter');
+  });
+
+  it('should generate Field of Vision (FOV) overlays and clean them up', () => {
+    service.applyAccessibilityFilters('none', 0, 'simulate', 'glaucoma', 50);
+    const fov = document.getElementById('fov-overlay');
+    expect(fov).toBeTruthy();
+    expect(fov?.style.background).toContain('radial-gradient');
+
+    // Switch back to none, should clean up!
+    service.applyAccessibilityFilters('none', 0, 'simulate', 'none', 0);
+    expect(document.getElementById('fov-overlay')).toBeNull();
+  });
 });

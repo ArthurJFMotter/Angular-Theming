@@ -64,4 +64,26 @@ describe('PreferencesService Facade', () => {
       expect(service.headingFontFamily()).toBe('Roboto'); 
     });
   });
+
+  describe('Safety & Reset Logic', () => {
+    it('should reset all registered domains', () => {
+      const mockDomain = { key: 'test', getSnapshot: () => ({}), patchState: () => {}, reset: jasmine.createSpy('reset') };
+      TestBed.configureTestingModule({
+        providers: [PreferencesService, { provide: PREFERENCE_DOMAINS, useValue: mockDomain, multi: true }]
+      });
+      const srv = TestBed.inject(PreferencesService);
+      srv.resetToDefaults();
+      expect(mockDomain.reset).toHaveBeenCalled();
+    });
+
+    it('should warn in dev mode if state data exists but no matching domains are found', () => {
+      spyOn(console, 'warn');
+      TestBed.configureTestingModule({ providers: [PreferencesService] });
+      const srv = TestBed.inject(PreferencesService);
+      
+      // Pass V1 data with no migration strategy provided
+      srv.patchState({ mode: 'dark', fontFamily: 'Arial' });
+      expect(console.warn).toHaveBeenCalledWith(jasmine.stringMatching(/do not match the expected nested schema/));
+    });
+  });
 });

@@ -38,4 +38,22 @@ describe('ColorEngine', () => {
     expect(suggestions.error).toBeDefined();
     expect(Array.isArray(suggestions.extended)).toBeTrue();
   });
+
+  it('should shift tones in dark mode', () => {
+    const light = ColorEngine.buildTokens(mockCustomColors, 'light');
+    const dark = ColorEngine.buildTokens(mockCustomColors, 'dark');
+    expect(light.primary).not.toBe(dark.primary); // Dark mode generates lighter primary tones
+  });
+
+  it('should shift container tones aggressively in High Contrast mode', () => {
+    const normal = ColorEngine.buildTokens(mockCustomColors, 'light', 0);
+    const high = ColorEngine.buildTokens(mockCustomColors, 'light', 1.0);
+    expect(normal['primary-container']).not.toBe(high['primary-container']);
+  });
+
+  it('should respect Scheme Variants (Monochrome vs Vibrant)', () => {
+    const monochrome = ColorEngine.buildTokens(mockCustomColors, 'light', 0, 'monochrome');
+    const vibrant = ColorEngine.buildTokens(mockCustomColors, 'light', 0, 'vibrant');
+    expect(monochrome.primary).not.toBe(vibrant.primary);
+  });
 });
