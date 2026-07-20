@@ -15,4 +15,10 @@ describe('TypographyPreferencesService', () => {
     expect(snap.bodyFontFamily).toBe('Roboto'); // Default
     expect(snap.fontScale).toBe(1.2);
   });
+
+  it('should reset back to defaults', () => {
+    service.setHeadingFontFamily('Comic Sans');
+    service.reset();
+    expect(service.headingFontFamily()).toBe('Roboto');
+  });
 });

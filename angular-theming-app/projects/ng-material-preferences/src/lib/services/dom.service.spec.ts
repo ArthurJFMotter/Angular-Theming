@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { DOCUMENT } from '@angular/common';
 import { DomService } from './dom.service';
+import { FONT_LOADER_STRATEGY } from './preferences/font-loader.strategy';
 
 describe('DomService', () => {
   let service: DomService;
@@ -68,3 +69,26 @@ describe('DomService', () => {
     expect(document.getElementById('fov-overlay')).toBeNull();
   });
 });
+
+describe('With FontLoaderStrategy', () => {
+    let mockFontLoader: any;
+    let domWithLoader: DomService;
+
+    beforeEach(() => {
+      mockFontLoader = { loadFont: jasmine.createSpy('loadFont') };
+      TestBed.resetTestingModule(); // Reset the previous setup
+      TestBed.configureTestingModule({
+        providers: [
+          DomService,
+          { provide: FONT_LOADER_STRATEGY, useValue: mockFontLoader } 
+        ]
+      });
+      domWithLoader = TestBed.inject(DomService);
+    });
+
+    it('should delegate to the FontLoaderStrategy when applying typography', () => {
+      domWithLoader.applyTypography('Oswald', 'Roboto', 1);
+      expect(mockFontLoader.loadFont).toHaveBeenCalledWith('Oswald', jasmine.any(Object));
+      expect(mockFontLoader.loadFont).toHaveBeenCalledWith('Roboto', jasmine.any(Object));
+    });
+  });

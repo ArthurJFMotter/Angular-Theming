@@ -14,4 +14,10 @@ describe('NotificationPreferencesService', () => {
     expect(snap.snackbarHPosition).toBe('end');
     expect(snap.snackbarVPosition).toBe('top');
   });
+
+  it('should reset back to defaults', () => {
+    service.setSnackbarHPosition('left');
+    service.reset();
+    expect(service.snackbarHPosition()).toBe('center'); // The default
+  });
 });
