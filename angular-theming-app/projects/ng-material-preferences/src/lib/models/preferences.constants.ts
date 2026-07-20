@@ -48,6 +48,10 @@ export const DEFAULT_PREFERENCES_STATE: Required<PreferencesState> = {
 export const THEME_MODES: ThemeMode[] = ['light', 'auto', 'dark'];
 export const CONTRAST_MODES: ContrastMode[] = ['normal', 'auto', 'high'];
 
+/** 
+ * Convenience array for UI dropdowns. 
+ * @note The `label` and `desc` properties are English defaults. Override for i18n.
+ */
 export const SCHEME_VARIANTS: { value: SchemeVariant; label: string; desc: string }[] = [
   { value: 'tonal-spot', label: 'Tonal Spot', desc: 'Standard Material 3 (Pastel/Safe)' },
   { value: 'vibrant', label: 'Vibrant', desc: 'Maximized saturation' },
@@ -58,6 +62,11 @@ export const SCHEME_VARIANTS: { value: SchemeVariant; label: string; desc: strin
   { value: 'content', label: 'Content', desc: 'Optimized for embedded content' },
 ];
 
+/** 
+ * Convenience array for UI dropdowns. 
+ * @note The `label` and `desc` properties are English defaults. 
+ * For i18n (Internationalization), map the `value` keys to your own translation dictionaries. 
+ */
 export const CVD_MODES: { value: CvdMode; label: string; desc: string }[] = [
   { value: 'none', label: 'Normal Vision', desc: 'No color deficiency' },
   { value: 'protanopia', label: 'Protanomaly/Protanopia', desc: 'Red-blindness spectrum' },
@@ -66,6 +75,10 @@ export const CVD_MODES: { value: CvdMode; label: string; desc: string }[] = [
   { value: 'achromatopsia', label: 'Achromatomaly/Achromatopsia', desc: 'Grayscale spectrum' },
 ];
 
+/** 
+ * Convenience array for UI dropdowns. 
+ * @note The `label` and `desc` properties are English defaults. Override for i18n.
+ */
 export const SCREEN_FILTERS: { value: ScreenFilter; label: string; desc: string }[] = [
   { value: 'none', label: 'No Overlay', desc: 'Clear screen' },
   { value: 'blur', label: 'Low Vision', desc: 'Simulates blurred vision' },
@@ -76,6 +89,10 @@ export const SCREEN_FILTERS: { value: ScreenFilter; label: string; desc: string 
   { value: 'glaucoma', label: 'Glaucoma', desc: 'Tunnel vision (Mouse Tracked)' },
 ];
 
+/** 
+ * Standard font recommendations. 
+ * @note The `label` properties are English defaults. Override for i18n.
+ */
 export const FONT_OPTIONS = [
   { value: 'Roboto', label: 'Roboto' },
   { value: 'Inter', label: 'Inter' },
