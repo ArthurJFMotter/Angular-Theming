@@ -1,9 +1,14 @@
-// Global styles
-// Theme palettes (blue/green/purple x light/dark) live in _themes.scss,
-// applied via [data-theme-scheme]/[data-theme-mode] attributes on <html>.
-@use "./themes";
-@use "@angular/material" as mat;
+@use '@angular/material' as mat;
 
+// NOTE: External consumers who NPM install the library will use:
+// @use 'ng-material-preferences/src/styles/theming' as prefs;
+
+// For local monorepo development, we point directly to the project folder:
+@use '../projects/ng-material-preferences/src/styles/theming' as prefs;
+
+@include prefs.setup-theming();
+
+// Global styles
 html,
 body {
   height: 100%;
@@ -19,84 +24,10 @@ body {
     color 200ms ease;
 }
 
-:root {
-  /* 
-    Fallback Semantic Tokens 
-    These ensure the UI doesn't break if the dynamic ColorEngine domain is omitted.
-  */
-  --mat-sys-success: #188038;
-  --mat-sys-on-success: #ffffff;
-  --mat-sys-success-container: #e6f4ea;
-  --mat-sys-on-success-container: #137333;
-  
-  --mat-sys-warning: #f29900;
-  --mat-sys-on-warning: #ffffff;
-  --mat-sys-warning-container: #fef7e0;
-  --mat-sys-on-warning-container: #b06000;
-  
-  --mat-sys-info: #1967d2;
-  --mat-sys-on-info: #ffffff;
-  --mat-sys-info-container: #e8f0fe;
-  --mat-sys-on-info-container: #174ea6;
-}
-
-// Smooth, non-jarring crossfade whenever the theme attributes change.
-* {
-  transition:
-    background-color 200ms ease,
-    border-color 200ms ease,
-    color 200ms ease;
-}
-
-// The custom-color-picker panel supplies its own padding/width; strip
-// Material's default menu content padding so it isn't doubled up.
-// (mat-menu renders its overlay outside component view encapsulation, so
-// this has to live in a global stylesheet to reach it.)
+// APP overrides
 .custom-menu-panel .mat-mdc-menu-content {
   padding: 0;
 }
-
-// =============================================================================
-// CDK Overlay Styles (Snackbars)
-// =============================================================================
-// These run globally so any component can use these!
-
-// Wire the Snackbar shape into our global Shape Engine
-.mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  border-radius: var(--mat-sys-corner-small) !important;
-}
-
-// Override default colors with our semantic container tokens
-.snackbar-success {
-  --mat-snackbar-container-color: var(--mat-sys-success-container);
-  --mat-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
-  --mat-snack-bar-button-color: var(--mat-sys-on-success-container);
-}
-
-.snackbar-warning {
-  --mat-snackbar-container-color: var(--mat-sys-warning-container);
-  --mat-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
-  --mat-snack-bar-button-color: var(--mat-sys-on-warning-container);
-}
-
-.snackbar-info {
-  --mat-snackbar-container-color: var(--mat-sys-info-container);
-  --mat-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
-  --mat-snack-bar-button-color: var(--mat-sys-on-info-container);
-}
-
-.snackbar-error {
-  --mat-snackbar-container-color: var(--mat-sys-error-container);
-  --mat-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
-  --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
-}
-
-// Wire Dialogs into the Shape Engine
-.mat-mdc-dialog-container .mdc-dialog__surface {
-  border-radius: var(--mat-sys-corner-extra-large) !important;
-}
-
-// Wire Bottom Sheets into the Shape Engine (Top corners only!)
 .mat-bottom-sheet-container {
   border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
   border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
