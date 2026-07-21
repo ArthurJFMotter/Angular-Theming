@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CustomSnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
+import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
 import { PreferencesService } from 'ng-material-preferences';
 
 export type NotificationType = 'default' | 'success' | 'warning' | 'info' | 'error';
@@ -14,7 +14,7 @@ export class NotificationService {
     let panelClass = '';
     if (type !== 'default') panelClass = `snackbar-${type}`;
 
-    this.snackBar.openFromComponent(CustomSnackbarComponent, {
+    this.snackBar.openFromComponent(SnackbarComponent, {
       data: { message, type },
       duration: 4000,
       horizontalPosition: this.prefs.snackbarHPosition?.() || 'center',

@@ -21,7 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
-import { CustomColorPickerComponent } from '../custom-color-picker/custom-color-picker.component';
+import { ColorPickerComponent } from '../color-picker/color-picker.component';
 
 import {
   PreferencesService,
@@ -52,7 +52,7 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
-    CustomColorPickerComponent,
+    ColorPickerComponent,
   ],
   templateUrl: './preferences-side-drawer.component.html',
   styleUrl: './preferences-side-drawer.component.scss',

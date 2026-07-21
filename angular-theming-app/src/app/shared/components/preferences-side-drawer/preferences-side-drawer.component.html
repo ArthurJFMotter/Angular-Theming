@@ -64,7 +64,7 @@
           <mat-menu #customMenu="matMenu" class="custom-menu-panel">
             <ng-template matMenuContent>
               <div (click)="$event.stopPropagation()">
-                <app-custom-color-picker (actionComplete)="closeCustomMenu()" />
+                <app-color-picker (actionComplete)="closeCustomMenu()" />
               </div>
             </ng-template>
           </mat-menu>

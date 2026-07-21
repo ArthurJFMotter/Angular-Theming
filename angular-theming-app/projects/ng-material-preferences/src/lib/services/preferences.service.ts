@@ -221,9 +221,9 @@ export class PreferencesService {
   removeExtendedColor(id: string) {
     this.color?.removeExtendedColor(id);
   }
-  suggestedCustomDefaults() {
+  suggestedColorsDefaults() {
     return (
-      this.color?.suggestedCustomDefaults() || ({} as Required<CustomColors>)
+      this.color?.suggestedColorsDefaults() || ({} as Required<CustomColors>)
     );
   }
 

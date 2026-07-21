@@ -32,7 +32,7 @@ interface RoleField {
 }
 
 @Component({
-  selector: 'app-custom-color-picker',
+  selector: 'app-color-picker',
   standalone: true,
   imports: [
     FormsModule,
@@ -42,10 +42,10 @@ interface RoleField {
     MatSlideToggleModule,
     MatDividerModule,
   ],
-  templateUrl: './custom-color-picker.component.html',
-  styleUrl: './custom-color-picker.component.scss',
+  templateUrl: './color-picker.component.html',
+  styleUrl: './color-picker.component.scss',
 })
-export class CustomColorPickerComponent {
+export class ColorPickerComponent {
   readonly preferencesService = inject(PreferencesService);
 
   @Output() actionComplete = new EventEmitter<void>();
@@ -104,7 +104,7 @@ export class CustomColorPickerComponent {
   ];
 
   readonly suggested = computed(() =>
-    this.preferencesService.suggestedCustomDefaults(),
+    this.preferencesService.suggestedColorsDefaults(),
   );
   readonly primaryInvalid = computed(
     () => !isValidHexColor(this.primaryDraft()),

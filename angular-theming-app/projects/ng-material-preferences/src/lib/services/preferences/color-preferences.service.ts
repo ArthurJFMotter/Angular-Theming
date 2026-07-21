@@ -173,7 +173,7 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
       );
   }
 
-  suggestedCustomDefaults() {
+  suggestedColorsDefaults() {
     return ColorEngine.suggestDefaults(
       this.activeCustomColors().primary,
       this.variant(),

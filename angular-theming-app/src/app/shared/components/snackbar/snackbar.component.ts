@@ -9,13 +9,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { NotificationType } from '../../../core/services/notification.service';
 
 @Component({
-  selector: 'app-custom-snackbar',
+  selector: 'app-snackbar',
   standalone: true,
   imports: [MatIconModule, MatButtonModule],
   templateUrl: './snackbar.component.html',
   styleUrl: './snackbar.component.scss',
 })
-export class CustomSnackbarComponent {
+export class SnackbarComponent {
   private readonly snackBarRef = inject(MatSnackBarRef);
   readonly data: { message: string; type: NotificationType } =
     inject(MAT_SNACK_BAR_DATA);
