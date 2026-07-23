@@ -1,0 +1,40 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x' # Use the LTS Node version
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Run Library Tests
+      # Runs the 50+ specs we wrote for the core engine
+      run: npx ng test ng-material-preferences --watch=false --browsers=ChromeHeadless
+
+    - name: Run Demo App Tests
+      # Runs the domain-omission UI tests for the sandbox
+      run: npx ng test --watch=false --browsers=ChromeHeadless
+
+    - name: Build Library
+      # Ensures the ng-packagr bundling process succeeds
+      run: npx ng build ng-material-preferences
+
+    - name: Build Demo App
+      # Ensures the sandbox app successfully imports and consumes the built library
+      run: npx ng build
