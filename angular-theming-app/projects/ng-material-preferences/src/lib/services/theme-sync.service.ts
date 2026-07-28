@@ -1,4 +1,4 @@
-import { Injectable, Inject, effect } from '@angular/core';
+import { Injectable, Inject, effect, Optional } from '@angular/core';
 import { PreferencesService } from './preferences.service';
 import { DomService } from './dom.service';
 import { ColorEngine } from '../utils/engines/color-engine';
@@ -9,14 +9,14 @@ export class ThemeSyncService {
   constructor(
     private prefs: PreferencesService,
     private dom: DomService,
-    @Inject(PREFERENCES_STORAGE_TOKEN) private storage: IPreferencesStorage
+    @Optional() @Inject(PREFERENCES_STORAGE_TOKEN) private storage: IPreferencesStorage | null
   ) {
     this.initialize();
   }
 
   private initialize(): void {
     // Load from storage and patch state
-    const savedState = this.storage.load();
+    const savedState = this.storage?.load();
     if (savedState) {
       this.prefs.patchState(savedState);
     }
@@ -26,7 +26,7 @@ export class ThemeSyncService {
       const state = this.prefs.preferences();
       
       // Save full state to persistence
-      this.storage.save(state);
+      this.storage?.save(state);
 
       // --- COLOR DOMAIN ---
       if (state.color) {
