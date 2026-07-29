@@ -50,19 +50,16 @@ No Angular Material **components** are required by the library itself — it nev
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
-import {
-  providePreferences,
-  PREFERENCES_STORAGE_TOKEN,
-  LocalPreferencesStorageService,
-} from 'ng-material-preferences';
+import { providePreferences } from 'ng-material-preferences';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     // ...your other providers (router, animations, etc.)
 
-    { provide: PREFERENCES_STORAGE_TOKEN, useClass: LocalPreferencesStorageService },
+    // Starts the Theme Engine and sets up LocalStorage automatically!
+    providePreferences()
 
-    providePreferences(), // registers all five domains with sensible defaults
+    // Addendum: you can provide PREFERENCES_STORAGE_TOKEN if you need to sync the preferences values to an database
   ],
 };
 ```

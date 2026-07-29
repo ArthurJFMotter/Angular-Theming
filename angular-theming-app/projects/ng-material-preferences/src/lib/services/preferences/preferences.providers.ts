@@ -5,7 +5,7 @@ import { ColorPreferencesService } from './color-preferences.service';
 import { LayoutPreferencesService } from './layout-preferences.service';
 import { NotificationPreferencesService } from './notification-preferences.service';
 import { TypographyPreferencesService } from './typography-preferences.service';
-import { PREFERENCES_STORAGE_KEY_TOKEN } from '../../storage/preferences-storage.interface';
+import { PREFERENCES_STORAGE_KEY_TOKEN, PREFERENCES_STORAGE_TOKEN } from '../../storage/preferences-storage.interface';
 import { PREFERENCES_MIGRATION_TOKEN, PreferencesMigrationFn } from '../../storage/preferences-migration.token';
 import {
   FONT_LOADER_STRATEGY,
@@ -13,6 +13,7 @@ import {
   GoogleFontLoaderStrategy,
 } from './font-loader.strategy';
 import { ThemeSyncService } from '../theme-sync.service';
+import { LocalPreferencesStorageService } from '../../storage/local-preferences-storage.service';
 
 // Individual Domain Providers
 export function provideColorPreferences(): Provider[] {
@@ -108,13 +109,16 @@ export function providePreferences(config: ThemingConfig = {}): Provider[] {
   if (config.layout !== false) providers.push(...provideLayoutPreferences());
   if (config.notifications !== false) providers.push(...provideNotificationPreferences());
 
-  if (config.migrationStrategy) {
-    providers.push({ provide: PREFERENCES_MIGRATION_TOKEN, useValue: config.migrationStrategy });
-  }
+  // Default Storage Boundary (Zero-config fallback!)
+  // Consumers can still override this by providing their own PREFERENCES_STORAGE_TOKEN in their app.config.ts
+  providers.push({ provide: PREFERENCES_STORAGE_TOKEN, useClass: LocalPreferencesStorageService });
 
-  // Configure Storage Boundary
   if (config.storageKey) {
     providers.push({ provide: PREFERENCES_STORAGE_KEY_TOKEN, useValue: config.storageKey });
+  }
+  
+  if (config.migrationStrategy) {
+    providers.push({ provide: PREFERENCES_MIGRATION_TOKEN, useValue: config.migrationStrategy });
   }
 
   // Configure Font Loading Strategy Override
