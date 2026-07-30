@@ -10,9 +10,13 @@ import {
   SchemeNeutral,
   SchemeMonochrome,
   SchemeFidelity,
-  SchemeContent
+  SchemeContent,
 } from '@material/material-color-utilities';
-import { CustomColors, SchemeVariant, ThemeMode } from '../../models/preferences.types';
+import {
+  CustomColors,
+  SchemeVariant,
+  ThemeMode,
+} from '../../models/preferences.types';
 
 export interface MatSysColorTokens {
   primary: string;
@@ -64,20 +68,34 @@ export interface MatSysColorTokens {
   'on-info': string;
   'info-container': string;
   'on-info-container': string;
-  [key: string]: string; 
+  [key: string]: string;
 }
 
 export class ColorEngine {
-  static buildTokenPair(colors: CustomColors, contrastLevel = 0, variant: SchemeVariant = 'tonal-spot') {
+  static buildTokenPair(
+    colors: CustomColors,
+    contrastLevel = 0,
+    variant: SchemeVariant = 'tonal-spot',
+  ) {
     return {
       light: ColorEngine.buildTokens(colors, 'light', contrastLevel, variant),
       dark: ColorEngine.buildTokens(colors, 'dark', contrastLevel, variant),
     };
   }
 
-  static buildTokens(colors: CustomColors, mode: ThemeMode, contrastLevel = 0, variant: SchemeVariant = 'tonal-spot'): MatSysColorTokens {
+  static buildTokens(
+    colors: CustomColors,
+    mode: ThemeMode,
+    contrastLevel = 0,
+    variant: SchemeVariant = 'tonal-spot',
+  ): MatSysColorTokens {
     const isDark = mode === 'dark';
-    const scheme = ColorEngine.buildScheme(colors, isDark, contrastLevel, variant);
+    const scheme = ColorEngine.buildScheme(
+      colors,
+      isDark,
+      contrastLevel,
+      variant,
+    );
     const argb = (value: number) => hexFromArgb(value);
 
     const buildSemanticTokens = (hex: string, name: string) => {
@@ -85,25 +103,43 @@ export class ColorEngine {
       let palette: TonalPalette;
 
       switch (variant) {
-        case 'vibrant': palette = new SchemeVibrant(sourceHct, isDark, contrastLevel).primaryPalette; break;
-        case 'expressive': palette = new SchemeExpressive(sourceHct, isDark, contrastLevel).primaryPalette; break;
-        case 'neutral': palette = new SchemeNeutral(sourceHct, isDark, contrastLevel).primaryPalette; break;
-        case 'monochrome': palette = new SchemeMonochrome(sourceHct, isDark, contrastLevel).primaryPalette; break;
-        case 'fidelity': palette = new SchemeFidelity(sourceHct, isDark, contrastLevel).primaryPalette; break;
-        case 'content': palette = new SchemeContent(sourceHct, isDark, contrastLevel).primaryPalette; break;
+        case 'vibrant':
+          palette = new SchemeVibrant(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
+        case 'expressive':
+          palette = new SchemeExpressive(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
+        case 'neutral':
+          palette = new SchemeNeutral(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
+        case 'monochrome':
+          palette = new SchemeMonochrome(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
+        case 'fidelity':
+          palette = new SchemeFidelity(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
+        case 'content':
+          palette = new SchemeContent(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
         case 'tonal-spot':
         default:
-          palette = new SchemeTonalSpot(sourceHct, isDark, contrastLevel).primaryPalette; break;
+          palette = new SchemeTonalSpot(sourceHct, isDark, contrastLevel)
+            .primaryPalette;
+          break;
       }
-      
-      // Standard M3 Tones
+
       let tBase = isDark ? 80 : 40;
       let tOnBase = isDark ? 20 : 100;
       let tContainer = isDark ? 30 : 90;
       let tOnContainer = isDark ? 90 : 10;
-      
-      // High Contrast Tone shifts
-      if (contrastLevel >= 0.5) { 
+
+      if (contrastLevel >= 0.5) {
         tBase = isDark ? 90 : 30;
         tOnBase = isDark ? 0 : 100;
         tContainer = isDark ? 20 : 85;
@@ -114,7 +150,7 @@ export class ColorEngine {
         [`${name}`]: argb(palette.tone(tBase)),
         [`on-${name}`]: argb(palette.tone(tOnBase)),
         [`${name}-container`]: argb(palette.tone(tContainer)),
-        [`on-${name}-container`]: argb(palette.tone(tOnContainer))
+        [`on-${name}-container`]: argb(palette.tone(tOnContainer)),
       };
     };
 
@@ -125,7 +161,8 @@ export class ColorEngine {
       }
     }
 
-    return {
+    // 1. Store your generated hex colors in a base object
+    const baseTokens: Record<string, string> = {
       primary: argb(scheme.primary),
       'on-primary': argb(scheme.onPrimary),
       'primary-container': argb(scheme.primaryContainer),
@@ -163,28 +200,47 @@ export class ColorEngine {
       'surface-tint': argb(scheme.primary),
       shadow: argb(scheme.shadow),
       scrim: argb(scheme.scrim),
-      
+
       ...buildSemanticTokens(colors.success || '#188038', 'success'),
       ...buildSemanticTokens(colors.warning || '#f29900', 'warning'),
       ...buildSemanticTokens(colors.info || '#1967d2', 'info'),
-      ...extendedTokens
-    } as MatSysColorTokens;
+      ...extendedTokens,
+    };
+
+    // 2. Auto-generate the -channel equivalents for every single color!
+    const finalTokens: Record<string, string> = { ...baseTokens };
+    for (const [key, hex] of Object.entries(baseTokens)) {
+      finalTokens[`${key}-channel`] = toRgbChannel(hex);
+    }
+
+    return finalTokens as MatSysColorTokens;
   }
 
-  static suggestDefaults(primaryHex: string, variant: SchemeVariant = 'tonal-spot'): Required<CustomColors> {
+  static suggestDefaults(
+    primaryHex: string,
+    variant: SchemeVariant = 'tonal-spot',
+  ): Required<CustomColors> {
     const primaryHct = Hct.fromInt(argbFromHex(primaryHex));
-    const mockScheme = ColorEngine.buildScheme({ primary: primaryHex }, false, 0, variant);
+    const mockScheme = ColorEngine.buildScheme(
+      { primary: primaryHex },
+      false,
+      0,
+      variant,
+    );
 
     return {
       primary: primaryHex,
       secondary: hexFromArgb(mockScheme.secondaryPalette.tone(40)),
       tertiary: hexFromArgb(mockScheme.tertiaryPalette.tone(40)),
       // Fallback used safely just in case the Scheme version doesn't initialize errorPalette immediately
-      error: hexFromArgb((mockScheme as any).errorPalette?.tone(40) || TonalPalette.fromHueAndChroma(25, 84).tone(40)),
-      success: '#188038', 
-      warning: '#f29900', 
-      info: '#1967d2', 
-      extended: []
+      error: hexFromArgb(
+        (mockScheme as any).errorPalette?.tone(40) ||
+          TonalPalette.fromHueAndChroma(25, 84).tone(40),
+      ),
+      success: '#188038',
+      warning: '#f29900',
+      info: '#1967d2',
+      extended: [],
     };
   }
 
@@ -192,33 +248,61 @@ export class ColorEngine {
     colors: CustomColors,
     isDark: boolean,
     contrastLevel = 0,
-    variant: SchemeVariant = 'tonal-spot'
+    variant: SchemeVariant = 'tonal-spot',
   ): DynamicScheme {
     const primaryHct = Hct.fromInt(argbFromHex(colors.primary));
     let scheme: DynamicScheme;
 
     switch (variant) {
-      case 'vibrant': scheme = new SchemeVibrant(primaryHct, isDark, contrastLevel); break;
-      case 'expressive': scheme = new SchemeExpressive(primaryHct, isDark, contrastLevel); break;
-      case 'neutral': scheme = new SchemeNeutral(primaryHct, isDark, contrastLevel); break;
-      case 'monochrome': scheme = new SchemeMonochrome(primaryHct, isDark, contrastLevel); break;
-      case 'fidelity': scheme = new SchemeFidelity(primaryHct, isDark, contrastLevel); break;
-      case 'content': scheme = new SchemeContent(primaryHct, isDark, contrastLevel); break;
+      case 'vibrant':
+        scheme = new SchemeVibrant(primaryHct, isDark, contrastLevel);
+        break;
+      case 'expressive':
+        scheme = new SchemeExpressive(primaryHct, isDark, contrastLevel);
+        break;
+      case 'neutral':
+        scheme = new SchemeNeutral(primaryHct, isDark, contrastLevel);
+        break;
+      case 'monochrome':
+        scheme = new SchemeMonochrome(primaryHct, isDark, contrastLevel);
+        break;
+      case 'fidelity':
+        scheme = new SchemeFidelity(primaryHct, isDark, contrastLevel);
+        break;
+      case 'content':
+        scheme = new SchemeContent(primaryHct, isDark, contrastLevel);
+        break;
       case 'tonal-spot':
       default:
-        scheme = new SchemeTonalSpot(primaryHct, isDark, contrastLevel); break;
+        scheme = new SchemeTonalSpot(primaryHct, isDark, contrastLevel);
+        break;
     }
 
     if (colors.secondary) {
-      (scheme as any).secondaryPalette = TonalPalette.fromInt(argbFromHex(colors.secondary));
+      (scheme as any).secondaryPalette = TonalPalette.fromInt(
+        argbFromHex(colors.secondary),
+      );
     }
     if (colors.tertiary) {
-      (scheme as any).tertiaryPalette = TonalPalette.fromInt(argbFromHex(colors.tertiary));
+      (scheme as any).tertiaryPalette = TonalPalette.fromInt(
+        argbFromHex(colors.tertiary),
+      );
     }
     if (colors.error) {
-      (scheme as any).errorPalette = TonalPalette.fromInt(argbFromHex(colors.error));
+      (scheme as any).errorPalette = TonalPalette.fromInt(
+        argbFromHex(colors.error),
+      );
     }
 
     return scheme;
   }
+}
+
+/** Converts a #RRGGBB hex string into a comma-separated RGB channel string */
+function toRgbChannel(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  
+  return `${r}, ${g}, ${b}`;
 }

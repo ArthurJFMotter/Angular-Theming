@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 /// Fallback Semantic Tokens
 /// Ensures the UI doesn't break if the dynamic ColorEngine domain is omitted.
@@ -8,12 +8,12 @@
     --mat-sys-on-success: #ffffff;
     --mat-sys-success-container: #e6f4ea;
     --mat-sys-on-success-container: #137333;
-    
+
     --mat-sys-warning: #f29900;
     --mat-sys-on-warning: #ffffff;
     --mat-sys-warning-container: #fef7e0;
     --mat-sys-on-warning-container: #b06000;
-    
+
     --mat-sys-info: #1967d2;
     --mat-sys-on-info: #ffffff;
     --mat-sys-info-container: #e8f0fe;
@@ -31,24 +31,41 @@
   
   // Snackbar Semantic Colors
   .snackbar-success {
-    --mat-snackbar-container-color: var(--mat-sys-success-container);
-    --mat-mdc-snack-bar-button-color: var(--mat-sys-on-success-container);
+    --mdc-snackbar-container-color: var(--mat-sys-success-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-success-container);
+    color: var(--mat-sys-on-success-container);
   }
   .snackbar-warning {
-    --mat-snackbar-container-color: var(--mat-sys-warning-container);
-    --mat-mdc-snack-bar-button-color: var(--mat-sys-on-warning-container);
+    --mdc-snackbar-container-color: var(--mat-sys-warning-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-warning-container);
+    color: var(--mat-sys-on-warning-container);
   }
   .snackbar-info {
-    --mat-snackbar-container-color: var(--mat-sys-info-container);
-    --mat-mdc-snack-bar-button-color: var(--mat-sys-on-info-container);
+    --mdc-snackbar-container-color: var(--mat-sys-info-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-info-container);
+    color: var(--mat-sys-on-info-container);
   }
   .snackbar-error {
-    --mat-snackbar-container-color: var(--mat-sys-error-container);
-    --mat-mdc-snack-bar-button-color: var(--mat-sys-on-error-container);
+    --mdc-snackbar-container-color: var(--mat-sys-error-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
+    --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
+    color: var(--mat-sys-on-error-container);
+  }
+
+  // Force custom components to inherit the text and icon colors properly
+  .mat-mdc-snack-bar-container {
+    &.snackbar-success, &.snackbar-warning, &.snackbar-info, &.snackbar-error {
+      .mdc-snackbar__surface {
+        background-color: var(--mdc-snackbar-container-color) !important;
+        color: var(--mdc-snackbar-supporting-text-color) !important;
+      }
+      mat-icon {
+        color: var(--mdc-snackbar-supporting-text-color) !important;
+      }
+    }
   }
 
   // Generic Dialog & Bottom Sheet Shapes
@@ -67,7 +84,11 @@
 @mixin apply-density() {
   @for $i from 1 through 3 {
     html[data-theme-density="-#{$i}"] {
-      @include mat.theme((density: -$i));
+      @include mat.theme(
+        (
+          density: -$i,
+        )
+      );
     }
   }
 }

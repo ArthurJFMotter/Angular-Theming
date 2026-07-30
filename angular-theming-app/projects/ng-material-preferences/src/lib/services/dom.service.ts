@@ -233,33 +233,17 @@ export class DomService {
   }
 
   // --- Motion Helper ---
+ // --- Motion Helper ---
   applyMotion(scale: number): void {
-    const root = this.document.documentElement;
-    const styleId = 'theme-motion-override';
-    let styleEl = this.document.getElementById(styleId);
+    // 1. Clean up the old style element if it still exists in the browser
+    const styleEl = this.document.getElementById('theme-motion-override');
+    if (styleEl) styleEl.remove();
 
-    if (scale === 0) {
-      if (!styleEl) {
-        styleEl = this.document.createElement('style');
-        styleEl.id = styleId;
-
-        styleEl.innerHTML = `
-          *:not(.mat-ripple-element), 
-          *:not(.mat-ripple-element)::before, 
-          *:not(.mat-ripple-element)::after {
-            transition-duration: 0.001ms !important;
-            animation-duration: 0.001ms !important;
-            animation-iteration-count: 1 !important;
-            scroll-behavior: auto !important;
-          }
-        `;
-        this.document.head.appendChild(styleEl);
-      }
-    } else {
-      if (styleEl) styleEl.remove();
-    }
-
-    root.style.setProperty('--theme-motion-scale', scale.toString());
+    // 2. We expose the scale as a custom property.
+    // Native Material Ripples are handled perfectly by MAT_RIPPLE_GLOBAL_OPTIONS in the provider.
+    // Consumers can use this CSS variable for their own custom component animations:
+    // e.g., `transition: all calc(0.3s * var(--theme-motion-scale)) ease;`
+    this.document.documentElement.style.setProperty('--theme-motion-scale', scale.toString());
   }
 
   // --- Other Helpers ---
