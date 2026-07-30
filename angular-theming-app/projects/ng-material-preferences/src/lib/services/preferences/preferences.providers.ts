@@ -1,10 +1,13 @@
 import { ENVIRONMENT_INITIALIZER, inject, Provider } from '@angular/core';
+import { MAT_RIPPLE_GLOBAL_OPTIONS, RippleGlobalOptions } from '@angular/material/core';
 import { PREFERENCE_DOMAINS } from './preference-domain.token';
 import { AccessibilityPreferencesService } from './accessibility-preferences.service';
 import { ColorPreferencesService } from './color-preferences.service';
 import { LayoutPreferencesService } from './layout-preferences.service';
 import { NotificationPreferencesService } from './notification-preferences.service';
 import { TypographyPreferencesService } from './typography-preferences.service';
+import { ThemeSyncService } from '../theme-sync.service';
+import { LocalPreferencesStorageService } from '../../storage/local-preferences-storage.service';
 import { PREFERENCES_STORAGE_KEY_TOKEN, PREFERENCES_STORAGE_TOKEN } from '../../storage/preferences-storage.interface';
 import { PREFERENCES_MIGRATION_TOKEN, PreferencesMigrationFn } from '../../storage/preferences-migration.token';
 import {
@@ -12,8 +15,6 @@ import {
   NoopFontLoaderStrategy,
   GoogleFontLoaderStrategy,
 } from './font-loader.strategy';
-import { ThemeSyncService } from '../theme-sync.service';
-import { LocalPreferencesStorageService } from '../../storage/local-preferences-storage.service';
 
 // Individual Domain Providers
 export function provideColorPreferences(): Provider[] {
@@ -131,6 +132,26 @@ export function providePreferences(config: ThemingConfig = {}): Provider[] {
     provide: ENVIRONMENT_INITIALIZER,
     multi: true,
     useValue: () => inject(ThemeSyncService)
+  });
+
+  providers.push({
+    provide: MAT_RIPPLE_GLOBAL_OPTIONS,
+    useFactory: (): RippleGlobalOptions => {
+      const layout = inject(LayoutPreferencesService, { optional: true });
+      
+      return {
+        get disabled() { 
+          return layout ? layout.motionScale() === 0 : false; 
+        },
+        get animation() {
+          const scale = layout ? layout.motionScale() : 1;
+          return {
+            enterDuration: 450 * scale, // Normal is 450ms, Fast is 225ms
+            exitDuration: 400 * scale
+          };
+        }
+      };
+    }
   });
 
   return providers;

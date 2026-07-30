@@ -238,13 +238,15 @@ export class DomService {
     const styleId = 'theme-motion-override';
     let styleEl = this.document.getElementById(styleId);
 
-    // If motion is turned off entirely (0x), aggressively disable all CSS animations/transitions globally
     if (scale === 0) {
       if (!styleEl) {
         styleEl = this.document.createElement('style');
         styleEl.id = styleId;
+
         styleEl.innerHTML = `
-          *, *::before, *::after {
+          *:not(.mat-ripple-element), 
+          *:not(.mat-ripple-element)::before, 
+          *:not(.mat-ripple-element)::after {
             transition-duration: 0.001ms !important;
             animation-duration: 0.001ms !important;
             animation-iteration-count: 1 !important;
@@ -254,11 +256,9 @@ export class DomService {
         this.document.head.appendChild(styleEl);
       }
     } else {
-      // If motion is normal or fast, remove the aggressive override
       if (styleEl) styleEl.remove();
     }
 
-    // Expose the scale as a custom property for any custom SCSS you write in the future
     root.style.setProperty('--theme-motion-scale', scale.toString());
   }
 
