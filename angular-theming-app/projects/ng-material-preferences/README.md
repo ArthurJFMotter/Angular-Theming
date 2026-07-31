@@ -232,10 +232,15 @@ All of this is handled internally — you only need to call `prefs.setCvdMode(..
 
 This is the most important thing to understand if your UI doesn't visibly change after wiring the library up correctly.
 
-The library **never touches your component templates or styles directly.** It writes CSS custom properties onto `document.documentElement` (and a couple of `data-*` attributes), and your own SCSS/CSS is responsible for actually consuming them. If your components don't reference these variables, nothing will visibly change — the library isn't broken, it's just not wired to anything your styles read from.
+The library **never touches your component templates or styles directly.** It writes CSS custom properties onto `document.documentElement` (and a couple of `data-*` attributes), and your own SCSS/CSS is responsible for actually consuming them.
 
 ### Color tokens (`color` domain)
 Full Material 3 role set: `--mat-sys-primary`, `--mat-sys-on-primary`, `--mat-sys-primary-container`, `--mat-sys-surface`, `--mat-sys-outline`, etc. — plus semantic extras: `--mat-sys-success`, `--mat-sys-warning`, `--mat-sys-info` (and their `on-`/`-container` pairs), and one four-token set per custom **extended color** you define (e.g. `--mat-sys-brand`, `--mat-sys-on-brand`, ...).
+*Note: The engine automatically generates comma-separated RGB `-channel` variants (e.g. `--mat-sys-primary-channel`) required by Angular Material for opacity/state layer calculations.*
+
+### State Layer Opacities (Interaction states)
+Angular Material components require opacity variables to calculate hover, focus, and ripple effects. If you use the library's `setup-theming()` SCSS mixin, it automatically provides the M3 defaults globally:
+`--mat-sys-hover-state-layer-opacity`, `--mat-sys-focus-state-layer-opacity`, `--mat-sys-pressed-state-layer-opacity`, and `--mat-sys-dragged-state-layer-opacity`.
 
 ### Typography tokens (`typography` domain)
 Per role (`display-large`, `headline-medium`, `body-small`, etc.): `--mat-sys-{role}-font`, `--mat-sys-{role}-size`, `--mat-sys-{role}-line-height`.
