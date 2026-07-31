@@ -233,10 +233,10 @@ export class DomService {
   }
 
   // --- Motion Helper ---
- // --- Motion Helper ---
   applyMotion(scale: number): void {
-    // 1. Clean up the old style element if it still exists in the browser
-    const styleEl = this.document.getElementById('theme-motion-override');
+    // 1. Clean up the old CSS hammer if it still exists in the DOM
+    const styleId = 'theme-motion-override';
+    const styleEl = this.document.getElementById(styleId);
     if (styleEl) styleEl.remove();
 
     // 2. We expose the scale as a custom property.
