@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, HostBinding, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { PreferencesService } from 'ng-material-preferences';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,10 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'angular-theming-app';
+  private prefs = inject(PreferencesService);
+
+  @HostBinding('@.disabled')
+  get animationsDisabled() {
+    return this.prefs.motionScale() === 0;
+  }
 }

@@ -1,31 +1,30 @@
-import { Injectable, Inject, effect, Optional } from '@angular/core';
+import { Injectable, Inject, Optional, effect } from '@angular/core';
 import { PreferencesService } from './preferences.service';
 import { DomService } from './dom.service';
 import { ColorEngine } from '../utils/engines/color-engine';
 import { PREFERENCES_STORAGE_TOKEN, IPreferencesStorage } from '../storage/preferences-storage.interface';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeSyncService {
   constructor(
     private prefs: PreferencesService,
     private dom: DomService,
-    @Optional() @Inject(PREFERENCES_STORAGE_TOKEN) private storage: IPreferencesStorage | null
+    @Optional() @Inject(PREFERENCES_STORAGE_TOKEN) private storage: IPreferencesStorage | null,
+    private overlay: OverlayContainer
   ) {
     this.initialize();
   }
 
   private initialize(): void {
-    // Load from storage and patch state
+
     const savedState = this.storage?.load();
     if (savedState) {
       this.prefs.patchState(savedState);
     }
 
-    // Setup reactive side-effect to apply changes whenever state updates
     effect(() => {
       const state = this.prefs.preferences();
-      
-      // Save full state to persistence
       this.storage?.save(state);
 
       // --- COLOR DOMAIN ---
@@ -72,6 +71,14 @@ export class ThemeSyncService {
         this.dom.setAttribute('data-theme-density', state.layout.densityScale.toString());
         this.dom.applyShape(state.layout.shapeScale);
         this.dom.applyMotion(state.layout.motionScale);
+
+        if (state.layout.motionScale === 0) {
+          this.dom.setAttribute('data-theme-motion', 'off');
+          this.overlay.getContainerElement().classList.add('theme-motion-off');
+        } else {
+          this.dom.removeAttribute('data-theme-motion');
+          this.overlay.getContainerElement().classList.remove('theme-motion-off');
+        }
       }
     });
   }

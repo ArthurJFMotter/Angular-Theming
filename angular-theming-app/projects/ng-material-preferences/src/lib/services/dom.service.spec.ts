@@ -29,13 +29,17 @@ describe('DomService', () => {
     expect(root.style.getPropertyValue('--mat-sys-test-color')).toBe('#ffffff');
   });
 
-  it('should inject motion override styles when motion is disabled', () => {
-    service.applyMotion(0); // 0 = Off
-    const styleEl = document.getElementById('theme-motion-override');
-    expect(styleEl).toBeTruthy();
-    expect(styleEl?.innerHTML).toContain('0.001ms');
+  it('should expose motion scale as a CSS custom property', () => {
+    service.applyMotion(0.5);
+    expect(document.documentElement.style.getPropertyValue('--theme-motion-scale')).toBe('0.5');
+  });
+
+  it('should clean up any legacy motion-override style tag if present', () => {
+    const legacy = document.createElement('style');
+    legacy.id = 'theme-motion-override';
+    document.head.appendChild(legacy);
     
-    service.applyMotion(1); // 1 = Normal
+    service.applyMotion(1);
     expect(document.getElementById('theme-motion-override')).toBeNull();
   });
 

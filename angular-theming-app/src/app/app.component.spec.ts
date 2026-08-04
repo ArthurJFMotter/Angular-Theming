@@ -1,12 +1,20 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
+import { signal } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { PreferencesService } from 'ng-material-preferences';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
-      providers: [provideRouter([])]
+      imports: [AppComponent, RouterModule.forRoot([]), NoopAnimationsModule],
+      providers: [
+        {
+          provide: PreferencesService,
+          useValue: { motionScale: signal(1) } // Mock the signal used by [@.disabled]
+        }
+      ]
     }).compileComponents();
   });
 
