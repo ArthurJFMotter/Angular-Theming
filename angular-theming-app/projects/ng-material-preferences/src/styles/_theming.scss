@@ -89,19 +89,44 @@
 
 /// 4. Motion / Animation Killer
 @mixin apply-motion() {
-  // In-page components (Sidenav, Tabs, Chips, Button Toggles)
+  // In-page components
   html[data-theme-motion="off"] {
+    
+    // Core Layout
     .mat-sidenav, .mat-drawer, .mat-drawer-container, .mat-drawer-content,
-    .mat-mdc-chip, .mdc-evolution-chip,
-    .mat-button-toggle-group, .mat-button-toggle,
-    .mat-mdc-tab-header, .mdc-tab-indicator, .mat-mdc-tab-body-wrapper {
-      transition-duration: 0.001ms !important;
-      animation-duration: 0.001ms !important;
+    
+    // 1. Form Fields (Floating labels, notches, line ripples)
+    .mdc-floating-label, .mdc-line-ripple, .mdc-notched-outline__notch,
+    
+    // 2. Chips (Includes the stubborn SVG checkmark drawing animation!)
+    .mat-mdc-chip, .mdc-evolution-chip, .mdc-evolution-chip__action,
+    .mat-mdc-chip-action, .mdc-evolution-chip__graphic, 
+    .mdc-evolution-chip__checkmark, .mdc-evolution-chip__checkmark-path,
+    
+    // 3. Slide Toggle (Thumb, track, shadow)
+    .mdc-switch__handle, .mdc-switch__track, .mdc-switch__thumb, .mdc-switch__shadow,
+    
+    // 4. Progress Bars & Spinners (Freezes indeterminate looping for WCAG compliance)
+    .mdc-linear-progress__bar, .mdc-linear-progress__bar-inner,
+    .mdc-circular-progress__spinner, .mdc-circular-progress__circle,
+    
+    // 5. Tabs (Underline indicator and body sliding content)
+    .mat-mdc-tab-header, .mdc-tab-indicator, .mdc-tab-indicator__content, 
+    .mat-mdc-tab-body-wrapper, .mat-mdc-tab-body-content,
+    
+    // 6. Button Toggles (Includes the internal focus/background overlays)
+    .mat-button-toggle-group, .mat-button-toggle, .mat-button-toggle-button, 
+    .mat-button-toggle-label-content, .mat-button-toggle-focus-overlay {
+      
+      // Hit the element AND its pseudo-elements (where MDC hides a lot of animations)
+      &, &::before, &::after {
+        transition-duration: 0.001ms !important;
+        animation-duration: 0.001ms !important;
+      }
     }
   }
 
   // Floating components (Dialogs, Snackbars, Select Dropdowns, Menus, Tooltips)
-  // Targets the universal `.cdk-overlay-pane` wildcard
   :root .cdk-overlay-container.theme-motion-off {
     .cdk-overlay-pane,
     .cdk-overlay-pane *,
@@ -118,5 +143,5 @@
   @include fallback-tokens();
   @include cdk-overrides();
   @include apply-density();
-  @include apply-motion(); // <-- Added!
+  @include apply-motion();
 }
