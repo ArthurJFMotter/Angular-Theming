@@ -56,4 +56,16 @@ describe('ColorEngine', () => {
     const vibrant = ColorEngine.buildTokens(mockCustomColors, 'light', 0, 'vibrant');
     expect(monochrome.primary).not.toBe(vibrant.primary);
   });
+
+  it('should generate comma-separated RGB channel tokens for state layer opacities', () => {
+    const tokens = ColorEngine.buildTokens(mockCustomColors, 'light', 0, 'tonal-spot');
+    
+    expect(tokens['primary-channel']).toBeDefined();
+    
+    // Crucial regression test: Ensure it formats as "R, G, B" (with commas!) and NOT as hex or missing commas
+    expect(tokens['primary-channel']).toMatch(/^\d{1,3}, \d{1,3}, \d{1,3}$/);
+    
+    // Ensure semantic colors also get channels
+    expect(tokens['success-channel']).toBeDefined();
+  });
 });

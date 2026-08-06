@@ -1,5 +1,5 @@
 <mat-sidenav-container class="app-container">
-  <!-- The New Settings Drawer -->
+  <!-- Settings Drawer -->
   <mat-sidenav
     #settingsDrawer
     mode="over"
@@ -10,13 +10,12 @@
     <app-preferences-side-drawer (closeDrawer)="settingsDrawer.close()" />
   </mat-sidenav>
 
-  <!-- The Main Content -->
+  <!-- Main Content -->
   <mat-sidenav-content class="main-content">
     <mat-toolbar class="app-toolbar" color="primary">
       <mat-icon class="app-toolbar__logo">palette</mat-icon>
       <span class="app-toolbar__title">Angular Theming App</span>
       <span class="app-toolbar__spacer"></span>
-      <!-- Button to open the drawer -->
       <button
         mat-icon-button
         (click)="settingsDrawer.toggle()"
@@ -36,7 +35,6 @@
           secondary, tertiary, and error colors — contrast is always kept safe
           for you.
         </p>
-        <!-- Test image for the simulator! -->
         <img
           src="https://picsum.photos/id/1015/600/200"
           alt="Colorful landscape"
@@ -115,7 +113,10 @@
             <mat-card-subtitle>Surfaces, dividers and motion</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <mat-progress-bar mode="indeterminate" value="64"></mat-progress-bar>
+            <mat-progress-bar
+              mode="indeterminate"
+              value="64"
+            ></mat-progress-bar>
             <mat-divider class="section-divider"></mat-divider>
             <mat-tab-group>
               <mat-tab label="Overview">
@@ -155,7 +156,6 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Add this right after the "Status & Alerts" card -->
         <mat-card class="showcase-card" appearance="outlined">
           <mat-card-header>
             <mat-card-title>Snackbars & Toasts</mat-card-title>
@@ -164,36 +164,36 @@
             >
           </mat-card-header>
           <mat-card-content>
-            <!-- Controls for spawn position -->
-             @if (prefs.hasNotifications) {
-            <div class="snackbar-controls">
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Vertical Spawn</mat-label>
-                <mat-select
-                  [value]="prefs.snackbarVPosition()"
-                  (selectionChange)="prefs.setSnackbarVPosition($event.value)"
-                >
-                  <mat-option value="top">Top</mat-option>
-                  <mat-option value="bottom">Bottom</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Horizontal Spawn</mat-label>
-                <mat-select
-                  [value]="prefs.snackbarHPosition()"
-                  (selectionChange)="prefs.setSnackbarHPosition($event.value)"
-                >
-                  <mat-option value="start">Start (Left)</mat-option>
-                  <mat-option value="center">Center</mat-option>
-                  <mat-option value="end">End (Right)</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+            <!-- Snackbar Controls -->
+            @if (prefs.hasNotifications) {
+              <div class="snackbar-controls">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-label>Vertical Spawn</mat-label>
+                  <mat-select
+                    [value]="prefs.snackbarVPosition()"
+                    (selectionChange)="prefs.setSnackbarVPosition($event.value)"
+                  >
+                    <mat-option value="top">Top</mat-option>
+                    <mat-option value="bottom">Bottom</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                  <mat-label>Horizontal Spawn</mat-label>
+                  <mat-select
+                    [value]="prefs.snackbarHPosition()"
+                    (selectionChange)="prefs.setSnackbarHPosition($event.value)"
+                  >
+                    <mat-option value="start">Start (Left)</mat-option>
+                    <mat-option value="center">Center</mat-option>
+                    <mat-option value="end">End (Right)</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
 
-            <mat-divider class="section-divider"></mat-divider>
-          }
+              <mat-divider class="section-divider"></mat-divider>
+            }
 
-            <!-- Triggers -->
+            <!-- Snackbar Triggers -->
             <div class="button-row">
               <button mat-stroked-button (click)="triggerSnackbar('default')">
                 Default
@@ -243,12 +243,14 @@
               (mixing primary color into backgrounds) to indicate elevation.
             </p>
             <div class="button-row" style="margin-top: 16px">
-              <button mat-flat-button color="primary" (click)="openDialog()">
-                <mat-icon>settings</mat-icon> Advanced Preferences
-              </button>
               @if (prefs.hasColor) {
                 <button mat-stroked-button (click)="openBottomSheet()">
                   <mat-icon>share</mat-icon> Share Profile
+                </button>
+              }
+              @if (prefs.hasLayout || prefs.hasColor) {
+                <button mat-flat-button color="primary" (click)="openDialog()">
+                  <mat-icon>settings</mat-icon> Advanced Preferences
                 </button>
               }
             </div>
