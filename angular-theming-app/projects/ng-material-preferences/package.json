@@ -1,7 +1,8 @@
 {
   "name": "ng-material-preferences",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "peerDependencies": {
+    "@angular/cdk": "^20.0.0",
     "@angular/common": "^20.0.0",
     "@angular/core": "^20.0.0",
     "@angular/material": "^20.0.0",
