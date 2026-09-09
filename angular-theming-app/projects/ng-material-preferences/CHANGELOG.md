@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.0.1] - 2026-09-09
+### Fixed
+- **Monochrome Semantic Colors**: Refactored `ColorEngine.buildSemanticTokens` to generate tones directly from the source HEX. Semantic colors (Success, Warning, Info) now correctly preserve their hue and chroma under all Scheme Variants (e.g., Monochrome), matching the native MCU Error palette behavior.
+
 ## [1.0.0] - 2026-08-07
 ### Added
 - **Granular DI Architecture**: Introduced `providePreferences()` and individual domain providers (`provideColorPreferences()`, etc.) to enable strict tree-shaking of unused features.

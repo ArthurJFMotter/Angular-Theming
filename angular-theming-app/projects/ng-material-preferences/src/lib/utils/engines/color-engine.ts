@@ -99,40 +99,7 @@ export class ColorEngine {
     const argb = (value: number) => hexFromArgb(value);
 
     const buildSemanticTokens = (hex: string, name: string) => {
-      const sourceHct = Hct.fromInt(argbFromHex(hex));
-      let palette: TonalPalette;
-
-      switch (variant) {
-        case 'vibrant':
-          palette = new SchemeVibrant(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'expressive':
-          palette = new SchemeExpressive(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'neutral':
-          palette = new SchemeNeutral(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'monochrome':
-          palette = new SchemeMonochrome(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'fidelity':
-          palette = new SchemeFidelity(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'content':
-          palette = new SchemeContent(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-        case 'tonal-spot':
-        default:
-          palette = new SchemeTonalSpot(sourceHct, isDark, contrastLevel)
-            .primaryPalette;
-          break;
-      }
+      const palette = TonalPalette.fromInt(argbFromHex(hex));
 
       let tBase = isDark ? 80 : 40;
       let tOnBase = isDark ? 20 : 100;
@@ -303,6 +270,6 @@ function toRgbChannel(hex: string): string {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
-  
+
   return `${r}, ${g}, ${b}`;
 }

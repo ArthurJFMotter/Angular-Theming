@@ -1,3 +1,4 @@
+import { argbFromHex, Hct } from '@material/material-color-utilities';
 import { ColorEngine } from './color-engine';
 
 describe('ColorEngine', () => {
@@ -67,5 +68,21 @@ describe('ColorEngine', () => {
     
     // Ensure semantic colors also get channels
     expect(tokens['success-channel']).toBeDefined();
+  });
+
+  it('should preserve semantic color hue/chroma regardless of Scheme Variant (Ticket Fix)', () => {
+    // We pass a bright green for success
+    const colorsWithSemantic = { ...mockCustomColors, success: '#00ff00' };
+    
+    // Build tokens using the Monochrome variant
+    const monochromeTokens = ColorEngine.buildTokens(colorsWithSemantic, 'light', 0, 'monochrome');
+    
+    // The primary color SHOULD be desaturated (gray) because of Monochrome
+    const primaryHct = Hct.fromInt(argbFromHex(monochromeTokens.primary));
+    expect(primaryHct.chroma).toBeLessThan(5); // Chroma is near 0 for grays
+    
+    // The semantic Success color SHOULD NOT be desaturated! It must remain green.
+    const successHct = Hct.fromInt(argbFromHex(monochromeTokens.success));
+    expect(successHct.chroma).toBeGreaterThan(40); // High chroma means it kept its vibrant color
   });
 });
