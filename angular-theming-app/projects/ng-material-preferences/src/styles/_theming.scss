@@ -30,6 +30,7 @@
 @mixin cdk-overrides() {
   .mat-mdc-snack-bar-container .mdc-snackbar__surface {
     border-radius: var(--mat-sys-corner-small) !important;
+     min-width: fit-content !important; 
   }
   
   // A. Variable mappings for default library semantic types
