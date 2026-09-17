@@ -9,9 +9,26 @@
   width: 20px;
   height: 20px;
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .message {
   flex: 1;
   font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.snackbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
 }

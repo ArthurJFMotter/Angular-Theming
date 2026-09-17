@@ -1,0 +1,33 @@
+.dynamic-modal-container {
+  .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: var(--mat-sys-on-surface);
+  }
+
+  .modal-message {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--mat-sys-on-surface-variant);
+    margin: 0 0 16px;
+  }
+
+  .modal-preview {
+    background: var(--mat-sys-surface-container-lowest);
+    border: 1px dashed var(--mat-sys-outline-variant);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+
+    code {
+      font-family: "Roboto Mono", monospace;
+      font-size: 0.85rem;
+      color: var(--mat-sys-primary);
+      line-height: 1.5;
+    }
+  }
+}

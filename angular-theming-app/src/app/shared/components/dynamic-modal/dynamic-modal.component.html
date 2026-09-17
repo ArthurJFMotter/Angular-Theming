@@ -1,0 +1,38 @@
+<div class="dynamic-modal-container">
+  <!-- Header -->
+  <h2 mat-dialog-title class="modal-title">
+    @if (data.icon) { <mat-icon color="primary">{{ data.icon }}</mat-icon> }
+    {{ data.title }}
+  </h2>
+
+  <!-- Content -->
+  <mat-dialog-content>
+    <p class="modal-message">{{ data.message }}</p>
+    
+    <!-- ADD THE PREVIEW BLOCK -->
+    @if (data.previewSnippet) {
+      <div class="modal-preview">
+        <code>{{ data.previewSnippet }}</code>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <!-- Actions -->
+  <mat-dialog-actions align="center">
+    @if (data.showCloseButton !== false) {
+      <button mat-button mat-dialog-close>Close</button>
+    }
+    
+    @for (action of data.actions; track action.label) {
+      @if (action.isPrimary) {
+        <button mat-flat-button [color]="action.color || 'primary'" (click)="handleAction(action)">
+          {{ action.label }}
+        </button>
+      } @else {
+        <button mat-button [color]="action.color || 'primary'" (click)="handleAction(action)">
+          {{ action.label }}
+        </button>
+      }
+    }
+  </mat-dialog-actions>
+</div>

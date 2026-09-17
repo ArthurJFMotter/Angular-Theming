@@ -13,44 +13,34 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatBottomSheet } from '@angular/material/bottom-sheet'; // <-- ADD THIS
 
 import { PreferencesSideDrawerComponent } from '../../shared/components/preferences-side-drawer/preferences-side-drawer.component';
+import { ModalBottomSheetComponent } from '../../shared/components/modal-bottom-sheet/modal-bottom-sheet.component'; // <-- ADD THIS
 import { ModalService } from '../../core/services/modal.service';
-import { NotificationService } from '../../core/services/notification.service';
-
+import { NotificationService, NotificationType } from '../../core/services/notification.service';
 import { PreferencesService } from 'ng-material-preferences';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-home', // Or 'app-home' depending on what you named it
   standalone: true,
   imports: [
-    MatToolbarModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatChipsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSlideToggleModule,
-    MatProgressBarModule,
-    MatDividerModule,
-    MatTabsModule,
-    MatBadgeModule,
-    MatSelectModule,
-    MatSidenavModule,
+    MatToolbarModule, MatCardModule, MatButtonModule, MatIconModule, MatChipsModule,
+    MatFormFieldModule, MatInputModule, MatSlideToggleModule, MatProgressBarModule,
+    MatDividerModule, MatTabsModule, MatBadgeModule, MatSelectModule, MatSidenavModule,
     PreferencesSideDrawerComponent,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './home.component.html', // Point to your HTML file
+  styleUrl: './home.component.scss',    // Point to your SCSS file
 })
 export class HomeComponent {
   readonly notify = inject(NotificationService);
   readonly modals = inject(ModalService);
+  readonly bottomSheet = inject(MatBottomSheet); // Inject native bottom sheet
   readonly prefs = inject(PreferencesService);
 
   readonly chips = ['Angular', 'Material 3', 'SCSS', 'Signals'];
 
-  // ADD THIS COMPUTED SIGNAL:
   readonly paletteSwatches = computed(() => {
     const baseSwatches = [
       { id: 'primary', label: 'Primary' },
@@ -71,23 +61,39 @@ export class HomeComponent {
     ];
   });
 
-  triggerSnackbar(type: 'default' | 'success' | 'warning' | 'info' | 'error') {
-    let msg = 'Action completed.';
-    if (type === 'success') msg = 'Changes saved successfully!';
-    if (type === 'warning')
-      msg = 'Warning: Your subscription expires in 3 days.';
-    if (type === 'info')
-      msg = 'Did you know? New features are available in settings.';
-    if (type === 'error') msg = 'Error: Failed to communicate with the server.';
+  triggerSnackbar(type: NotificationType) {
+    const messages: Record<NotificationType, string> = {
+      default: 'Action completed.',
+      success: 'Changes saved successfully!',
+      warning: 'Warning: Your subscription expires in 3 days.',
+      info: 'Did you know? New features are available in settings.',
+      error: 'Error: Failed to communicate with the server.',
+    };
 
-    this.notify.show(type, msg);
+    // Show off the new interactive action buttons in the sandbox!
+    const actionLabels: Record<NotificationType, string | undefined> = {
+      default: undefined,
+      success: 'Undo',
+      warning: 'Retry',
+      info: 'Learn More',
+      error: 'Report',
+    };
+
+    const label = actionLabels[type];
+    const action = label ? { label, actionFn: () => console.log(`${label} clicked!`) } : undefined;
+
+    this.notify.show(type, messages[type], action, 4000);
   }
 
   openDialog() {
-    this.modals.initModalDialog();
+    this.modals.alert(
+      'Advanced Preferences',
+      'Material 3 avoids heavy shadows, instead using surface tints to indicate elevation.',
+      'settings'
+    ).subscribe();
   }
 
   openBottomSheet() {
-    this.modals.initModalBottomSheet();
+    this.bottomSheet.open(ModalBottomSheetComponent);
   }
 }

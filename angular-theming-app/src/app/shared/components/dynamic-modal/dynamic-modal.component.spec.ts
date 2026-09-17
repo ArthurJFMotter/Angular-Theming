@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalDialogComponent } from './modal-dialog.component';
+import { DynamicModalComponent } from './dynamic-modal.component';
 
-describe('ModalDialogComponent', () => {
-  let component: ModalDialogComponent;
-  let fixture: ComponentFixture<ModalDialogComponent>;
+describe('DynamicModalComponent', () => {
+  let component: DynamicModalComponent;
+  let fixture: ComponentFixture<DynamicModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ModalDialogComponent]
+      imports: [DynamicModalComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ModalDialogComponent);
+    fixture = TestBed.createComponent(DynamicModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

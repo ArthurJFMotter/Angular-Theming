@@ -32,40 +32,41 @@
     border-radius: var(--mat-sys-corner-small) !important;
   }
   
+  // A. Variable mappings for default library semantic types
   .snackbar-success {
     --mdc-snackbar-container-color: var(--mat-sys-success-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
-    --mat-snack-bar-button-color: var(--mat-sys-on-success-container);
-    color: var(--mat-sys-on-success-container);
   }
   .snackbar-warning {
     --mdc-snackbar-container-color: var(--mat-sys-warning-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
-    --mat-snack-bar-button-color: var(--mat-sys-on-warning-container);
-    color: var(--mat-sys-on-warning-container);
   }
   .snackbar-info {
     --mdc-snackbar-container-color: var(--mat-sys-info-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
-    --mat-snack-bar-button-color: var(--mat-sys-on-info-container);
-    color: var(--mat-sys-on-info-container);
   }
   .snackbar-error {
     --mdc-snackbar-container-color: var(--mat-sys-error-container);
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
-    --mat-snack-bar-button-color: var(--mat-sys-on-error-container);
-    color: var(--mat-sys-on-error-container);
   }
 
-  .mat-mdc-snack-bar-container {
-    &.snackbar-success, &.snackbar-warning, &.snackbar-info, &.snackbar-error {
-      .mdc-snackbar__surface {
-        background-color: var(--mdc-snackbar-container-color) !important;
-        color: var(--mdc-snackbar-supporting-text-color) !important;
-      }
-      mat-icon {
-        color: var(--mdc-snackbar-supporting-text-color) !important;
-      }
+  // B. THE MAGIC WILDCARD FIX
+  // Applies to ANY snackbar with a class name containing "snackbar-"
+  .mat-mdc-snack-bar-container[class*="snackbar-"] {
+    .mdc-snackbar__surface {
+      background-color: var(--mdc-snackbar-container-color) !important;
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+    
+    // Force icons to inherit the text color
+    mat-icon {
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+    
+    // Force Action Buttons (like UNDO, RETRY) to inherit the semantic text color!
+    .mat-mdc-button {
+      --mdc-text-button-label-text-color: var(--mdc-snackbar-supporting-text-color);
+      --mat-text-button-state-layer-color: var(--mdc-snackbar-supporting-text-color);
     }
   }
 
@@ -98,7 +99,7 @@
     // 1. Form Fields (Floating labels, notches, line ripples)
     .mdc-floating-label, .mdc-line-ripple, .mdc-notched-outline__notch,
     
-    // 2. Chips (Includes the stubborn SVG checkmark drawing animation!)
+    // 2. Chips
     .mat-mdc-chip, .mdc-evolution-chip, .mdc-evolution-chip__action,
     .mat-mdc-chip-action, .mdc-evolution-chip__graphic, 
     .mdc-evolution-chip__checkmark, .mdc-evolution-chip__checkmark-path,
@@ -106,19 +107,18 @@
     // 3. Slide Toggle (Thumb, track, shadow)
     .mdc-switch__handle, .mdc-switch__track, .mdc-switch__thumb, .mdc-switch__shadow,
     
-    // 4. Progress Bars & Spinners (Freezes indeterminate looping for WCAG compliance)
+    // 4. Progress Bars & Spinners
     .mdc-linear-progress__bar, .mdc-linear-progress__bar-inner,
     .mdc-circular-progress__spinner, .mdc-circular-progress__circle,
     
-    // 5. Tabs (Underline indicator and body sliding content)
+    // 5. Tabs
     .mat-mdc-tab-header, .mdc-tab-indicator, .mdc-tab-indicator__content, 
     .mat-mdc-tab-body-wrapper, .mat-mdc-tab-body-content,
     
-    // 6. Button Toggles (Includes the internal focus/background overlays)
+    // 6. Button Toggles
     .mat-button-toggle-group, .mat-button-toggle, .mat-button-toggle-button, 
     .mat-button-toggle-label-content, .mat-button-toggle-focus-overlay {
       
-      // Hit the element AND its pseudo-elements (where MDC hides a lot of animations)
       &, &::before, &::after {
         transition-duration: 0.001ms !important;
         animation-duration: 0.001ms !important;
@@ -126,7 +126,7 @@
     }
   }
 
-  // Floating components (Dialogs, Snackbars, Select Dropdowns, Menus, Tooltips)
+  // Floating components
   :root .cdk-overlay-container.theme-motion-off {
     .cdk-overlay-pane,
     .cdk-overlay-pane *,
