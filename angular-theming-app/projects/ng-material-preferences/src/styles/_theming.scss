@@ -63,10 +63,16 @@
       color: var(--mdc-snackbar-supporting-text-color) !important;
     }
     
-    // Force Action Buttons (like UNDO, RETRY) to inherit the semantic text color!
-    .mat-mdc-button {
-      --mdc-text-button-label-text-color: var(--mdc-snackbar-supporting-text-color);
+    .mat-mdc-button, .action-btn {
+      --mat-button-text-label-text-color: var(--mdc-snackbar-supporting-text-color);
       --mat-text-button-state-layer-color: var(--mdc-snackbar-supporting-text-color);
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+
+    .mat-mdc-icon-button {
+      --mat-icon-button-icon-color: var(--mdc-snackbar-supporting-text-color);
+      --mat-icon-button-state-layer-color: var(--mdc-snackbar-supporting-text-color);
+      color: var(--mdc-snackbar-supporting-text-color) !important;
     }
   }
 
@@ -96,7 +102,7 @@
     // Core Layout
     .mat-sidenav, .mat-drawer, .mat-drawer-container, .mat-drawer-content,
     
-    // 1. Form Fields (Floating labels, notches, line ripples)
+    // 1. Form Fields
     .mdc-floating-label, .mdc-line-ripple, .mdc-notched-outline__notch,
     
     // 2. Chips
@@ -104,7 +110,7 @@
     .mat-mdc-chip-action, .mdc-evolution-chip__graphic, 
     .mdc-evolution-chip__checkmark, .mdc-evolution-chip__checkmark-path,
     
-    // 3. Slide Toggle (Thumb, track, shadow)
+    // 3. Slide Toggle
     .mdc-switch__handle, .mdc-switch__track, .mdc-switch__thumb, .mdc-switch__shadow,
     
     // 4. Progress Bars & Spinners
