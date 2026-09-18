@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.0.2] - 2026-09-18
+### Fixed
+- **Snackbar Width**: `cdk-overrides()` now sets `min-width: fit-content` on the snackbar surface. Short messages (e.g. "Action completed.") render at their natural width instead of stretching to Material's default fixed minimum.
+- **Snackbar Action & Dismiss Button Color**: `cdk-overrides()` now targets any snackbar with a class name containing `snackbar-` (`[class*="snackbar-"]`) and applies the semantic `on-*-container` color to its action button (e.g. "UNDO", "RETRY") and dismiss icon, via both the relevant Material CSS custom properties and a direct `color` override — the custom-property mapping alone was not sufficient to win Material's own cascade in testing. Previously, these buttons always rendered in the theme's primary color regardless of the snackbar's severity, so an error toast's action button could read in the same color as a success toast's.
+
 ## [1.0.1] - 2026-09-09
 ### Fixed
 - **Monochrome Semantic Colors**: Refactored `ColorEngine.buildSemanticTokens` to generate tones directly from the source HEX. Semantic colors (Success, Warning, Info) now correctly preserve their hue and chroma under all Scheme Variants (e.g., Monochrome), matching the native MCU Error palette behavior.
@@ -29,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **Stuck Ripple Bug**: Fixed an issue where setting Motion to 0 caused Material ripples to permanently stick to the DOM. Ripples are now properly scaled/disabled natively via `MAT_RIPPLE_GLOBAL_OPTIONS`.
 - **Silent Data Loss**: Fixed a bug where `patchState` would silently swallow legacy storage formats. Added `try/catch` wrappers and dev-mode heuristic console warnings to guide developers.
-- **State Restoration Overwrite**: Fixed a bug in `ColorPreferencesService` where restoring the scratchpad color inadvertently overwrote saved color profiles upon page reload.
+- **State Restoration Overwrite**: Fixed a bug in `ColorPreferencesService` where restoring the scratchpad color during boot-time `patchState` inadvertently routed through the same "smart" logic used for user-driven color changes — which writes into whichever profile is currently active — silently overwriting a saved profile's colors with default scratchpad values on every page reload. `patchState` now sets the underlying signal directly, bypassing that logic entirely.
 - **Component Domain Guards**: Ensured UI components strictly check capability flags (e.g., `prefs.hasColor`) before attempting to render domain-specific controls, preventing silent proxy failures.
 
 ## [0.0.1] - 2026-07-16

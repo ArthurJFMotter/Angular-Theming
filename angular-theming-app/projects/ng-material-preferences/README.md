@@ -190,7 +190,7 @@ Or compose only what you need:
 | Mixin | What it does | When you need it |
 |---|---|---|
 | `fallback-tokens()` | Defines semantic color tokens (`--mat-sys-success`/`-warning`/`-info` and their `on-`/`-container` variants) plus the M3 state-layer opacity tokens (`--mat-sys-hover-state-layer-opacity` and friends) at safe default values | Always — even with the color domain active, this covers the moment before the first sync and guards against Angular Material builds that scope these tokens narrowly instead of emitting them at `:root` |
-| `cdk-overrides()` | Shapes snackbars/dialogs/bottom sheets using your corner-radius tokens; maps `snackbar-success`/`-warning`/`-info`/`-error` panel classes to your semantic color tokens | If you use notifications, dialogs, or bottom sheets |
+| `cdk-overrides()` | Shapes snackbars/dialogs/bottom sheets using your corner-radius tokens; maps `snackbar-success`/`-warning`/`-info`/`-error` panel classes to your semantic color tokens — including the snackbar's surface, icon, action button, and dismiss button, so severity color reaches the whole toast, not just its background; also removes the fixed `min-width` Material applies to snackbars so short messages render at their natural width instead of an oversized fixed box | If you use notifications, dialogs, or bottom sheets |
 | `apply-density()` | Generates the SCSS-time density variants (`-1` to `-3`) keyed to the `data-theme-density` attribute the library writes on `<html>` | Only if you use `layout` domain's `densityScale` |
 | `apply-motion()` | Class-targeted forced-duration overrides for both in-page (sidenav, chips, tabs, toggles, form fields) and CDK-overlay (dialogs, menus, snackbars, tooltips) components, keyed to `data-theme-motion`/`.theme-motion-off` | Only if you use `layout` domain's `motionScale` |
 
@@ -260,6 +260,8 @@ The library **never touches your component templates or styles directly.** It wr
 
 ### Color tokens (`color` domain)
 Full Material 3 role set: `--mat-sys-primary`, `--mat-sys-on-primary`, `--mat-sys-primary-container`, `--mat-sys-surface`, `--mat-sys-outline`, etc. — plus semantic extras: `--mat-sys-success`, `--mat-sys-warning`, `--mat-sys-info` (and their `on-`/`-container` pairs), and one four-token set per custom **extended color** you define (e.g. `--mat-sys-brand`, `--mat-sys-on-brand`, ...).
+
+**Semantic and extended tokens are variant-independent by design.** `primary`, `secondary`, and `tertiary` are derived through whatever `SchemeVariant` is currently selected (`tonal-spot`, `vibrant`, `monochrome`, etc.), so their hue and saturation shift with the chosen aesthetic. `success`, `warning`, `info`, and every extended color you define do **not** — they always preserve their own configured hue and chroma, regardless of variant, the same way Material Color Utilities' own `error` token is generated independent of variant. This is intentional: a color that exists to carry meaning (a red error state, a green success state) shouldn't become indistinguishable from its neighbors just because the user picked `Monochrome` for their primary brand color. If you build a UI that lets users preview semantic alerts, this is why Success/Warning/Info/Error stay visually distinct under every variant, including Monochrome.
 
 **`-channel` variants.** Every color token above also gets a matching `-channel` counterpart (e.g. `--mat-sys-primary-channel: 59, 111, 214`) — a bare `R, G, B` triplet with no `#` or `rgba()` wrapper. Angular Material's hover/focus/pressed state layers compose these with an opacity value at the point of use (`rgba(var(--mat-sys-primary-channel), 0.08)`), so this is what makes interactive states (button hover tints, ripple color) follow your dynamic theme instead of the SCSS-compiled fallback palette.
 
@@ -409,6 +411,7 @@ Because the library is headless — it renders no markup and no strings of its o
 - **One instance per page.** `DomService` writes to `document.documentElement` and `document.body` globally (CSS variables, SVG filters). Multiple independent instances on one page (e.g. theming two unrelated widgets differently) isn't supported in this version.
 - **Storage schema stability is a documentation contract, not an enforced one.** A future major version of this library may change `PreferencesState`'s shape; if you provide a `migrationStrategy`, revisit it when upgrading across major versions.
 - **Motion "Fast" only accelerates opted-in CSS.** See [§8](#8-the-motion-engine) — this is a deliberate limitation of what's possible with third-party component animations, not an oversight.
+- **Semantic and extended color tokens ignore `SchemeVariant` by design.** See [§7](#7-the-css-custom-properties-contract) — only `primary`/`secondary`/`tertiary` shift with the selected variant.
 - **This package ships pure state/logic + one optional SCSS partial — no Angular Material UI components.** You (or the demo app in this repo) own the actual settings interface.
 
 ---
@@ -426,6 +429,12 @@ Confirm `@include prefs.apply-motion()` (or `setup-theming()`) is included in yo
 
 **Motion "Fast" doesn't make my own custom transitions faster**
 You need to explicitly opt each transition in via `calc(... * var(--theme-motion-scale, 1))` — this is not automatic. See [§8](#8-the-motion-engine).
+
+**Success/Warning/Info look identical (or all gray) when Theme Variant is set to Monochrome**
+Fixed as of `1.0.1`. If you're still seeing this, confirm you're on `1.0.1` or later — earlier versions derived semantic tokens through the selected `SchemeVariant`, which flattened them under Monochrome. See [§7](#7-the-css-custom-properties-contract) for why semantic tokens are now variant-independent by design.
+
+**A snackbar's action button (e.g. "UNDO", "RETRY") renders in your primary color instead of matching the toast's severity color**
+Make sure `@include prefs.cdk-overrides()` (or `setup-theming()`) is included in your global styles and that your snackbar applies one of the `snackbar-success`/`-warning`/`-info`/`-error` panel classes. If it's still mismatched, check for a `color="primary"` (or similar) attribute on the action button in your own snackbar component template — an explicit color input on the button itself can outrank the library's styling depending on your Angular Material version and load order.
 
 ---
 
@@ -484,6 +493,6 @@ You need to explicitly opt each transition in via `calc(... * var(--theme-motion
 |---|---|
 | `setup-theming()` | Convenience: includes all four mixins below |
 | `fallback-tokens()` | Semantic color + state-layer opacity token defaults |
-| `cdk-overrides()` | Snackbar/dialog/bottom-sheet shape and color wiring |
+| `cdk-overrides()` | Snackbar/dialog/bottom-sheet shape and color wiring, including action/dismiss button color and natural-width sizing |
 | `apply-density()` | SCSS-time density variant generation |
 | `apply-motion()` | Motion kill-switch selectors for in-page and CDK-overlay components |
