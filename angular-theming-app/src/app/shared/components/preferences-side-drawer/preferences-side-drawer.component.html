@@ -169,7 +169,12 @@
               <mat-icon>remove</mat-icon>
             </button>
 
-            <mat-slider min="-1" max="1" step="0.5" discrete>
+            <mat-slider
+              [min]="contrastScale.min"
+              [max]="contrastScale.max"
+              [step]="contrastScale.step"
+              discrete
+            >
               <input
                 matSliderThumb
                 [ngModel]="prefs.contrastLevel()"
@@ -275,12 +280,18 @@
             <button mat-icon-button (click)="scaleDown()">
               <mat-icon>remove</mat-icon>
             </button>
-            <mat-slider min="0.8" max="1.3" step="0.05" discrete
-              ><input
+            <mat-slider
+              [min]="fontScale.min"
+              [max]="fontScale.max"
+              [step]="fontScale.step"
+              discrete
+            >
+              <input
                 matSliderThumb
                 [ngModel]="prefs.fontScale()"
                 (ngModelChange)="setFontScale($event)"
-            /></mat-slider>
+              />
+            </mat-slider>
             <button mat-icon-button (click)="scaleUp()">
               <mat-icon>add</mat-icon>
             </button>
@@ -302,12 +313,18 @@
             <button mat-icon-button (click)="scaleShapeDown()">
               <mat-icon>remove</mat-icon>
             </button>
-            <mat-slider min="0" max="3" step="0.25" discrete
-              ><input
+            <mat-slider
+              [min]="shapeScale.min"
+              [max]="shapeScale.max"
+              [step]="shapeScale.step"
+              discrete
+            >
+              <input
                 matSliderThumb
                 [ngModel]="prefs.shapeScale()"
-                (ngModelChange)="setShapeScale($event)"
-            /></mat-slider>
+                (ngModelChange)="prefs.setShapeScale($event)"
+              />
+            </mat-slider>
             <button mat-icon-button (click)="scaleShapeUp()">
               <mat-icon>add</mat-icon>
             </button>
@@ -322,12 +339,18 @@
             <button mat-icon-button (click)="scaleDensityDown()">
               <mat-icon>remove</mat-icon>
             </button>
-            <mat-slider min="-3" max="0" step="1" discrete
-              ><input
+            <mat-slider
+              [min]="densityScale.min"
+              [max]="densityScale.max"
+              [step]="densityScale.step"
+              discrete
+            >
+              <input
                 matSliderThumb
                 [ngModel]="prefs.densityScale()"
-                (ngModelChange)="setDensityScale($event)"
-            /></mat-slider>
+                (ngModelChange)="prefs.setDensityScale($event)"
+              />
+            </mat-slider>
             <button mat-icon-button (click)="scaleDensityUp()">
               <mat-icon>add</mat-icon>
             </button>
@@ -345,15 +368,18 @@
             <button mat-icon-button (click)="decreaseMotion()">
               <mat-icon>remove</mat-icon>
             </button>
-
-            <mat-slider min="0" max="1" step="0.5" discrete>
+            <mat-slider
+              [min]="motionScale.min"
+              [max]="motionScale.max"
+              [step]="motionScale.step"
+              discrete
+            >
               <input
                 matSliderThumb
                 [ngModel]="prefs.motionScale()"
                 (ngModelChange)="prefs.setMotionScale($event)"
               />
             </mat-slider>
-
             <button mat-icon-button (click)="increaseMotion()">
               <mat-icon>add</mat-icon>
             </button>
@@ -436,15 +462,18 @@
               <button mat-icon-button (click)="decreaseCvdSeverity()">
                 <mat-icon>remove</mat-icon>
               </button>
-
-              <mat-slider min="10" max="100" step="10" discrete>
+              <mat-slider
+                [min]="cvdSeverityScale.min"
+                [max]="cvdSeverityScale.max"
+                [step]="cvdSeverityScale.step"
+                discrete
+              >
                 <input
                   matSliderThumb
                   [ngModel]="prefs.cvdSeverity()"
                   (ngModelChange)="prefs.setCvdSeverity($event)"
                 />
               </mat-slider>
-
               <button mat-icon-button (click)="increaseCvdSeverity()">
                 <mat-icon>add</mat-icon>
               </button>
@@ -503,15 +532,18 @@
               <button mat-icon-button (click)="decreaseScreenFilterIntensity()">
                 <mat-icon>remove</mat-icon>
               </button>
-
-              <mat-slider min="10" max="100" step="10" discrete>
+              <mat-slider
+                [min]="screenFilterScale.min"
+                [max]="screenFilterScale.max"
+                [step]="screenFilterScale.step"
+                discrete
+              >
                 <input
                   matSliderThumb
                   [ngModel]="prefs.screenFilterIntensity()"
                   (ngModelChange)="prefs.setScreenFilterIntensity($event)"
                 />
               </mat-slider>
-
               <button mat-icon-button (click)="increaseScreenFilterIntensity()">
                 <mat-icon>add</mat-icon>
               </button>
@@ -527,7 +559,7 @@
         mat-stroked-button
         color="warn"
         class="full-width"
-        (click)="prefs.resetToDefaults()"
+        (click)="confirmReset()"
       >
         <mat-icon>restore</mat-icon> Reset all preferences
       </button>
