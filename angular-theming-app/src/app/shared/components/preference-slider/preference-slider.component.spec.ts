@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PreferencesSliderComponent } from './preferences-slider.component';
+import { PreferencesSliderComponent } from './preference-slider.component';
 
 describe('PreferencesSliderComponent', () => {
   let component: PreferencesSliderComponent;

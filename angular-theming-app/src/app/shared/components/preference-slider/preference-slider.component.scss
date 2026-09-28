@@ -9,17 +9,22 @@
   justify-content: space-between;
   align-items: center;
 }
-.slider-header label {
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.header-left label {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--mat-sys-on-surface);
 }
-.slider-header span {
+.header-left span {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--mat-sys-on-surface-variant);
 }
-.slider-header span.highlight {
+.header-left span.highlight {
   color: var(--mat-sys-primary);
 }
 .slider-row {

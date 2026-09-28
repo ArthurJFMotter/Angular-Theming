@@ -16,8 +16,10 @@ import {
   SCHEME_VARIANTS,
   CONTRAST_SCALE,
 } from 'ng-material-preferences';
-import { PreferenceSliderComponent } from '../../../preferences-slider/preferences-slider.component';
+
+import { PreferenceSliderComponent } from '../../../preference-slider/preference-slider.component';
 import { ColorPickerComponent } from '../../../color-picker/color-picker.component';
+import { PreferenceSelectComponent } from '../../../preference-select/preference-select.component';
 
 @Component({
   selector: 'app-drawer-color',
@@ -29,6 +31,7 @@ import { ColorPickerComponent } from '../../../color-picker/color-picker.compone
     MatSlideToggleModule,
     MatIconModule,
     MatTooltipModule,
+    PreferenceSelectComponent,
     PreferenceSliderComponent,
     ColorPickerComponent,
   ],
@@ -42,11 +45,6 @@ export class DrawerColorComponent {
   readonly variantOptions = SCHEME_VARIANTS;
   readonly contrastScale = CONTRAST_SCALE;
 
-  readonly variantName = computed(
-    () =>
-      this.variantOptions.find((v) => v.value === this.prefs.variant())
-        ?.label || 'Tonal Spot',
-  );
   readonly contrastName = computed(
     () =>
       this.contrastScale.presets.find(

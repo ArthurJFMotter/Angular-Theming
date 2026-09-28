@@ -9,7 +9,8 @@ import {
   CVD_SEVERITY_SCALE,
   SCREEN_FILTER_INTENSITY_SCALE,
 } from 'ng-material-preferences';
-import { PreferenceSliderComponent } from '../../../preferences-slider/preferences-slider.component';
+import { PreferenceSliderComponent } from '../../../preference-slider/preference-slider.component';
+import { PreferenceSelectComponent } from '../../../preference-select/preference-select.component';
 
 @Component({
   selector: 'app-drawer-accessibility',
@@ -18,6 +19,7 @@ import { PreferenceSliderComponent } from '../../../preferences-slider/preferenc
     MatSelectModule,
     MatFormFieldModule,
     MatButtonToggleModule,
+    PreferenceSelectComponent,
     PreferenceSliderComponent,
   ],
   templateUrl: './drawer-accessibility.component.html',
@@ -25,16 +27,9 @@ import { PreferenceSliderComponent } from '../../../preferences-slider/preferenc
 })
 export class DrawerAccessibilityComponent {
   readonly prefs = inject(PreferencesService);
-
+  
   readonly cvdOptions = CVD_MODES;
   readonly filterOptions = SCREEN_FILTERS;
   readonly cvdScale = CVD_SEVERITY_SCALE;
   readonly filterScale = SCREEN_FILTER_INTENSITY_SCALE;
-
-  getCvdLabel(value: string) {
-    return this.cvdOptions.find((v) => v.value === value)?.label || value;
-  }
-  getScreenFilterLabel(value: string) {
-    return this.filterOptions.find((v) => v.value === value)?.label || value;
-  }
 }

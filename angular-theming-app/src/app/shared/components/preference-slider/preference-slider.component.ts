@@ -16,8 +16,8 @@ import { ScaleDefinition } from 'ng-material-preferences';
     MatButtonModule,
     MatIconModule,
   ],
-  templateUrl: './preferences-slider.component.html',
-  styleUrl: './preferences-slider.component.scss',
+  templateUrl: './preference-slider.component.html',
+  styleUrl: './preference-slider.component.scss',
 })
 export class PreferenceSliderComponent {
   @Input({ required: true }) label!: string;

@@ -1,9 +1,19 @@
 <div class="slider-group">
   <div class="slider-header">
-    <label>{{ label }}</label>
-    <!-- Allows custom display values -->
-    <span [class.highlight]="highlight">{{ displayValue ?? value }}</span>
+    <!-- LEFT SIDE: Label and Value -->
+    <div class="header-left">
+      <label>{{ label }}</label>
+      @if (displayValue !== undefined) {
+        <span [class.highlight]="highlight">{{ displayValue }}</span>
+      }
+    </div>
+
+    <!-- RIGHT SIDE: Projected Actions (Like Auto Toggles) -->
+    <div class="header-right">
+      <ng-content select="[header-action]"></ng-content>
+    </div>
   </div>
+
   <div class="slider-row" [style.opacity]="disabled ? '0.4' : '1'">
     <button mat-icon-button (click)="decrease()" [disabled]="disabled">
       <mat-icon>remove</mat-icon>

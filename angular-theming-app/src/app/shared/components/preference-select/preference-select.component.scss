@@ -1,0 +1,25 @@
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+.full-width {
+  width: 100%;
+}
+
+.option-label {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  padding: 6px 0;
+}
+
+.option-description {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+}

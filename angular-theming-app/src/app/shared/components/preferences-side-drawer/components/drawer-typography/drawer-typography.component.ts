@@ -8,7 +8,7 @@ import {
   FONT_OPTIONS,
   FONT_SCALE,
 } from 'ng-material-preferences';
-import { PreferenceSliderComponent } from '../../../preferences-slider/preferences-slider.component';
+import { PreferenceSliderComponent } from '../../../preference-slider/preference-slider.component';
 
 @Component({
   selector: 'app-drawer-typography',

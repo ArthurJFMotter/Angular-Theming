@@ -1,41 +1,13 @@
 <div class="settings-section">
   <div class="section-title">Vision Simulator</div>
 
-  <!-- CVD Selector -->
-  <mat-form-field
-    appearance="outline"
-    subscriptSizing="dynamic"
-    class="full-width"
+  <app-preference-select
+    label="Color Deficiency"
+    [value]="prefs.cvd()"
+    [options]="cvdOptions"
+    (valueChange)="prefs.setCvdMode($event)"
   >
-    <mat-label>Color Deficiency</mat-label>
-    <mat-select
-      [value]="prefs.cvd()"
-      (selectionChange)="prefs.setCvdMode($event.value)"
-    >
-      <mat-select-trigger>{{ getCvdLabel(prefs.cvd()) }}</mat-select-trigger>
-      @for (option of cvdOptions; track option.value) {
-        <mat-option [value]="option.value">
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              line-height: 1.2;
-              padding: 6px 0;
-            "
-          >
-            <span>{{ option.label }}</span>
-            <span
-              style="
-                font-size: 0.75rem;
-                color: var(--mat-sys-on-surface-variant);
-              "
-              >{{ option.desc }}</span
-            >
-          </div>
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+  </app-preference-select>
 
   @if (prefs.cvd() !== "none" && prefs.cvd() !== "achromatopsia") {
     <div class="field-row" style="margin-top: 4px; margin-bottom: 12px">
@@ -62,44 +34,15 @@
     </app-preference-slider>
   }
 
-  <!-- Screen Filter Selector -->
-  <mat-form-field
-    appearance="outline"
-    subscriptSizing="dynamic"
-    class="full-width"
-    [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'"
-  >
-    <mat-label>Environmental Overlay</mat-label>
-    <mat-select
+  <div [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'">
+    <app-preference-select
+      label="Environmental Overlay"
       [value]="prefs.screenFilter()"
-      (selectionChange)="prefs.setScreenFilter($event.value)"
+      [options]="filterOptions"
+      (valueChange)="prefs.setScreenFilter($event)"
     >
-      <mat-select-trigger>{{
-        getScreenFilterLabel(prefs.screenFilter())
-      }}</mat-select-trigger>
-      @for (option of filterOptions; track option.value) {
-        <mat-option [value]="option.value">
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              line-height: 1.2;
-              padding: 6px 0;
-            "
-          >
-            <span>{{ option.label }}</span>
-            <span
-              style="
-                font-size: 0.75rem;
-                color: var(--mat-sys-on-surface-variant);
-              "
-              >{{ option.desc }}</span
-            >
-          </div>
-        </mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+    </app-preference-select>
+  </div>
 
   @if (prefs.screenFilter() !== "none") {
     <app-preference-slider

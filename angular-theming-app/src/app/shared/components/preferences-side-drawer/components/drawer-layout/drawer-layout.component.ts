@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
-import { PreferenceSliderComponent } from '../../../preferences-slider/preferences-slider.component';
+import { PreferenceSliderComponent } from '../../../preference-slider/preference-slider.component';
 import {
   PreferencesService,
   SHAPE_SCALE,
