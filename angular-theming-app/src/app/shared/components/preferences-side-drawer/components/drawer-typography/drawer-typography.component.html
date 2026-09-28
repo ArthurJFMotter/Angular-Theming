@@ -1,0 +1,69 @@
+<div class="settings-section">
+  <div class="section-title">Typography</div>
+
+  <!-- Heading Font -->
+  <div class="field-row">
+    <label>Heading Font (Display, Titles)</label>
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="full-width"
+    >
+      <input
+        type="text"
+        matInput
+        [value]="prefs.headingFontFamily()"
+        (change)="prefs.setHeadingFontFamily($any($event.target).value)"
+        [matAutocomplete]="headingAuto"
+      />
+      <mat-autocomplete
+        #headingAuto="matAutocomplete"
+        (optionSelected)="prefs.setHeadingFontFamily($event.option.value)"
+      >
+        @for (font of fontOptions; track font.value) {
+          <mat-option [value]="font.value" [style.font-family]="font.value">{{
+            font.label
+          }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+  <!-- Body Font -->
+  <div class="field-row" style="margin-top: 4px">
+    <label>Body Font (Text, Labels)</label>
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="full-width"
+    >
+      <input
+        type="text"
+        matInput
+        [value]="prefs.bodyFontFamily()"
+        (change)="prefs.setBodyFontFamily($any($event.target).value)"
+        [matAutocomplete]="bodyAuto"
+      />
+      <mat-autocomplete
+        #bodyAuto="matAutocomplete"
+        (optionSelected)="prefs.setBodyFontFamily($event.option.value)"
+      >
+        @for (font of fontOptions; track font.value) {
+          <mat-option [value]="font.value" [style.font-family]="font.value">{{
+            font.label
+          }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+  <!-- Dynamic Slider -->
+  <app-preference-slider
+    label="Size Scale"
+    [value]="prefs.fontScale()"
+    [scale]="fontScale"
+    [displayValue]="prefs.fontScale() | percent"
+    (valueChange)="prefs.setFontScale($event)"
+  >
+  </app-preference-slider>
+</div>

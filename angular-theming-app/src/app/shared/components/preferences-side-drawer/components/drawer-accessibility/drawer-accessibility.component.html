@@ -1,0 +1,115 @@
+<div class="settings-section">
+  <div class="section-title">Vision Simulator</div>
+
+  <!-- CVD Selector -->
+  <mat-form-field
+    appearance="outline"
+    subscriptSizing="dynamic"
+    class="full-width"
+  >
+    <mat-label>Color Deficiency</mat-label>
+    <mat-select
+      [value]="prefs.cvd()"
+      (selectionChange)="prefs.setCvdMode($event.value)"
+    >
+      <mat-select-trigger>{{ getCvdLabel(prefs.cvd()) }}</mat-select-trigger>
+      @for (option of cvdOptions; track option.value) {
+        <mat-option [value]="option.value">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              line-height: 1.2;
+              padding: 6px 0;
+            "
+          >
+            <span>{{ option.label }}</span>
+            <span
+              style="
+                font-size: 0.75rem;
+                color: var(--mat-sys-on-surface-variant);
+              "
+              >{{ option.desc }}</span
+            >
+          </div>
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (prefs.cvd() !== "none" && prefs.cvd() !== "achromatopsia") {
+    <div class="field-row" style="margin-top: 4px; margin-bottom: 12px">
+      <mat-button-toggle-group
+        class="full-width-toggle"
+        [value]="prefs.cvdIntent()"
+        (change)="prefs.setCvdIntent($event.value)"
+      >
+        <mat-button-toggle value="simulate">Simulate</mat-button-toggle>
+        <mat-button-toggle value="compensate">Daltonize</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  }
+
+  @if (prefs.cvd() !== "none") {
+    <app-preference-slider
+      label="Severity"
+      [value]="prefs.cvdSeverity()"
+      [scale]="cvdScale"
+      [displayValue]="prefs.cvdSeverity() + '%'"
+      [highlight]="true"
+      (valueChange)="prefs.setCvdSeverity($event)"
+    >
+    </app-preference-slider>
+  }
+
+  <!-- Screen Filter Selector -->
+  <mat-form-field
+    appearance="outline"
+    subscriptSizing="dynamic"
+    class="full-width"
+    [style.margin-top]="prefs.cvd() === 'none' ? '12px' : '0'"
+  >
+    <mat-label>Environmental Overlay</mat-label>
+    <mat-select
+      [value]="prefs.screenFilter()"
+      (selectionChange)="prefs.setScreenFilter($event.value)"
+    >
+      <mat-select-trigger>{{
+        getScreenFilterLabel(prefs.screenFilter())
+      }}</mat-select-trigger>
+      @for (option of filterOptions; track option.value) {
+        <mat-option [value]="option.value">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              line-height: 1.2;
+              padding: 6px 0;
+            "
+          >
+            <span>{{ option.label }}</span>
+            <span
+              style="
+                font-size: 0.75rem;
+                color: var(--mat-sys-on-surface-variant);
+              "
+              >{{ option.desc }}</span
+            >
+          </div>
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  @if (prefs.screenFilter() !== "none") {
+    <app-preference-slider
+      label="Intensity"
+      [value]="prefs.screenFilterIntensity()"
+      [scale]="filterScale"
+      [displayValue]="prefs.screenFilterIntensity() + '%'"
+      [highlight]="true"
+      (valueChange)="prefs.setScreenFilterIntensity($event)"
+    >
+    </app-preference-slider>
+  }
+</div>

@@ -1,0 +1,133 @@
+<div class="settings-section">
+  <div class="section-title">Color Scheme</div>
+  <div class="scheme-picker" role="group">
+    @for (profile of prefs.savedProfiles(); track profile.id) {
+      <button
+        type="button"
+        class="swatch"
+        [class.swatch--active]="prefs.scheme() === profile.id"
+        [style.--swatch-color]="profile.colors.primary"
+        [matTooltip]="profile.name"
+        (click)="prefs.setScheme(profile.id)"
+        [matMenuTriggerFor]="prefs.scheme() === profile.id ? customMenu : null"
+      >
+        @if (prefs.scheme() === profile.id) {
+          <mat-icon class="swatch__check">check</mat-icon>
+        }
+      </button>
+    }
+    <button
+      type="button"
+      class="swatch swatch--custom"
+      [class.swatch--active]="prefs.scheme() === 'custom'"
+      [style.--swatch-color]="prefs.customColors().primary"
+      matTooltip="Custom Scratchpad"
+      (click)="prefs.setScheme('custom')"
+      [matMenuTriggerFor]="prefs.scheme() === 'custom' ? customMenu : null"
+    >
+      @if (prefs.scheme() === "custom") {
+        <mat-icon class="swatch__check">check</mat-icon>
+      } @else {
+        <mat-icon class="swatch__custom-icon">tune</mat-icon>
+      }
+    </button>
+
+    <mat-menu #customMenu="matMenu" class="custom-menu-panel">
+      <ng-template matMenuContent>
+        <div (click)="$event.stopPropagation()">
+          <app-color-picker
+            (actionComplete)="closeCustomMenu()"
+          ></app-color-picker>
+        </div>
+      </ng-template>
+    </mat-menu>
+  </div>
+</div>
+
+<div class="settings-section" style="padding-top: 0">
+  <div class="section-title">Appearance</div>
+
+  <div class="field-row">
+    <label>Theme Mode</label>
+    <mat-button-toggle-group
+      class="full-width-toggle"
+      [value]="prefs.mode()"
+      (change)="prefs.setMode($event.value)"
+    >
+      <mat-button-toggle value="light" matTooltip="Light mode"
+        ><mat-icon>light_mode</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle value="auto" matTooltip="System Default"
+        ><mat-icon>brightness_auto</mat-icon></mat-button-toggle
+      >
+      <mat-button-toggle value="dark" matTooltip="Dark mode"
+        ><mat-icon>dark_mode</mat-icon></mat-button-toggle
+      >
+    </mat-button-toggle-group>
+  </div>
+
+  <div class="field-row" style="margin-top: 8px">
+    <label>Theme Variant</label>
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="full-width"
+    >
+      <mat-select
+        [value]="prefs.variant()"
+        (selectionChange)="prefs.setVariant($event.value)"
+      >
+        <mat-select-trigger>{{ variantName() }}</mat-select-trigger>
+        @for (variant of variantOptions; track variant.value) {
+          <mat-option [value]="variant.value">
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                line-height: 1.2;
+                padding: 6px 0;
+              "
+            >
+              <span>{{ variant.label }}</span>
+              <span
+                style="
+                  font-size: 0.75rem;
+                  color: var(--mat-sys-on-surface-variant);
+                "
+                >{{ variant.desc }}</span
+              >
+            </div>
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="field-row" style="margin-top: 8px">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <label>Contrast</label>
+      <mat-slide-toggle
+        [checked]="prefs.autoContrast()"
+        (change)="prefs.setAutoContrast($event.checked)"
+      >
+        <span
+          style="font-size: 0.75rem; color: var(--mat-sys-on-surface-variant)"
+          >Auto (OS)</span
+        >
+      </mat-slide-toggle>
+    </div>
+
+    <app-preference-slider
+      label=" "
+      [value]="prefs.contrastLevel()"
+      [scale]="contrastScale"
+      [displayValue]="contrastName()"
+      [disabled]="prefs.autoContrast()"
+      [highlight]="true"
+      (valueChange)="prefs.setContrastLevel($event)"
+    >
+    </app-preference-slider>
+  </div>
+</div>

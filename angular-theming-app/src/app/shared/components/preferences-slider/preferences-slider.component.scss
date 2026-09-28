@@ -1,0 +1,33 @@
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.slider-header label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface);
+}
+.slider-header span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+}
+.slider-header span.highlight {
+  color: var(--mat-sys-primary);
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -8px;
+}
+mat-slider {
+  flex: 1;
+}

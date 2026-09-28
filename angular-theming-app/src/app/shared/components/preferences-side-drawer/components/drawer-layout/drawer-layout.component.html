@@ -1,0 +1,31 @@
+<div class="settings-section">
+  <div class="section-title">Interface</div>
+
+  <app-preference-slider
+    label="Corner Radius"
+    [value]="prefs.shapeScale()"
+    [scale]="shapeScale"
+    [displayValue]="prefs.shapeScale() | percent"
+    (valueChange)="prefs.setShapeScale($event)"
+  >
+  </app-preference-slider>
+
+  <app-preference-slider
+    label="Density"
+    [value]="prefs.densityScale()"
+    [scale]="densityScale"
+    [displayValue]="prefs.densityScale().toString()"
+    (valueChange)="prefs.setDensityScale($event)"
+  >
+  </app-preference-slider>
+
+  <app-preference-slider
+    label="Motion"
+    [value]="prefs.motionScale()"
+    [scale]="motionScale"
+    [displayValue]="motionName()"
+    [highlight]="true"
+    (valueChange)="prefs.setMotionScale($event)"
+  >
+  </app-preference-slider>
+</div>
