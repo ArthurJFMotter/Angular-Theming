@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.1.0] - 2026-09-28
+### Added
+- **Single Source of Truth Metrics**: Exported new heavily-typed `ScaleDefinition` objects (`FONT_SCALE`, `SHAPE_SCALE`, `CONTRAST_SCALE`, `DENSITY_SCALE`, `MOTION_SCALE`, `CVD_SEVERITY_SCALE`, `SCREEN_FILTER_INTENSITY_SCALE`). UI components should consume these directly to build sliders and cycle buttons.
+- **Threshold Constants**: Exported `HIGH_CONTRAST_THRESHOLD`, `MAX_COLOR_PROFILES`, and `MAX_EXTENDED_COLORS` to standardize UI warnings and state-layer shifts.
+- **Snackbar Option Arrays**: Exported `SNACKBAR_V_POSITIONS` and `SNACKBAR_H_POSITIONS`.
+
+### Deprecated
+- `ContrastMode` and `CONTRAST_MODES`: These flat-state legacy typings are no longer valid under the v2 auto-contrast/level paradigm and will be removed in v2.0.0. Use `CONTRAST_SCALE` instead.
 ## [1.0.2] - 2026-09-18
 ### Fixed
 - **Snackbar Width**: `cdk-overrides()` now sets `min-width: fit-content` on the snackbar surface. Short messages (e.g. "Action completed.") render at their natural width instead of stretching to Material's default fixed minimum.

@@ -2,6 +2,8 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import {
   DEFAULT_PREFERENCES_STATE,
   isValidHexColor,
+  MAX_COLOR_PROFILES,
+  MAX_EXTENDED_COLORS,
 } from '../../models/preferences.constants';
 import {
   ThemeMode,
@@ -59,7 +61,7 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
     this.savedProfiles().find((p) => p.id === this.scheme()),
   );
   readonly canCreateColorProfile = computed(
-    () => this.savedProfiles().length < 12,
+    () => this.savedProfiles().length < MAX_COLOR_PROFILES,
   );
 
   // Setters
@@ -137,7 +139,7 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
   addExtendedColor(label: string, hexColor: string): void {
     const nextColors = { ...this.activeCustomColors() };
     const extended = nextColors.extended || [];
-    if (extended.length >= 5) return;
+    if (extended.length >= MAX_EXTENDED_COLORS) return;
     const id = label
       .trim()
       .toLowerCase()
@@ -152,7 +154,9 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
   ): void {
     const nextColors = { ...this.activeCustomColors() };
     if (nextColors.extended) {
-      nextColors.extended = nextColors.extended.map((c: any) => c.id === id ? { ...c, ...updates } : c);
+      nextColors.extended = nextColors.extended.map((c: any) =>
+        c.id === id ? { ...c, ...updates } : c,
+      );
       this.saveColors(nextColors);
     }
   }
@@ -194,12 +198,14 @@ export class ColorPreferencesService implements PreferenceDomain<ColorPreference
 
   patchState(state: Partial<ColorPreferences>): void {
     if (state.mode !== undefined) this.mode.set(state.mode);
-    if (state.autoContrast !== undefined) this.autoContrast.set(state.autoContrast);
-    if (state.contrastLevel !== undefined) this.contrastLevel.set(state.contrastLevel);
+    if (state.autoContrast !== undefined)
+      this.autoContrast.set(state.autoContrast);
+    if (state.contrastLevel !== undefined)
+      this.contrastLevel.set(state.contrastLevel);
     if (state.scheme !== undefined) this.scheme.set(state.scheme);
     if (state.variant !== undefined) this.variant.set(state.variant);
     if (state.savedProfiles) this.savedProfiles.set(state.savedProfiles);
-    
+
     if (state.customColors) {
       this.customColors.set(state.customColors);
     }

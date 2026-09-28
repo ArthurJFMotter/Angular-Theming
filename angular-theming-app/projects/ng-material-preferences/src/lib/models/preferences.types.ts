@@ -4,12 +4,26 @@ import {
 } from '@angular/material/snack-bar';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
+/** @deprecated Use boolean `autoContrast` and numeric `contrastLevel` instead. */
 export type ContrastMode = 'normal' | 'high' | 'auto';
 export type ColorScheme = string; // Either 'custom' or a profile ID
 export type SchemeVariant = 'tonal-spot' | 'vibrant' | 'expressive' | 'neutral' | 'monochrome' | 'fidelity' | 'content';
 export type CvdMode = 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia';
 export type CvdIntent = 'simulate' | 'compensate';
 export type ScreenFilter = 'none' | 'blur' | 'glare' | 'nightshift' | 'astigmatism' | 'macular' | 'glaucoma';
+
+export interface ScaleOption<T = number> {
+  value: T;
+  label: string;
+}
+
+export interface ScaleDefinition<T = number> {
+  min: number;
+  max: number;
+  step: number;
+  default: T;
+  presets: readonly ScaleOption<T>[];
+}
 
 export interface ExtendedColor {
   id: string;

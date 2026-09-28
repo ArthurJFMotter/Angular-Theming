@@ -17,6 +17,7 @@ import {
   SchemeVariant,
   ThemeMode,
 } from '../../models/preferences.types';
+import { HIGH_CONTRAST_THRESHOLD } from '../../models/preferences.constants';
 
 export interface MatSysColorTokens {
   primary: string;
@@ -106,7 +107,7 @@ export class ColorEngine {
       let tContainer = isDark ? 30 : 90;
       let tOnContainer = isDark ? 90 : 10;
 
-      if (contrastLevel >= 0.5) {
+      if (contrastLevel >= HIGH_CONTRAST_THRESHOLD) {
         tBase = isDark ? 90 : 30;
         tOnBase = isDark ? 0 : 100;
         tContainer = isDark ? 20 : 85;
@@ -128,7 +129,7 @@ export class ColorEngine {
       }
     }
 
-    // 1. Store your generated hex colors in a base object
+    // Store generated hex colors in a base object
     const baseTokens: Record<string, string> = {
       primary: argb(scheme.primary),
       'on-primary': argb(scheme.onPrimary),
@@ -174,7 +175,7 @@ export class ColorEngine {
       ...extendedTokens,
     };
 
-    // 2. Auto-generate the -channel equivalents for every single color!
+    // Auto-generate the -channel equivalents for every single color!
     const finalTokens: Record<string, string> = { ...baseTokens };
     for (const [key, hex] of Object.entries(baseTokens)) {
       finalTokens[`${key}-channel`] = toRgbChannel(hex);

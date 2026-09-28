@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 /// 1. Fallback Semantic Tokens
 @mixin fallback-tokens() {
@@ -7,12 +7,12 @@
     --mat-sys-on-success: #ffffff;
     --mat-sys-success-container: #e6f4ea;
     --mat-sys-on-success-container: #137333;
-    
+
     --mat-sys-warning: #f29900;
     --mat-sys-on-warning: #ffffff;
     --mat-sys-warning-container: #fef7e0;
     --mat-sys-on-warning-container: #b06000;
-    
+
     --mat-sys-info: #1967d2;
     --mat-sys-on-info: #ffffff;
     --mat-sys-info-container: #e8f0fe;
@@ -30,9 +30,9 @@
 @mixin cdk-overrides() {
   .mat-mdc-snack-bar-container .mdc-snackbar__surface {
     border-radius: var(--mat-sys-corner-small) !important;
-     min-width: fit-content !important; 
+    min-width: fit-content !important;
   }
-  
+
   // A. Variable mappings for default library semantic types
   .snackbar-success {
     --mdc-snackbar-container-color: var(--mat-sys-success-container);
@@ -58,21 +58,28 @@
       background-color: var(--mdc-snackbar-container-color) !important;
       color: var(--mdc-snackbar-supporting-text-color) !important;
     }
-    
+
     // Force icons to inherit the text color
     mat-icon {
       color: var(--mdc-snackbar-supporting-text-color) !important;
     }
-    
-    .mat-mdc-button, .action-btn {
-      --mat-button-text-label-text-color: var(--mdc-snackbar-supporting-text-color);
-      --mat-text-button-state-layer-color: var(--mdc-snackbar-supporting-text-color);
+
+    .mat-mdc-button,
+    .action-btn {
+      --mat-button-text-label-text-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
+      --mat-text-button-state-layer-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
       color: var(--mdc-snackbar-supporting-text-color) !important;
     }
 
     .mat-mdc-icon-button {
       --mat-icon-button-icon-color: var(--mdc-snackbar-supporting-text-color);
-      --mat-icon-button-state-layer-color: var(--mdc-snackbar-supporting-text-color);
+      --mat-icon-button-state-layer-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
       color: var(--mdc-snackbar-supporting-text-color) !important;
     }
   }
@@ -87,10 +94,15 @@
 }
 
 /// 3. Density Generator
+/// @warning The range (1 through 3) must stay synced with `DENSITY_SCALE.min` in preferences.constants.ts!
 @mixin apply-density() {
   @for $i from 1 through 3 {
     html[data-theme-density="-#{$i}"] {
-      @include mat.theme((density: -$i));
+      @include mat.theme(
+        (
+          density: -$i,
+        )
+      );
     }
   }
 }
@@ -99,7 +111,6 @@
 @mixin apply-motion() {
   // In-page components
   html[data-theme-motion="off"] {
-    
     // Core Layout
     .mat-sidenav, .mat-drawer, .mat-drawer-container, .mat-drawer-content,
     
@@ -125,8 +136,9 @@
     // 6. Button Toggles
     .mat-button-toggle-group, .mat-button-toggle, .mat-button-toggle-button, 
     .mat-button-toggle-label-content, .mat-button-toggle-focus-overlay {
-      
-      &, &::before, &::after {
+      &,
+      &::before,
+      &::after {
         transition-duration: 0.001ms !important;
         animation-duration: 0.001ms !important;
       }
