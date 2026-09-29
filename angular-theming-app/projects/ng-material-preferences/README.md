@@ -18,7 +18,7 @@ The library owns **state, math, persistence, and DOM/CSS-variable injection**. I
 8. [The motion engine](#8-the-motion-engine)
 9. [Storage, custom keys & migrations](#9-storage-custom-keys--migrations)
 10. [Font loading](#10-font-loading)
-11. [Convenience constants & i18n](#11-convenience-constants--i18n)
+11. [Convenience constants, scale definitions & i18n](#11-convenience-constants-scale-definitions--i18n)
 12. [Architectural constraints](#12-architectural-constraints)
 13. [Troubleshooting](#13-troubleshooting)
 14. [API reference](#14-api-reference)
@@ -191,7 +191,7 @@ Or compose only what you need:
 |---|---|---|
 | `fallback-tokens()` | Defines semantic color tokens (`--mat-sys-success`/`-warning`/`-info` and their `on-`/`-container` variants) plus the M3 state-layer opacity tokens (`--mat-sys-hover-state-layer-opacity` and friends) at safe default values | Always — even with the color domain active, this covers the moment before the first sync and guards against Angular Material builds that scope these tokens narrowly instead of emitting them at `:root` |
 | `cdk-overrides()` | Shapes snackbars/dialogs/bottom sheets using your corner-radius tokens; maps `snackbar-success`/`-warning`/`-info`/`-error` panel classes to your semantic color tokens — including the snackbar's surface, icon, action button, and dismiss button, so severity color reaches the whole toast, not just its background; also removes the fixed `min-width` Material applies to snackbars so short messages render at their natural width instead of an oversized fixed box | If you use notifications, dialogs, or bottom sheets |
-| `apply-density()` | Generates the SCSS-time density variants (`-1` to `-3`) keyed to the `data-theme-density` attribute the library writes on `<html>` | Only if you use `layout` domain's `densityScale` |
+| `apply-density()` | Generates the SCSS-time density variants (`-1` to `-3`) keyed to the `data-theme-density` attribute the library writes on `<html>`. **The range this generates must stay in sync with `DENSITY_SCALE.min` — see [§11](#11-convenience-constants-scale-definitions--i18n).** | Only if you use `layout` domain's `densityScale` |
 | `apply-motion()` | Class-targeted forced-duration overrides for both in-page (sidenav, chips, tabs, toggles, form fields) and CDK-overlay (dialogs, menus, snackbars, tooltips) components, keyed to `data-theme-motion`/`.theme-motion-off` | Only if you use `layout` domain's `motionScale` |
 
 You'll also need your own base Material theme declaration (a starting palette, typography, and density of `0`) — the library **overrides** this at runtime via CSS custom properties, it doesn't replace the need for Angular Material's own `@include mat.theme(...)` bootstrap:
@@ -250,6 +250,8 @@ The `accessibility` domain drives two independent visual simulation systems, bot
 
 All of this is handled internally — you only need to call `prefs.setCvdMode(...)` / `prefs.setScreenFilter(...)` and the corresponding intensity setters. No SCSS or manual filter wiring is required for these.
 
+`cvdSeverity` and `screenFilterIntensity` both accept the full `0`–`100` range — including `0`, which is what a "hold to compare with the original" UI pattern would set transiently. If your own UI restricts the *visible* range further (e.g. a slider that starts at `10`), that's a presentation choice layered on top of the full range; see `CVD_SEVERITY_SCALE` and `SCREEN_FILTER_INTENSITY_SCALE` in [§11](#11-convenience-constants-scale-definitions--i18n).
+
 ---
 
 ## 7. The CSS custom properties contract
@@ -266,6 +268,8 @@ Full Material 3 role set: `--mat-sys-primary`, `--mat-sys-on-primary`, `--mat-sy
 **`-channel` variants.** Every color token above also gets a matching `-channel` counterpart (e.g. `--mat-sys-primary-channel: 59, 111, 214`) — a bare `R, G, B` triplet with no `#` or `rgba()` wrapper. Angular Material's hover/focus/pressed state layers compose these with an opacity value at the point of use (`rgba(var(--mat-sys-primary-channel), 0.08)`), so this is what makes interactive states (button hover tints, ripple color) follow your dynamic theme instead of the SCSS-compiled fallback palette.
 
 **State-layer opacity tokens.** `--mat-sys-hover-state-layer-opacity`, `-focus-`, `-pressed-`, `-dragged-state-layer-opacity` — these are not colors, so `ColorEngine` doesn't generate them; they're supplied by `fallback-tokens()` in the SCSS partial (see [§4](#4-scss-setup)) as a defensive default, since Angular Material's own `mat.theme()` mixin can scope them narrowly (e.g. to `.mat-app-background`) rather than emitting them globally at `:root`, which is what this library's dynamic, page-wide theme swapping needs.
+
+**High-contrast tone shift.** Once `contrastLevel` reaches `HIGH_CONTRAST_THRESHOLD` (0.5), container tones shift aggressively across every color token, and `data-theme-contrast="high"` is set on `<html>`. This threshold is exported so nothing in your own app needs to hardcode `0.5` independently — see [§11](#11-convenience-constants-scale-definitions--i18n).
 
 ### Typography tokens (`typography` domain)
 Per role (`display-large`, `headline-medium`, `body-small`, etc.): `--mat-sys-{role}-font`, `--mat-sys-{role}-size`, `--mat-sys-{role}-line-height`.
@@ -380,7 +384,9 @@ providers: [
 
 ---
 
-## 11. Convenience constants & i18n
+## 11. Convenience constants, scale definitions & i18n
+
+### Enum-style constants
 
 The library exports label constants for building your own UI quickly:
 
@@ -391,6 +397,51 @@ CVD_MODES // [{ value: 'protanopia', label: 'Protanomaly/Protanopia', desc: 'Red
 ```
 
 **Important:** the `value` field on each of these is the real, language-neutral contract — it's the exact string the typed setters (`setCvdMode`, `setVariant`, `setScreenFilter`) expect, and it's what gets persisted to storage. The `label` and `desc` fields are **English convenience defaults only**, provided so an English-language app can wire up a settings UI without writing its own copy.
+
+### Scale definitions
+
+Every *numeric* preference (font scale, corner radius, density, motion, contrast, CVD severity, screen filter intensity) has a corresponding `ScaleDefinition` export, following the same idea as the enum constants above but for continuous or stepped values instead of discrete options:
+
+```ts
+export interface ScaleOption<T = number> {
+  value: T;
+  label: string;
+}
+
+export interface ScaleDefinition<T = number> {
+  min: number;
+  max: number;
+  step: number;
+  default: T;
+  presets: readonly ScaleOption<T>[];
+}
+```
+
+| Export | Governs | Range | Presets |
+|---|---|---|---|
+| `FONT_SCALE` | `fontScale` | `0.85`–`1.3`, step `0.05` | Small / Medium / Large / X-Large |
+| `CONTRAST_SCALE` | `contrastLevel` | `-1`–`1`, step `0.5` | Reduced / Low / Standard / Medium / High |
+| `SHAPE_SCALE` | `shapeScale` | `0`–`3`, step `0.25` | Sharp / Rounded / Extra Round / Pill |
+| `DENSITY_SCALE` | `densityScale` | `-3`–`0`, step `1` | Compact / Comfort |
+| `MOTION_SCALE` | `motionScale` | `0`–`1`, step `0.5` | Off / Fast / Normal |
+| `CVD_SEVERITY_SCALE` | `cvdSeverity` | `0`–`100`, step `10` | *(none — see [§6](#6-accessibility-features-cvd--screen-filters))* |
+| `SCREEN_FILTER_INTENSITY_SCALE` | `screenFilterIntensity` | `0`–`100`, step `10` | *(none)* |
+
+Use these instead of hardcoding your own ranges or step sizes: every slider, cycle button, or preset chip in your UI should read `min`/`max`/`step`/`presets` from the relevant export rather than redeclaring them, so a font-scale slider on one page and a quick-toggle button on another can never quietly drift out of sync with each other or with the setter's actual accepted range.
+
+`presets` is a curated subset of meaningful stops, not every value the range allows — `DENSITY_SCALE`, for instance, only labels its two endpoints (`Compact` at `-3`, `Comfort` at `0`), even though `-1` and `-2` are valid intermediate values. If you're building a "cycle through presets" control, look up the nearest preset by value rather than assuming every step has a label.
+
+> **The `DENSITY_SCALE.min` value (`-3`) must stay in sync with the SCSS `@for` loop in `apply-density()`** (see [§4](#4-scss-setup)) — the density system requires Angular Material's SCSS mixin to pre-generate each level at build time, so this one range can't be fully derived from a single source across both the TS and SCSS layers. Both locations carry a comment pointing at the other; if you fork the library to widen this range, update both.
+
+### Threshold & limit constants
+
+```ts
+HIGH_CONTRAST_THRESHOLD  // 0.5 — the contrastLevel at which container tones shift aggressively (see §7)
+MAX_COLOR_PROFILES       // 12 — saved color profiles allowed per user
+MAX_EXTENDED_COLORS      // 5 — custom semantic roles allowed per color configuration
+```
+
+### i18n
 
 If you're building a UI in another language, don't bind `label`/`desc` directly — write your own translated strings, keyed off the same `value`:
 
@@ -412,6 +463,7 @@ Because the library is headless — it renders no markup and no strings of its o
 - **Storage schema stability is a documentation contract, not an enforced one.** A future major version of this library may change `PreferencesState`'s shape; if you provide a `migrationStrategy`, revisit it when upgrading across major versions.
 - **Motion "Fast" only accelerates opted-in CSS.** See [§8](#8-the-motion-engine) — this is a deliberate limitation of what's possible with third-party component animations, not an oversight.
 - **Semantic and extended color tokens ignore `SchemeVariant` by design.** See [§7](#7-the-css-custom-properties-contract) — only `primary`/`secondary`/`tertiary` shift with the selected variant.
+- **`ContrastMode` and `CONTRAST_MODES` are deprecated** as of `1.1.0` and will be removed in `2.0.0`. They describe the old flat `'normal' | 'auto' | 'high'` contrast model; the live state uses the independent `autoContrast` boolean plus numeric `contrastLevel`, matched by `CONTRAST_SCALE` (see [§11](#11-convenience-constants-scale-definitions--i18n)). If you're on `1.x`, migrate off these before the next major version.
 - **This package ships pure state/logic + one optional SCSS partial — no Angular Material UI components.** You (or the demo app in this repo) own the actual settings interface.
 
 ---
@@ -435,6 +487,9 @@ Fixed as of `1.0.1`. If you're still seeing this, confirm you're on `1.0.1` or l
 
 **A snackbar's action button (e.g. "UNDO", "RETRY") renders in your primary color instead of matching the toast's severity color**
 Make sure `@include prefs.cdk-overrides()` (or `setup-theming()`) is included in your global styles and that your snackbar applies one of the `snackbar-success`/`-warning`/`-info`/`-error` panel classes. If it's still mismatched, check for a `color="primary"` (or similar) attribute on the action button in your own snackbar component template — an explicit color input on the button itself can outrank the library's styling depending on your Angular Material version and load order.
+
+**Two parts of my UI show different ranges or step sizes for the same preference (e.g. a slider allows a value a "quick toggle" button can't reach)**
+This is almost always a hand-authored range that's drifted from another one, rather than a library bug — see the new **Scale definitions** section in [§11](#11-convenience-constants-scale-definitions--i18n). Import the relevant `ScaleDefinition` (`FONT_SCALE`, `SHAPE_SCALE`, etc.) in both places instead of hardcoding `min`/`max`/`step` independently.
 
 ---
 
@@ -483,9 +538,14 @@ Make sure `@include prefs.cdk-overrides()` (or `setup-theming()`) is included in
 |---|---|
 | `PreferencesState` and per-domain interfaces (`ColorPreferences`, `AccessibilityPreferences`, etc.) | For type-safety in your own code |
 | `ThemeMode`, `CvdMode`, `ScreenFilter`, `SchemeVariant`, etc. | Union types matching each setter's parameter |
-| `CVD_MODES`, `SCHEME_VARIANTS`, `SCREEN_FILTERS`, `FONT_OPTIONS` | English-labeled convenience lists — see [§11](#11-convenience-constants--i18n) |
-| `DEFAULT_PREFERENCES_STATE` | The full default state tree |
+| `ScaleOption<T>` / `ScaleDefinition<T>` | Generic shape backing every numeric scale export below |
+| `CVD_MODES`, `SCHEME_VARIANTS`, `SCREEN_FILTERS`, `FONT_OPTIONS` | English-labeled convenience lists for enum-style preferences — see [§11](#11-convenience-constants-scale-definitions--i18n) |
+| `SNACKBAR_V_POSITIONS`, `SNACKBAR_H_POSITIONS` | English-labeled convenience lists for `snackbarVPosition`/`snackbarHPosition` |
+| `FONT_SCALE`, `CONTRAST_SCALE`, `SHAPE_SCALE`, `DENSITY_SCALE`, `MOTION_SCALE`, `CVD_SEVERITY_SCALE`, `SCREEN_FILTER_INTENSITY_SCALE` | `ScaleDefinition` objects for every numeric preference — see [§11](#11-convenience-constants-scale-definitions--i18n) |
+| `HIGH_CONTRAST_THRESHOLD`, `MAX_COLOR_PROFILES`, `MAX_EXTENDED_COLORS` | Threshold/limit constants used internally and safe to reuse in your own UI |
+| `DEFAULT_PREFERENCES_STATE` | The full default state tree — every numeric default is sourced from its matching `ScaleDefinition.default` |
 | `isValidHexColor` | Hex color validator used internally, exported for reuse |
+| `ContrastMode`, `CONTRAST_MODES` | **Deprecated as of `1.1.0`**, removal planned for `2.0.0` — use `CONTRAST_SCALE` and the independent `autoContrast`/`contrastLevel` fields instead |
 
 ### SCSS (`ng-material-preferences/src/styles/theming`)
 
@@ -494,5 +554,5 @@ Make sure `@include prefs.cdk-overrides()` (or `setup-theming()`) is included in
 | `setup-theming()` | Convenience: includes all four mixins below |
 | `fallback-tokens()` | Semantic color + state-layer opacity token defaults |
 | `cdk-overrides()` | Snackbar/dialog/bottom-sheet shape and color wiring, including action/dismiss button color and natural-width sizing |
-| `apply-density()` | SCSS-time density variant generation |
+| `apply-density()` | SCSS-time density variant generation. Range must stay in sync with `DENSITY_SCALE.min` |
 | `apply-motion()` | Motion kill-switch selectors for in-page and CDK-overlay components |
