@@ -9,7 +9,6 @@ import { DrawerLayoutComponent } from './components/drawer-layout/drawer-layout.
 import { DrawerTypographyComponent } from './components/drawer-typography/drawer-typography.component';
 import { DrawerAccessibilityComponent } from './components/drawer-accessibility/drawer-accessibility.component';
 import { DrawerNotificationsComponent } from './components/drawer-notifications/drawer-notifications.component';
-// import { DrawerNotificationsComponent } from './components/drawer-notifications/drawer-notifications.component';
 
 @Component({
   selector: 'app-preferences-side-drawer',
@@ -21,9 +20,9 @@ import { DrawerNotificationsComponent } from './components/drawer-notifications/
     DrawerAccessibilityComponent,
     DrawerColorComponent,
     DrawerLayoutComponent,
-    // DrawerNotificationsComponent, /* future use */
+    DrawerNotificationsComponent,
     DrawerTypographyComponent,
-],
+  ],
   templateUrl: './preferences-side-drawer.component.html',
   styleUrl: './preferences-side-drawer.component.scss',
 })

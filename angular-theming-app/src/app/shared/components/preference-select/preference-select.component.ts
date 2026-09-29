@@ -4,9 +4,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 export interface SelectOption {
-  value: any;
-  label: string;
-  desc?: string; // Optional
+  readonly value: any;
+  readonly label: string;
+  readonly desc?: string; 
 }
 
 @Component({
@@ -19,14 +19,12 @@ export interface SelectOption {
 export class PreferenceSelectComponent {
   @Input() label?: string;
   @Input({ required: true }) value: any;
-  @Input({ required: true }) options: SelectOption[] = [];
+  @Input({ required: true }) options: readonly SelectOption[] = [];
   @Input() disabled = false;
-
+  
   @Output() valueChange = new EventEmitter<any>();
 
   get selectedLabel(): string {
-    return (
-      this.options.find((o) => o.value === this.value)?.label || this.value
-    );
+    return this.options.find(o => o.value === this.value)?.label || this.value;
   }
 }

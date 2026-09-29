@@ -1,2 +1,20 @@
-<p>drawer-notifications works!</p>
-<!-- reserved for future use and migration -->
+<div class="settings-section">
+  <div class="section-title">Notifications</div>
+
+  <app-preference-select
+    label="Vertical Spawn"
+    [value]="prefs.snackbarVPosition()"
+    [options]="vPositions"
+    (valueChange)="updateVPosition($event)"
+  >
+  </app-preference-select>
+
+  <app-preference-select
+    label="Horizontal Spawn"
+    [value]="prefs.snackbarHPosition()"
+    [options]="hPositions"
+    (valueChange)="updateHPosition($event)"
+  >
+  </app-preference-select>
+
+</div>
