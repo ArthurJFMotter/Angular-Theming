@@ -5,6 +5,7 @@ import {
   TonalPalette,
 } from '@material/material-color-utilities';
 import { ColorEngine } from './color-engine';
+import { HIGH_CONTRAST_THRESHOLD } from '../../models/preferences.constants';
 
 describe('ColorEngine', () => {
   const mockCustomColors = {
@@ -61,9 +62,22 @@ describe('ColorEngine', () => {
     expect(light.primary).not.toBe(dark.primary); // Dark mode generates lighter primary tones
   });
 
-  it('should shift container tones aggressively in High Contrast mode', () => {
-    const normal = ColorEngine.buildTokens(mockCustomColors, 'light', 0);
-    const high = ColorEngine.buildTokens(mockCustomColors, 'light', 1.0);
+  it('should shift container tones aggressively exactly at the HIGH_CONTRAST_THRESHOLD', () => {
+    // Generate tokens just BELOW the threshold
+    const normal = ColorEngine.buildTokens(
+      mockCustomColors,
+      'light',
+      HIGH_CONTRAST_THRESHOLD - 0.1,
+    );
+
+    // Generate tokens exactly AT the threshold
+    const high = ColorEngine.buildTokens(
+      mockCustomColors,
+      'light',
+      HIGH_CONTRAST_THRESHOLD,
+    );
+
+    // Prove the threshold triggered the shift
     expect(normal['primary-container']).not.toBe(high['primary-container']);
   });
 
