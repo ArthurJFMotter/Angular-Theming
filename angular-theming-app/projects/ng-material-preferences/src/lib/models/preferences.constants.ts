@@ -188,7 +188,7 @@ export const DEFAULT_PREFERENCES_STATE: Required<PreferencesState> = {
   },
   notifications: {
     snackbarHPosition: 'center',
-    snackbarVPosition: 'bottom',
+    snackbarVPosition: 'top',
   }
 };
 

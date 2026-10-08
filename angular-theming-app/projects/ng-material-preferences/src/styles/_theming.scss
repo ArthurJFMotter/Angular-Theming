@@ -51,7 +51,6 @@
     --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
   }
 
-  // B. THE MAGIC WILDCARD FIX
   // Applies to ANY snackbar with a class name containing "snackbar-"
   .mat-mdc-snack-bar-container[class*="snackbar-"] {
     .mdc-snackbar__surface {
@@ -90,6 +89,57 @@
   .mat-bottom-sheet-container {
     border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
     border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
+  }
+
+  /* --- BUTTON & INTERACTIVE SHAPE CURVE --- */
+
+  /* Standard Buttons */
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button,
+  .mat-mdc-outlined-button {
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+
+    --mdc-text-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-elevated-button-container-shape: var(--mat-sys-corner-extra-large);
+  }
+
+  /* FABs */
+  .mat-mdc-fab,
+  .mat-mdc-mini-fab {
+    border-radius: var(--mat-sys-corner-large) !important;
+
+    --mdc-fab-container-shape: var(--mat-sys-corner-large);
+    --mdc-fab-small-container-shape: var(--mat-sys-corner-medium);
+    --mdc-fab-large-container-shape: var(--mat-sys-corner-extra-large);
+  }
+
+  /* Chips */
+  .mat-mdc-chip,
+  .mat-mdc-basic-chip,
+  .mat-mdc-chip-option,
+  .mat-mdc-chip-row,
+  .mdc-evolution-chip,
+  .mdc-evolution-chip__cell,
+  .mdc-evolution-chip__action,
+  .mdc-evolution-chip__action::before,
+  .mdc-evolution-chip__action::after,
+  .mat-mdc-chip-focus-overlay,
+  .mdc-evolution-chip__ripple {
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+
+    --mdc-chip-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-chip-elevated-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-chip-flat-container-shape: var(--mat-sys-corner-extra-large);
+  }
+
+  /* Group Buttons */
+  .mat-button-toggle-group {
+    border-radius: var(--mat-sys-corner-extra-small) !important;
+    --mat-standard-button-toggle-shape: var(--mat-sys-corner-extra-small);
   }
 }
 

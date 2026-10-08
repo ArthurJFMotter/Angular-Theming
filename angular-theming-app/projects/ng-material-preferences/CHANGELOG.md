@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.1.1] - 2026-10-08
+### Changed
+- **Snackbar Default Position**: `DEFAULT_PREFERENCES_STATE.notifications.snackbarVPosition` now defaults to `'top'` (previously `'bottom'`). Consumers who relied on the old default and have no persisted preference will see snackbars appear at the top of the viewport; set `snackbarVPosition: 'bottom'` explicitly to retain the previous behavior.
+
+### Fixed
+- **Shape Scale Corner Radius**: `cdk-overrides()` now applies the correct shape-scale corner curves to `mat-button`, `mat-button-toggle`, and `mat-chip` components and all of their variants (text, raised, unelevated, outlined, FAB / mini-FAB, chip option / row / basic chip and the underlying `mdc-evolution-chip` elements). Previously, these components only responded to two shape states and did not follow the full `SHAPE_SCALE` range, so intermediate settings (e.g., "Extra Round" and "Pill") did not render with the expected curvature.
+
 ## [1.1.0] - 2026-09-29
 ### Added
 - **Single Source of Truth Metrics**: Exported new heavily-typed `ScaleDefinition` objects (`FONT_SCALE`, `SHAPE_SCALE`, `CONTRAST_SCALE`, `DENSITY_SCALE`, `MOTION_SCALE`, `CVD_SEVERITY_SCALE`, `SCREEN_FILTER_INTENSITY_SCALE`). UI components should consume these directly to build sliders and cycle buttons.
