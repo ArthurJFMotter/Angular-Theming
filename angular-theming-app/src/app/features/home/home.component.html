@@ -17,6 +17,15 @@
         <button [class.active]="activeSection() === 'feedback'" (click)="scrollTo('feedback')">Feedback</button>
       </nav>
     }
+
+    @if (viewMode() === 'layouts') {
+      <nav class="spy-menu">
+        <button [class.active]="activeLayoutSection() === 'dashboard'" (click)="scrollToLayout('dashboard')">Analytics Dashboard</button>
+        <button [class.active]="activeLayoutSection() === 'table'" (click)="scrollToLayout('table')">Data Table</button>
+        <button [class.active]="activeLayoutSection() === 'kanban'" (click)="scrollToLayout('kanban')">Kanban Board</button>
+        <button [class.active]="activeSection() === 'mobile'" (click)="scrollToLayout('mobile')">Mobile Frame</button>
+      </nav>
+    }
   </aside>
 
   <!-- RIGHT: THE CANVAS -->

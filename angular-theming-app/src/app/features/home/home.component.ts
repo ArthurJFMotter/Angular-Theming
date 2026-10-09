@@ -18,6 +18,13 @@ export class HomeComponent {
   
   readonly viewMode = signal<'elements' | 'layouts'>('elements');
   readonly activeSection = signal<string>('actions');
+  readonly activeLayoutSection = signal<string>('dashboard');
+
+  scrollToLayout(id: string) {
+    this.activeLayoutSection.set(id);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: this.prefs.motionScale() === 0 ? 'instant' : 'smooth', block: 'start' });
+  }
 
   scrollTo(id: string) {
     this.activeSection.set(id);

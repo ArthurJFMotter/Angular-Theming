@@ -1,0 +1,85 @@
+<div class="palette-groups">
+  <!-- CORE COLORS -->
+  <div class="palette-group">
+    <h4 class="group-label">Core</h4>
+    <div class="swatch-row">
+      @for (swatch of coreSwatches; track swatch.id) {
+        <div
+          class="palette-swatch"
+          [style.background-color]="'var(--mat-sys-' + swatch.id + ')'"
+          [style.color]="'var(--mat-sys-on-' + swatch.id + ')'"
+        >
+          <span>{{ swatch.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- SEMANTIC COLORS -->
+  <div class="palette-group">
+    <h4 class="group-label">Semantic</h4>
+    <div class="swatch-row">
+      @for (swatch of semanticSwatches; track swatch.id) {
+        <div
+          class="palette-swatch"
+          [style.background-color]="'var(--mat-sys-' + swatch.id + ')'"
+          [style.color]="'var(--mat-sys-on-' + swatch.id + ')'"
+        >
+          <span>{{ swatch.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- CUSTOM ROLES -->
+  @if (customSwatches().length > 0) {
+    <div class="palette-group">
+      <h4 class="group-label">Custom Roles</h4>
+      <div class="swatch-row">
+        @for (swatch of customSwatches(); track swatch.id) {
+          <div
+            class="palette-swatch"
+            [style.background-color]="'var(--mat-sys-' + swatch.id + ')'"
+            [style.color]="'var(--mat-sys-on-' + swatch.id + ')'"
+          >
+            <span>{{ swatch.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- SURFACE ELEVATIONS -->
+  <div class="palette-group">
+    <h4 class="group-label">Surface Tiers</h4>
+    <div class="surface-tiers">
+      <div
+        class="tier"
+        style="background: var(--mat-sys-surface-container-lowest)"
+      >
+        Lowest
+      </div>
+      <div
+        class="tier"
+        style="background: var(--mat-sys-surface-container-low)"
+      >
+        Low
+      </div>
+      <div class="tier" style="background: var(--mat-sys-surface-container)">
+        Base
+      </div>
+      <div
+        class="tier"
+        style="background: var(--mat-sys-surface-container-high)"
+      >
+        High
+      </div>
+      <div
+        class="tier"
+        style="background: var(--mat-sys-surface-container-highest)"
+      >
+        Highest
+      </div>
+    </div>
+  </div>
+</div>

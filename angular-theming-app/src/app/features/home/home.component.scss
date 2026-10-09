@@ -1,7 +1,6 @@
 .sandbox-layout {
   display: flex;
   align-items: flex-start;
-  /* Let the parent Sidenav handle the main scrollbar! */
   height: 100%;
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-background);
@@ -14,14 +13,16 @@
 /* --- LEFT NAV (SCROLL SPY) --- */
 .mini-nav {
   position: sticky;
-  top: 0;
-  width: 280px; /* THE FIX: Increased width from 240px to stop squishing */
+  top: 64px;
+  height: calc(100vh - 64px);
+
+  width: 280px;
   padding: 32px 24px;
-  height: calc(100vh - 64px); /* Viewport minus the navbar */
   border-right: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface);
   box-sizing: border-box;
   overflow-y: auto;
+  flex-shrink: 0;
 
   @media (max-width: 900px) {
     position: static;
@@ -47,7 +48,6 @@
     mat-button-toggle {
       flex: 1;
     }
-    /* THE FIX: Force the text to fit cleanly inside the toggle buttons */
     ::ng-deep .mat-button-toggle-label-content {
       padding: 0 8px;
       font-size: 0.85rem;
@@ -89,8 +89,8 @@
 /* --- CANVAS --- */
 .canvas {
   flex: 1;
-  padding: 48px;
-  max-width: 1300px; /* THE FIX: Let it breathe on large monitors! */
+  padding: 48px 64px;
+  max-width: 1400px;
   margin: 0 auto;
   min-width: 0;
 
@@ -102,6 +102,15 @@
 .canvas-section {
   padding-bottom: 64px;
   scroll-margin-top: 100px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  padding-top: 48px;
+  margin-top: 24px;
+
+  &:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
 
   .section-title {
     font-size: 1.5rem;

@@ -1,5 +1,9 @@
 @use "../../sandbox-shared.scss";
 
+mat-divider{
+    margin-bottom: 4rem;
+}
+
 .canvas-section {
   padding-bottom: 64px;
   scroll-margin-top: 100px;

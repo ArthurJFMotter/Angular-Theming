@@ -13,6 +13,7 @@ import { ActionsSectionComponent } from '../actions-section/actions-section.comp
 import { FeedbackSectionComponent } from '../feedback-section/feedback-section.component';
 import { InputsSectionComponent } from '../inputs-section/inputs-section.component';
 import { SurfacesSectionComponent } from '../surfaces-section/surfaces-section.component';
+import { PaletteStripComponent } from '../palette-strip/palette-strip.component';
 
 @Component({
   selector: 'app-elements-view',
@@ -23,6 +24,7 @@ import { SurfacesSectionComponent } from '../surfaces-section/surfaces-section.c
     InputsSectionComponent,
     SurfacesSectionComponent,
     FeedbackSectionComponent,
+    PaletteStripComponent,
   ],
   templateUrl: './elements-view.component.html',
   styleUrl: './elements-view.component.scss',
@@ -35,10 +37,12 @@ export class ElementsViewComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find((e) => e.isIntersecting);
-        if (visible) this.sectionScrolled.emit(visible.target.id);
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          this.sectionScrolled.emit(visible[0].target.id);
+        }
       },
-      { rootMargin: '-100px 0px -60% 0px' },
+      { rootMargin: '-10% 0px -70% 0px' },
     );
     this.spyTargets.forEach((target) =>
       this.observer?.observe(target.nativeElement),
