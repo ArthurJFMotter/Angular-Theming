@@ -1,291 +1,215 @@
-<mat-sidenav-container class="app-container">
-  <!-- Settings Drawer -->
-  <mat-sidenav
-    #settingsDrawer
-    mode="over"
-    position="end"
-    autoFocus="false"
-    class="settings-drawer"
-  >
-    <app-preferences-side-drawer (closeDrawer)="settingsDrawer.close()" />
-  </mat-sidenav>
+<div class="sandbox-layout">
+  
+  <!-- LEFT: MINI NAVIGATION (SCROLL SPY) -->
+  <aside class="mini-nav">
+    <div class="nav-header">
+      <h3>Theming Lab</h3>
+      <mat-button-toggle-group [value]="viewMode()" (change)="viewMode.set($event.value)" class="view-toggle">
+        <mat-button-toggle value="components">Components</mat-button-toggle>
+        <mat-button-toggle value="compositions">Compositions</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
 
-  <!-- Main Content -->
-  <mat-sidenav-content class="main-content">
-    <mat-toolbar class="app-toolbar" color="primary">
-      <mat-icon class="app-toolbar__logo">palette</mat-icon>
-      <span class="app-toolbar__title">Angular Theming App</span>
-      <span class="app-toolbar__spacer"></span>
-      <button
-        mat-icon-button
-        (click)="settingsDrawer.toggle()"
-        matTooltip="Open Preferences"
-      >
-        <mat-icon>settings</mat-icon>
-      </button>
-    </mat-toolbar>
+    @if (viewMode() === 'components') {
+      <nav class="spy-menu">
+        <button [class.active]="activeSection() === 'actions'" (click)="scrollTo('actions')">Actions</button>
+        <button [class.active]="activeSection() === 'inputs'" (click)="scrollTo('inputs')">Inputs & Forms</button>
+        <button [class.active]="activeSection() === 'surfaces'" (click)="scrollTo('surfaces')">Surfaces</button>
+        <button [class.active]="activeSection() === 'feedback'" (click)="scrollTo('feedback')">Feedback</button>
+      </nav>
+    }
+  </aside>
 
-    <main class="home">
-      <section class="home__intro">
-        <h1>Live Material 3 theming</h1>
-        <p>
-          Pick a mode and a color scheme above — every component on this page
-          restyles instantly and your choice is remembered on this device. Want
-          your own colors? Click the dashed swatch to pick custom primary,
-          secondary, tertiary, and error colors — contrast is always kept safe
-          for you.
-        </p>
-        <img
-          src="https://picsum.photos/id/1015/600/200"
-          alt="Colorful landscape"
-          class="hero-image"
-        />
-      </section>
-
-      <section class="home__grid">
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Buttons</mat-card-title>
-            <mat-card-subtitle
-              >Primary, secondary &amp; tertiary roles, side by
-              side</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content class="button-row">
-            <button mat-button>Text</button>
+  <!-- RIGHT: THE CANVAS -->
+  <main class="canvas">
+    
+    @if (viewMode() === 'components') {
+      
+      <!-- 1. ACTIONS -->
+      <section id="actions" #spyTarget class="canvas-section">
+        <h2 class="section-title">Actions</h2>
+        
+        <div class="state-matrix">
+          <div class="matrix-row">
+            <span class="row-label">Filled</span>
+            <button mat-flat-button>Default</button>
             <button mat-flat-button color="primary">Primary</button>
-            <button mat-flat-button class="secondary-button">Secondary</button>
-            <button mat-stroked-button color="primary">Stroked</button>
-            <button mat-raised-button color="primary">Raised</button>
-            <button
-              mat-icon-button
-              matBadge="3"
-              matBadgeColor="warn"
-              aria-label="Notifications"
-            >
-              <mat-icon>notifications</mat-icon>
-            </button>
-            <button mat-fab class="tertiary-fab" aria-label="Add">
-              <mat-icon>add</mat-icon>
-            </button>
-          </mat-card-content>
-        </mat-card>
+            <button mat-flat-button color="accent">Secondary</button>
+            <button mat-flat-button color="warn">Warn</button>
+            <button mat-flat-button disabled>Disabled</button>
+          </div>
+          
+          <div class="matrix-row">
+            <span class="row-label">Stroked</span>
+            <button mat-stroked-button>Default</button>
+            <button mat-stroked-button color="primary">Primary</button>
+            <button mat-stroked-button disabled>Disabled</button>
+          </div>
 
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Form field</mat-card-title>
-            <mat-card-subtitle
-              >Inputs follow the active scheme</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Project name</mat-label>
-              <input matInput placeholder="Angular Theming App" />
-              <mat-icon matSuffix>edit</mat-icon>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Leave a comment</mat-label>
-              <textarea
-                matInput
-                placeholder="Ex. It makes me feel..."
-              ></textarea>
-            </mat-form-field>
-
-            <mat-slide-toggle checked>Enable notifications</mat-slide-toggle>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Chips</mat-card-title>
-            <mat-card-subtitle
-              >Selected chips use the secondary color</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content>
-            <mat-chip-listbox aria-label="Tech stack">
-              @for (chip of chips; track chip; let i = $index) {
-                <mat-chip-option [selected]="i === 0">{{
-                  chip
-                }}</mat-chip-option>
-              }
+          <div class="matrix-row">
+            <span class="row-label">FAB & Chips</span>
+            <button mat-fab color="primary"><mat-icon>add</mat-icon></button>
+            <button mat-mini-fab color="accent"><mat-icon>edit</mat-icon></button>
+            <mat-chip-listbox>
+              <mat-chip-option selected>Selected</mat-chip-option>
+              <mat-chip-option>Default</mat-chip-option>
+              <mat-chip-option disabled>Disabled</mat-chip-option>
             </mat-chip-listbox>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Progress &amp; tabs</mat-card-title>
-            <mat-card-subtitle>Surfaces, dividers and motion</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-progress-bar
-              mode="indeterminate"
-              value="64"
-            ></mat-progress-bar>
-            <mat-divider class="section-divider"></mat-divider>
-            <mat-tab-group>
-              <mat-tab label="Overview">
-                <p class="tab-copy">
-                  Surface colors update across every nested panel.
-                </p>
-              </mat-tab>
-              <mat-tab label="Details">
-                <p class="tab-copy">
-                  Tab indicators use the primary color token.
-                </p>
-              </mat-tab>
-            </mat-tab-group>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Status & Alerts</mat-card-title>
-            <mat-card-subtitle
-              >Semantic colors utilizing container tokens</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content class="alerts-container">
-            <div class="status-alert status-alert--success">
-              <mat-icon>check_circle</mat-icon>
-              <span>Changes saved successfully.</span>
-            </div>
-            <div class="status-alert status-alert--warning">
-              <mat-icon>warning</mat-icon>
-              <span>Your subscription expires in 3 days.</span>
-            </div>
-            <div class="status-alert status-alert--info">
-              <mat-icon>info</mat-icon>
-              <span>New features are available in settings.</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Snackbars & Toasts</mat-card-title>
-            <mat-card-subtitle
-              >Dynamic positioning & semantic colors</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content>
-            <!-- Snackbar Controls -->
-            @if (prefs.hasNotifications) {
-              <div class="snackbar-controls">
-                <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <mat-label>Vertical Spawn</mat-label>
-                  <mat-select
-                    [value]="prefs.snackbarVPosition()"
-                    (selectionChange)="prefs.setSnackbarVPosition($event.value)"
-                  >
-                    <mat-option value="top">Top</mat-option>
-                    <mat-option value="bottom">Bottom</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                  <mat-label>Horizontal Spawn</mat-label>
-                  <mat-select
-                    [value]="prefs.snackbarHPosition()"
-                    (selectionChange)="prefs.setSnackbarHPosition($event.value)"
-                  >
-                    <mat-option value="start">Start (Left)</mat-option>
-                    <mat-option value="center">Center</mat-option>
-                    <mat-option value="end">End (Right)</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <mat-divider class="section-divider"></mat-divider>
-            }
-
-            <!-- Snackbar Triggers -->
-            <div class="button-row">
-              <button mat-stroked-button (click)="triggerSnackbar('default')">
-                Default
-              </button>
-              <button
-                mat-flat-button
-                class="btn-success"
-                (click)="triggerSnackbar('success')"
-              >
-                Success
-              </button>
-              <button
-                mat-flat-button
-                class="btn-warning"
-                (click)="triggerSnackbar('warning')"
-              >
-                Warning
-              </button>
-              <button
-                mat-flat-button
-                class="btn-info"
-                (click)="triggerSnackbar('info')"
-              >
-                Info
-              </button>
-              <button
-                mat-flat-button
-                class="btn-error"
-                (click)="triggerSnackbar('error')"
-              >
-                Error
-              </button>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="showcase-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Elevation & Surfaces</mat-card-title>
-            <mat-card-subtitle
-              >Dialogs, bottom sheets, and scrims</mat-card-subtitle
-            >
-          </mat-card-header>
-          <mat-card-content>
-            <p class="tab-copy">
-              Material 3 avoids heavy shadows, instead using surface tints
-              (mixing primary color into backgrounds) to indicate elevation.
-            </p>
-            <div class="button-row" style="margin-top: 16px">
-              @if (prefs.hasColor) {
-                <button mat-stroked-button (click)="openBottomSheet()">
-                  <mat-icon>share</mat-icon> Share Profile
-                </button>
-              }
-              @if (prefs.hasLayout || prefs.hasColor) {
-                <button mat-flat-button color="primary" (click)="openDialog()">
-                  <mat-icon>settings</mat-icon> Advanced Preferences
-                </button>
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </div>
       </section>
 
-      @if (prefs.hasColor) {
-        <section class="home__palette">
-          <h2>Surface &amp; role tokens</h2>
-          <div class="palette-grid">
-            @for (swatch of paletteSwatches(); track swatch.id) {
-              <div
-                class="palette-swatch"
-                [style.background-color]="'var(--mat-sys-' + swatch.id + ')'"
-                [style.color]="
-                  'var(--mat-sys-on-' +
-                  (swatch.id === 'surface' ? 'surface' : swatch.id) +
-                  ')'
-                "
-              >
-                <span>{{ swatch.label }}</span>
-              </div>
-            }
+      <mat-divider></mat-divider>
+
+      <!-- 2. INPUTS & FORMS -->
+      <section id="inputs" #spyTarget class="canvas-section">
+        <h2 class="section-title">Inputs & Forms</h2>
+        
+        @defer (on viewport) {
+          <div class="state-matrix">
+            <div class="matrix-row inputs-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Standard Input</mat-label>
+                <input matInput placeholder="Placeholder">
+                <mat-icon matSuffix>person</mat-icon>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Error State</mat-label>
+                <input matInput [formControl]="emailControl" placeholder="Email">
+                <mat-error>Invalid email format</mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline">
+                <mat-label>Disabled</mat-label>
+                <input matInput disabled value="Locked value">
+              </mat-form-field>
+            </div>
+
+            <div class="matrix-row">
+              <mat-checkbox checked color="primary">Primary</mat-checkbox>
+              <mat-checkbox checked color="accent">Secondary</mat-checkbox>
+              <mat-radio-group value="1">
+                <mat-radio-button value="1" color="primary">Option 1</mat-radio-button>
+                <mat-radio-button value="2" color="warn">Warn</mat-radio-button>
+              </mat-radio-group>
+              <mat-slide-toggle checked color="primary">Enabled</mat-slide-toggle>
+              <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
+            </div>
+
+            <div class="matrix-row">
+              <span class="row-label">Slider</span>
+              <mat-slider min="0" max="100" step="10" showTickMarks discrete style="flex: 1; min-width: 200px;">
+                <input matSliderThumb value="50">
+              </mat-slider>
+            </div>
           </div>
-        </section>
-      }
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+        } @placeholder { <div class="loading-placeholder">Loading Forms...</div> }
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- 3. SURFACES -->
+      <section id="surfaces" #spyTarget class="canvas-section">
+        <h2 class="section-title">Surfaces & Containers</h2>
+        
+        @defer (on viewport) {
+          <div class="surface-grid">
+            <mat-card appearance="outlined">
+              <mat-card-header>
+                <mat-card-title>Outlined Card</mat-card-title>
+                <mat-card-subtitle>Surface container low</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p>Cards automatically inherit corner radius and density scaling.</p>
+              </mat-card-content>
+              <mat-card-actions align="end">
+                <button mat-button>Cancel</button>
+                <button mat-flat-button color="primary">Action</button>
+              </mat-card-actions>
+            </mat-card>
+
+            <mat-card appearance="raised">
+              <mat-card-header>
+                <mat-card-title>Elevated Card</mat-card-title>
+                <mat-card-subtitle>Shadows & Surface Tints</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p>Material 3 uses tinted backgrounds instead of heavy drop shadows for elevation.</p>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-accordion class="full-width" style="grid-column: 1 / -1;">
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Expansion Panel</mat-panel-title>
+                  <mat-panel-description>Click to expand</mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>Notice how the background color subtly shifts when expanded, obeying the M3 surface system.</p>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        } @placeholder { <div class="loading-placeholder">Loading Surfaces...</div> }
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- 4. FEEDBACK -->
+      <section id="feedback" #spyTarget class="canvas-section">
+        <h2 class="section-title">Feedback & Alerts</h2>
+        
+        @defer (on viewport) {
+          <div class="state-matrix">
+            <div class="matrix-row">
+              <span class="row-label">Progress</span>
+              <mat-progress-bar mode="indeterminate" style="flex: 1;"></mat-progress-bar>
+              <mat-spinner diameter="32"></mat-spinner>
+            </div>
+
+            <div class="matrix-row">
+              <span class="row-label">Trigger Snackbars</span>
+              <button mat-flat-button style="background: var(--mat-sys-success-container); color: var(--mat-sys-on-success-container)" (click)="triggerToast('success')">Success</button>
+              <button mat-flat-button style="background: var(--mat-sys-warning-container); color: var(--mat-sys-on-warning-container)" (click)="triggerToast('warning')">Warning</button>
+              <button mat-flat-button style="background: var(--mat-sys-info-container); color: var(--mat-sys-on-info-container)" (click)="triggerToast('info')">Info</button>
+              <button mat-flat-button style="background: var(--mat-sys-error-container); color: var(--mat-sys-on-error-container)" (click)="triggerToast('error')">Error</button>
+            </div>
+          </div>
+        } @placeholder { <div class="loading-placeholder">Loading Feedback...</div> }
+      </section>
+
+    } @else {
+      <!-- COMPOSITIONS VIEW -->
+      <section class="canvas-section compositions">
+        <h2 class="section-title">Real-World Compositions</h2>
+        
+        <div class="mock-dashboard">
+          <mat-toolbar color="primary" class="mock-toolbar">
+            <mat-icon>dashboard</mat-icon>
+            <span>Project Dashboard</span>
+            <span style="flex: 1"></span>
+            <button mat-icon-button><mat-icon>account_circle</mat-icon></button>
+          </mat-toolbar>
+          
+          <div class="dashboard-body">
+            <div class="stats-row">
+              <mat-card appearance="outlined"><div class="stat"><h3>24</h3><p>Active Tasks</p></div></mat-card>
+              <mat-card appearance="outlined"><div class="stat"><h3>12</h3><p>Pending Review</p></div></mat-card>
+              <mat-card appearance="outlined" style="background: var(--mat-sys-primary-container); color: var(--mat-sys-on-primary-container)"><div class="stat"><h3>100%</h3><p>System Uptime</p></div></mat-card>
+            </div>
+
+            <mat-card appearance="outlined" class="table-card">
+              <mat-card-header><mat-card-title>Recent Activity</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <div class="mock-table-row"><span>Updated backend deps</span><span class="badge success">Merged</span></div>
+                <mat-divider></mat-divider>
+                <div class="mock-table-row"><span>Fix sidebar z-index</span><span class="badge warning">Review</span></div>
+                <mat-divider></mat-divider>
+                <div class="mock-table-row"><span>Auth token failing</span><span class="badge error">Failed</span></div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </section>
+    }
+  </main>
+</div>
