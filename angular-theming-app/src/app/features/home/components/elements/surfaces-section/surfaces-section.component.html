@@ -1,0 +1,43 @@
+<div class="surface-grid">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Outlined Card</mat-card-title>
+      <mat-card-subtitle>Surface container low</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content
+      ><p>
+        Cards automatically inherit corner radius and density scaling.
+      </p></mat-card-content
+    >
+    <mat-card-actions align="end"
+      ><button mat-button>Cancel</button
+      ><button mat-flat-button color="primary">Action</button></mat-card-actions
+    >
+  </mat-card>
+
+  <mat-card appearance="raised">
+    <mat-card-header>
+      <mat-card-title>Elevated Card</mat-card-title>
+      <mat-card-subtitle>Shadows & Surface Tints</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content
+      ><p>
+        Material 3 uses tinted backgrounds instead of heavy drop shadows for
+        elevation.
+      </p></mat-card-content
+    >
+  </mat-card>
+
+  <mat-accordion class="full-width" style="grid-column: 1 / -1">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Expansion Panel</mat-panel-title>
+        <mat-panel-description>Click to expand</mat-panel-description>
+      </mat-expansion-panel-header>
+      <p>
+        Notice how the background color subtly shifts when expanded, obeying the
+        M3 surface system.
+      </p>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

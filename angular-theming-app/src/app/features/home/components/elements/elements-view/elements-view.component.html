@@ -1,0 +1,31 @@
+<section id="actions" #spyTarget class="canvas-section">
+  <h2 class="section-title">Actions</h2>
+  <app-actions-section />
+</section>
+<mat-divider></mat-divider>
+<section id="inputs" #spyTarget class="canvas-section">
+  <h2 class="section-title">Inputs & Forms</h2>
+  @defer (on viewport) {
+    <app-inputs-section />
+  } @placeholder {
+    <div class="loading-placeholder">Loading Forms...</div>
+  }
+</section>
+<mat-divider></mat-divider>
+<section id="surfaces" #spyTarget class="canvas-section">
+  <h2 class="section-title">Surfaces & Containers</h2>
+  @defer (on viewport) {
+    <app-surfaces-section />
+  } @placeholder {
+    <div class="loading-placeholder">Loading Surfaces...</div>
+  }
+</section>
+<mat-divider></mat-divider>
+<section id="feedback" #spyTarget class="canvas-section">
+  <h2 class="section-title">Feedback & Alerts</h2>
+  @defer (on viewport) {
+    <app-feedback-section />
+  } @placeholder {
+    <div class="loading-placeholder">Loading Feedback...</div>
+  }
+</section>

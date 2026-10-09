@@ -1,0 +1,58 @@
+<section class="canvas-section compositions">
+  <h2 class="section-title">Real-World Compositions</h2>
+  <div class="mock-dashboard">
+    <mat-toolbar color="primary" class="mock-toolbar">
+      <mat-icon>dashboard</mat-icon><span>Project Dashboard</span
+      ><span style="flex: 1"></span>
+      <button mat-icon-button><mat-icon>account_circle</mat-icon></button>
+    </mat-toolbar>
+    <div class="dashboard-body">
+      <div class="stats-row">
+        <mat-card appearance="outlined"
+          ><div class="stat">
+            <h3>24</h3>
+            <p>Active Tasks</p>
+          </div></mat-card
+        >
+        <mat-card appearance="outlined"
+          ><div class="stat">
+            <h3>12</h3>
+            <p>Pending Review</p>
+          </div></mat-card
+        >
+        <mat-card
+          appearance="outlined"
+          style="
+            background: var(--mat-sys-primary-container);
+            color: var(--mat-sys-on-primary-container);
+          "
+          ><div class="stat">
+            <h3>100%</h3>
+            <p>System Uptime</p>
+          </div></mat-card
+        >
+      </div>
+      <mat-card appearance="outlined" class="table-card">
+        <mat-card-header
+          ><mat-card-title>Recent Activity</mat-card-title></mat-card-header
+        >
+        <mat-card-content>
+          <div class="mock-table-row">
+            <span>Updated backend deps</span
+            ><span class="badge success">Merged</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="mock-table-row">
+            <span>Fix sidebar z-index</span
+            ><span class="badge warning">Review</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="mock-table-row">
+            <span>Auth token failing</span
+            ><span class="badge error">Failed</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+@use "../../sandbox-shared.scss";
+
+.canvas-section {
+  padding-bottom: 64px;
+  scroll-margin-top: 100px;
+}
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 24px;
+  color: var(--mat-sys-on-background);
+}

@@ -1,0 +1,50 @@
+<div class="state-matrix">
+  <div class="matrix-row">
+    <span class="row-label">Progress</span>
+    <mat-progress-bar mode="indeterminate" style="flex: 1"></mat-progress-bar>
+    <mat-spinner diameter="32"></mat-spinner>
+  </div>
+  <div class="matrix-row">
+    <span class="row-label">Trigger Snackbars</span>
+    <button
+      mat-flat-button
+      style="
+        background: var(--mat-sys-success-container);
+        color: var(--mat-sys-on-success-container);
+      "
+      (click)="triggerToast('success')"
+    >
+      Success
+    </button>
+    <button
+      mat-flat-button
+      style="
+        background: var(--mat-sys-warning-container);
+        color: var(--mat-sys-on-warning-container);
+      "
+      (click)="triggerToast('warning')"
+    >
+      Warning
+    </button>
+    <button
+      mat-flat-button
+      style="
+        background: var(--mat-sys-info-container);
+        color: var(--mat-sys-on-info-container);
+      "
+      (click)="triggerToast('info')"
+    >
+      Info
+    </button>
+    <button
+      mat-flat-button
+      style="
+        background: var(--mat-sys-error-container);
+        color: var(--mat-sys-on-error-container);
+      "
+      (click)="triggerToast('error')"
+    >
+      Error
+    </button>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="state-matrix">
+  <div class="matrix-row inputs-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Standard Input</mat-label>
+      <input matInput placeholder="Placeholder" />
+      <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Error State</mat-label>
+      <input matInput [formControl]="emailControl" placeholder="Email" />
+      <mat-error>Invalid email format</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Disabled</mat-label>
+      <input matInput disabled value="Locked value" />
+    </mat-form-field>
+  </div>
+  <div class="matrix-row">
+    <mat-checkbox checked color="primary">Primary</mat-checkbox>
+    <mat-checkbox checked color="accent">Secondary</mat-checkbox>
+    <mat-radio-group value="1" style="display: flex; gap: 16px; margin: 0 16px">
+      <mat-radio-button value="1" color="primary">Option 1</mat-radio-button>
+      <mat-radio-button value="2" color="warn">Warn</mat-radio-button>
+    </mat-radio-group>
+    <mat-slide-toggle checked color="primary">Enabled</mat-slide-toggle>
+    <mat-slide-toggle disabled style="margin-left: 16px"
+      >Disabled</mat-slide-toggle
+    >
+  </div>
+  <div class="matrix-row">
+    <span class="row-label">Slider</span>
+    <mat-slider
+      min="0"
+      max="100"
+      step="10"
+      showTickMarks
+      discrete
+      style="flex: 1; min-width: 200px; margin: 0 16px"
+    >
+      <input matSliderThumb value="50" />
+    </mat-slider>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+/* --- STATE MATRICES --- */
+.state-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-large);
+  padding: 32px;
+
+  .matrix-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .row-label {
+      width: 120px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mat-sys-outline);
+    }
+  }
+
+  .inputs-row {
+    align-items: flex-start;
+    gap: 24px;
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+}
+
+.loading-placeholder {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mat-sys-outline);
+  font-style: italic;
+}
