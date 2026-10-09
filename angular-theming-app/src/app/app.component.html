@@ -1,3 +1,33 @@
-<div class="app-layout">
-  <router-outlet />
-</div>
+<mat-sidenav-container
+  class="app-container"
+  [hasBackdrop]="uiState.drawerConfig().hasBackdrop"
+>
+  <!-- DRAWER -->
+  <mat-sidenav
+    #settingsDrawer
+    [mode]="uiState.safeDrawerConfig().mode"
+    [position]="uiState.safeDrawerConfig().position"
+    class="settings-drawer"
+    [class.is-start]="uiState.safeDrawerConfig().position === 'start'"
+    [class.is-end]="uiState.safeDrawerConfig().position === 'end'"
+  >
+    <app-preferences-side-drawer
+      (closeDrawer)="settingsDrawer.close()"
+    ></app-preferences-side-drawer>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="main-content">
+    <div class="app-layout">
+      <!-- NAVBAR -->
+      <app-navbar [drawer]="settingsDrawer"></app-navbar>
+
+      <!-- MAIN PAGE -->
+      <main class="app-main">
+        <router-outlet></router-outlet>
+      </main>
+
+      <!-- FOOTER -->
+      <app-footer></app-footer>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

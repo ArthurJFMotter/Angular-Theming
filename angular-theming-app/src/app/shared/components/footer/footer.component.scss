@@ -1,0 +1,58 @@
+.app-footer {
+  padding: 32px 48px;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  background-color: var(--mat-sys-surface-container-lowest);
+  color: var(--mat-sys-on-surface);
+  font-size: 0.85rem;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  strong {
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+  }
+  span {
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+
+  a {
+    color: var(--mat-sys-on-surface-variant);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    outline: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--mat-sys-primary);
+    }
+
+    &:focus-visible {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+}

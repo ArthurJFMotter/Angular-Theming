@@ -1,0 +1,65 @@
+<mat-toolbar class="app-navbar">
+  <!-- Drawer Trigger -->
+  @if (isDrawerMode()) {
+    <button
+      mat-icon-button
+      (click)="drawer.toggle()"
+      class="drawer-trigger"
+      [class]="drawerPos()"
+      [class.is-open]="drawer.opened"
+      aria-label="Toggle Settings"
+    >
+      <mat-icon>{{ drawer.opened ? "menu_open" : drawerIcon() }}</mat-icon>
+    </button>
+  }
+
+  <!-- BRAND -->
+  <div class="brand" routerLink="/">
+    <h1>NGMP Demo</h1>
+  </div>
+
+  <span class="toolbar-spacer"></span>
+
+  <!-- NAVIGATION 
+  <div class="nav-actions">
+    <div class="desktop-nav">
+      <a
+        mat-button
+        routerLink="/"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon>home</mat-icon><span>Home</span>
+      </a>
+      <a mat-button routerLink="/configurations" routerLinkActive="active-link">
+        <mat-icon>settings</mat-icon><span>Configurations</span>
+      </a>
+    </div>
+
+    <div class="mobile-nav">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="mobileMenu"
+        aria-label="Open Navigation"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #mobileMenu="matMenu">
+        <a
+          mat-menu-item
+          routerLink="/"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ><mat-icon>home</mat-icon><span>Home</span></a
+        >
+        <a
+          mat-menu-item
+          routerLink="/configurations"
+          routerLinkActive="active-link"
+          ><mat-icon>settings</mat-icon><span>Configurations</span></a
+        >
+      </mat-menu>
+    </div>
+  </div>
+  -->
+</mat-toolbar>

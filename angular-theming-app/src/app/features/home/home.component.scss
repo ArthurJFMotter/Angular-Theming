@@ -1,7 +1,8 @@
 .sandbox-layout {
   display: flex;
   align-items: flex-start;
-  min-height: calc(100vh - 64px);
+  /* Let the parent Sidenav handle the main scrollbar! */
+  height: 100%;
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-background);
 
@@ -13,11 +14,12 @@
 /* --- LEFT NAV (SCROLL SPY) --- */
 .mini-nav {
   position: sticky;
-  top: 64px; /* Below standard navbar */
-  width: 240px;
+  top: 0;
+  width: 280px; /* THE FIX: Increased width from 240px to stop squishing */
   padding: 32px 24px;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 64px); /* Viewport minus the navbar */
   border-right: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
   box-sizing: border-box;
   overflow-y: auto;
 
@@ -45,6 +47,11 @@
     mat-button-toggle {
       flex: 1;
     }
+    /* THE FIX: Force the text to fit cleanly inside the toggle buttons */
+    ::ng-deep .mat-button-toggle-label-content {
+      padding: 0 8px;
+      font-size: 0.85rem;
+    }
   }
 
   .spy-menu {
@@ -56,7 +63,7 @@
       background: transparent;
       border: none;
       text-align: left;
-      padding: 10px 16px;
+      padding: 12px 16px;
       border-radius: var(--mat-sys-corner-medium);
       color: var(--mat-sys-on-surface-variant);
       font-family: inherit;
@@ -83,9 +90,9 @@
 .canvas {
   flex: 1;
   padding: 48px;
-  max-width: 1000px;
+  max-width: 1300px; /* THE FIX: Let it breathe on large monitors! */
   margin: 0 auto;
-  min-width: 0; /* Prevent flex blowout */
+  min-width: 0;
 
   @media (max-width: 900px) {
     padding: 24px;
@@ -93,13 +100,13 @@
 }
 
 .canvas-section {
-  padding-bottom: 48px;
-  scroll-margin-top: 100px; /* For scroll-spy offset */
+  padding-bottom: 64px;
+  scroll-margin-top: 100px;
 
   .section-title {
     font-size: 1.5rem;
     font-weight: 600;
-    margin: 0 0 32px;
+    margin: 0 0 24px;
     color: var(--mat-sys-on-background);
   }
 }
@@ -108,30 +115,33 @@
 .state-matrix {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px; /* THE FIX: Increased gap between rows */
   background: var(--mat-sys-surface-container-lowest);
-  border: 1px dashed var(--mat-sys-outline-variant);
+
+  /* THE FIX: Swapped from dashed to a clean, solid M3 border */
+  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: var(--mat-sys-corner-large);
   padding: 32px;
 
   .matrix-row {
     display: flex;
-    align-items: center;
+    align-items: center; /* THE FIX: Vertically centers everything in the row! */
     flex-wrap: wrap;
     gap: 16px;
 
     .row-label {
-      width: 100px;
-      font-size: 0.85rem;
+      width: 120px;
+      font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--mat-sys-outline);
+      letter-spacing: 1px;
+      color: var(--mat-sys-on-surface-variant);
     }
   }
 
   .inputs-row {
-    align-items: flex-start; /* Align forms to the top so error messages don't break layout */
+    align-items: flex-start; /* Form fields look better aligned to the top */
+    gap: 24px;
     mat-form-field {
       flex: 1;
       min-width: 200px;

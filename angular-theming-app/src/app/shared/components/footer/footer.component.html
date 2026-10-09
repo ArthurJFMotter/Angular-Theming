@@ -1,0 +1,30 @@
+<footer class="app-footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <strong>NG-Material-Preferences</strong>
+      <span>Built with Material 3</span>
+    </div>
+
+    <div class="footer-links">
+      <a
+        tabindex="0"
+        (click)="openExternalLink('https://github.com')"
+        (keydown.enter)="openExternalLink('https://github.com')"
+      >
+        GitHub
+      </a>
+
+      <a
+        tabindex="0"
+        (click)="openExternalLink('https://material.angular.io')"
+        (keydown.enter)="openExternalLink('https://material.angular.io')"
+      >
+        Angular Material
+      </a>
+
+      <a tabindex="0" (click)="openLicense()" (keydown.enter)="openLicense()">
+        License
+      </a>
+    </div>
+  </div>
+</footer>
