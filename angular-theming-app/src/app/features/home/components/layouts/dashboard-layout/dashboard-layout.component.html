@@ -1,0 +1,58 @@
+<div class="mock-dashboard">
+  <mat-toolbar color="primary" class="mock-toolbar">
+    <mat-icon>insights</mat-icon><span>Q3 Analytics</span
+    ><span style="flex: 1"></span>
+    <button mat-icon-button><mat-icon>account_circle</mat-icon></button>
+  </mat-toolbar>
+
+  <div class="dashboard-body">
+    <div class="stats-row">
+      <mat-card appearance="outlined"
+        ><div class="stat">
+          <h3 style="color: var(--mat-sys-primary)">$42.4K</h3>
+          <p>Revenue</p>
+        </div></mat-card
+      >
+      <mat-card appearance="outlined"
+        ><div class="stat">
+          <h3 style="color: var(--mat-sys-tertiary)">1,204</h3>
+          <p>New Users</p>
+        </div></mat-card
+      >
+      <mat-card
+        appearance="outlined"
+        style="
+          background: var(--mat-sys-error-container);
+          color: var(--mat-sys-on-error-container);
+        "
+        ><div class="stat">
+          <h3>14</h3>
+          <p>Active Alerts</p>
+        </div></mat-card
+      >
+    </div>
+
+    <div class="chart-mock">
+      <div
+        class="bar"
+        style="height: 40%; background: var(--mat-sys-primary)"
+      ></div>
+      <div
+        class="bar"
+        style="height: 70%; background: var(--mat-sys-secondary)"
+      ></div>
+      <div
+        class="bar"
+        style="height: 50%; background: var(--mat-sys-tertiary)"
+      ></div>
+      <div
+        class="bar"
+        style="height: 90%; background: var(--mat-sys-primary)"
+      ></div>
+      <div
+        class="bar"
+        style="height: 30%; background: var(--mat-sys-error)"
+      ></div>
+    </div>
+  </div>
+</div>

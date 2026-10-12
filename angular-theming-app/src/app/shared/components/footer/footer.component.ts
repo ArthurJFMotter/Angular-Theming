@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ModalService } from '../../../core/services/modal.service';
-import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [MatIcon],
+  imports: [],
 })
 export class FooterComponent {
   private modals = inject(ModalService);

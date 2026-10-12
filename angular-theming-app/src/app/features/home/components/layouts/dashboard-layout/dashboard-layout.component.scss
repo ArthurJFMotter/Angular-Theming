@@ -1,0 +1,55 @@
+@use "../layouts-shared.scss";
+
+.mock-dashboard {
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-extra-large);
+  overflow: hidden;
+}
+.mock-toolbar {
+  border-radius: 0;
+  gap: 12px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.dashboard-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+.stat {
+  padding: 24px 16px;
+  text-align: center;
+  h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+.chart-mock {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 150px;
+  padding: 24px;
+  background: var(--mat-sys-surface-container);
+  border-radius: var(--mat-sys-corner-large);
+}
+.chart-mock .bar {
+  width: 15%;
+  border-radius: var(--mat-sys-corner-extra-small)
+    var(--mat-sys-corner-extra-small) 0 0;
+}

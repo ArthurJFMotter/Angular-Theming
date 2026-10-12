@@ -1,0 +1,59 @@
+@use "../layouts-shared.scss";
+
+.mobile-frame-wrapper {
+  display: flex;
+  justify-content: center;
+}
+.mobile-device {
+  width: 375px;
+  height: 667px;
+  border: 8px solid #222;
+  border-radius: 36px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--mat-sys-background);
+  position: relative;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+.mobile-content {
+  flex: 1;
+  padding: 0;
+  overflow-y: auto;
+}
+.mock-list-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  align-items: center;
+}
+.text {
+  line-height: 1.4;
+  strong {
+    color: var(--mat-sys-on-background);
+    font-size: 0.95rem;
+  }
+  small {
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.85rem;
+  }
+}
+.mobile-fab {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+}
+.mock-bottom-nav {
+  height: 64px;
+  background: var(--mat-sys-surface-container);
+  border-top: 1px solid var(--mat-sys-outline-variant);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  mat-icon {
+    color: var(--mat-sys-on-surface-variant);
+  }
+  mat-icon[color="primary"] {
+    color: var(--mat-sys-primary);
+  }
+}

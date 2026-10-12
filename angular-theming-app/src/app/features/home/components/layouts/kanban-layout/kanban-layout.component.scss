@@ -1,0 +1,34 @@
+@use "../layouts-shared.scss";
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+.kanban-col {
+  background: var(--mat-sys-surface-container-low);
+  border-radius: var(--mat-sys-corner-large);
+  padding: 16px;
+  h4 {
+    margin: 0 0 16px;
+    font-size: 0.85rem;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+  }
+}
+.kanban-card {
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
+.kanban-card .badge {
+  align-self: flex-start;
+}
