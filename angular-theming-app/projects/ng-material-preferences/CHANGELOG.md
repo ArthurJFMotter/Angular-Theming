@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.2.0] - 2026-10-13
+### Added
+- **M3 Button Variants**: Added the `@include button-variants()` SCSS mixin. This restores the ability to quickly style buttons with secondary, tertiary, and error roles using utility classes (e.g., `.btn-secondary`), mitigating the deprecation of the `color=""` attribute in Angular Material 3.
+
 ## [1.1.2] - 2026-10-12
 ### Fixed
 - **Density Text Clipping**: Applied `height: auto` and `min-height` overrides to `.mat-mdc-list-item`. This prevents Angular Material from aggressively clipping descenders (like 'g' or 'p') on multi-line lists when the density scale is set to high compactness (`-3`).
