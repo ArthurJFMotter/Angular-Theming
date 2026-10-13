@@ -11,6 +11,11 @@
       "input": "src/styles",
       "glob": "**/*.scss",
       "output": "styles"
+    },
+    {
+      "input": "src/legacy",
+      "glob": "**/*.scss",
+      "output": "src/styles"
     }
   ]
 }
