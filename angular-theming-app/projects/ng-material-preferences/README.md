@@ -89,7 +89,7 @@ export class AppComponent {
 **`styles.scss`**
 
 ```scss
-@use 'ng-material-preferences/src/styles/theming' as prefs;
+@use 'ng-material-preferences/styles/theming' as prefs;
 
 @include prefs.setup-theming();
 ```
@@ -168,10 +168,10 @@ prefs.hasNotifications
 
 ## 4. SCSS setup
 
-Angular Material's density system, a handful of CDK-rendered overlays (snackbars, dialogs, bottom sheets), and the motion engine's forced-duration overrides can't be wired up with runtime JS/CSS-variable injection alone — they require SCSS-time mixin generation and class-targeted selectors. The library ships an optional SCSS partial that handles this.
+Angular Material's density system, a handful of CDK-rendered overlays (snackbars, dialogs, bottom sheets), and the motion engine's forced-duration overrides can't be wired up with runtime JS/CSS-variable injection alone — they require SCSS-time mixin generation and class-targeted selectors. The library ships an optional SCSS module that handles this. It is a single entry point (`styles/theming`) backed by a handful of internal partials, so you import one path and pick the mixins you need.
 
 ```scss
-@use 'ng-material-preferences/src/styles/theming' as prefs;
+@use 'ng-material-preferences/styles/theming' as prefs;
 
 @include prefs.setup-theming(); // convenience: includes everything below
 ```
@@ -179,20 +179,24 @@ Angular Material's density system, a handful of CDK-rendered overlays (snackbars
 Or compose only what you need:
 
 ```scss
-@use 'ng-material-preferences/src/styles/theming' as prefs;
+@use 'ng-material-preferences/styles/theming' as prefs;
 
 @include prefs.fallback-tokens();  // safe defaults for tokens the color engine or Material's own mixin might not supply
 @include prefs.cdk-overrides();    // wires snackbars/dialogs/bottom sheets to your tokens
+@include prefs.button-variants();  // .btn-* color-role classes for Material buttons and FABs
 @include prefs.apply-density();    // only needed if you use the layout domain's density feature
 @include prefs.apply-motion();     // only needed if you use the layout domain's motion feature
 ```
+
+> **Import path.** As of `1.2.0` the entry point is `ng-material-preferences/styles/theming`. The previous path, `ng-material-preferences/src/styles/theming`, still resolves through a compatibility alias but is **deprecated** and will be removed in `2.0.0`. Switch it in your global styles when convenient; nothing else about the API changed.
 
 | Mixin | What it does | When you need it |
 |---|---|---|
 | `fallback-tokens()` | Defines semantic color tokens (`--mat-sys-success`/`-warning`/`-info` and their `on-`/`-container` variants) plus the M3 state-layer opacity tokens (`--mat-sys-hover-state-layer-opacity` and friends) at safe default values | Always — even with the color domain active, this covers the moment before the first sync and guards against Angular Material builds that scope these tokens narrowly instead of emitting them at `:root` |
 | `cdk-overrides()` | Shapes snackbars/dialogs/bottom sheets using your corner-radius tokens; maps `snackbar-success`/`-warning`/`-info`/`-error` panel classes to your semantic color tokens — including the snackbar's surface, icon, action button, and dismiss button, so severity color reaches the whole toast, not just its background; also removes the fixed `min-width` Material applies to snackbars so short messages render at their natural width instead of an oversized fixed box | If you use notifications, dialogs, or bottom sheets |
+| `button-variants()` | Generates `.btn-secondary`, `.btn-tertiary`, `.btn-error`, `.btn-success`, `.btn-warning`, `.btn-info` and their `-container` variants, which recolor Material filled/outlined buttons and FABs from a role's tokens (see [Button color variants](#button-color-variants)) | If you want role-colored buttons |
 | `apply-density()` | Generates the SCSS-time density variants (`-1` to `-3`) keyed to the `data-theme-density` attribute the library writes on `<html>`. **The range this generates must stay in sync with `DENSITY_SCALE.min` — see [§11](#11-convenience-constants-scale-definitions--i18n).** | Only if you use `layout` domain's `densityScale` |
-| `apply-motion()` | Class-targeted forced-duration overrides for both in-page (sidenav, chips, tabs, toggles, form fields) and CDK-overlay (dialogs, menus, snackbars, tooltips) components, keyed to `data-theme-motion`/`.theme-motion-off` | Only if you use `layout` domain's `motionScale` |
+| `apply-motion()` | Blanket motion reset for the whole page and the CDK overlay container: near-zero transition/animation durations, a single animation iteration (so spinners and progress bars stop instead of looping), and no smooth scrolling. Keyed to `data-theme-motion` / `.theme-motion-off` | Only if you use `layout` domain's `motionScale` |
 
 You'll also need your own base Material theme declaration (a starting palette, typography, and density of `0`) — the library **overrides** this at runtime via CSS custom properties, it doesn't replace the need for Angular Material's own `@include mat.theme(...)` bootstrap:
 
@@ -207,6 +211,70 @@ html {
   ));
 }
 ```
+
+### Button color variants
+
+`button-variants()` (included by `setup-theming()`) generates utility classes that recolor Material buttons and FABs from a role's tokens. Add the class next to the Material directive:
+
+```html
+<button mat-flat-button class="btn-success">Save</button>
+<button mat-stroked-button class="btn-error">Delete</button>
+<button mat-fab class="btn-tertiary"><mat-icon>add</mat-icon></button>
+<button mat-flat-button class="btn-warning-container">Needs review</button>
+```
+
+| Classes | Roles |
+|---|---|
+| `.btn-secondary`, `.btn-tertiary`, `.btn-error` | Core M3 roles (primary is Material's default and needs no class) |
+| `.btn-success`, `.btn-warning`, `.btn-info` | Semantic roles — see [§7](#7-the-css-custom-properties-contract) |
+| `.btn-success-container`, `.btn-warning-container`, `.btn-info-container`, `.btn-error-container` | Soft variants using the role's container / on-container pair |
+
+Base variants fill with the role color (and `on-` text); FABs use the role's container colors. The `-container` variants are designed for filled buttons and FABs — for outlined buttons prefer the base variants, since the container tone is intentionally light.
+
+Classes are generated for the roles above only. For an extended color (or any role with a full token set), build your own class with the same helpers:
+
+```scss
+@use 'ng-material-preferences/styles/theming' as prefs;
+
+.btn-brand      { @include prefs.apply-button-theme('brand'); }
+.btn-brand-soft { @include prefs.apply-container-button-theme('brand'); }
+```
+
+Pass the **base** role name to both helpers; `-container` is appended internally.
+
+### Granular mixins
+
+`cdk-overrides()` is composed of smaller mixins you can include individually if you only want part of the set:
+
+| Mixin | Covers |
+|---|---|
+| `snackbar-overrides()` | Snackbar shape and the `snackbar-success` / `-warning` / `-info` / `-error` color mapping |
+| `overlay-overrides()` | Dialog and bottom-sheet corner radius |
+| `shape-overrides()` | Corner-radius curve for buttons, FABs, chips and button-toggle groups (composed of `button-shapes()`, `fab-shapes()`, `chip-shapes()`, `toggle-group-shapes()`) |
+| `list-overrides()` | List-item sizing so density changes never clip text |
+| `kill-motion()` | Emits the motion-reset declarations used by `apply-motion()`. Advanced: include it inside your own selector to scope the motion-off behavior to a custom container |
+
+### How the SCSS is organized
+
+Relevant if you fork the library or want to know where to look:
+
+```
+styles/
+├── _theming.scss              ← public entry point: forwards everything, defines setup-theming()
+└── theming/
+    ├── _fallback-tokens.scss
+    ├── _button-variants.scss
+    ├── _density.scss          ← @for range must match DENSITY_SCALE.min
+    ├── _motion.scss
+    └── cdk/
+        ├── _index.scss        ← composes cdk-overrides()
+        ├── _snackbar.scss
+        ├── _overlays.scss
+        ├── _shapes.scss
+        └── _lists.scss
+```
+
+Everything is re-exported from `_theming.scss`, so you only ever import the one path shown above.
 
 ---
 
@@ -296,11 +364,13 @@ Motion preference (`prefs.motionScale()` — `0` = off, `0.5` = fast, `1` = norm
 
 Most current Angular Material components (menus, selects, sidenav, chips, tabs, button-toggle, form field notches) animate via plain **CSS transitions** defined in Material's own stylesheets — not Angular's animation engine. A smaller set of components, along with your own app code, may still use Angular's `@angular/animations` triggers. And a third category — CDK-overlay-attached components (dialogs, menus, snackbars, tooltips) — sit outside your app's component view tree entirely, so mechanisms that rely on view-tree propagation can't reach them. One mechanism can't cover all three cases, so the library and its SCSS partial cover each explicitly:
 
-1. **`data-theme-motion="off"` on `<html>`** (set by `ThemeSyncService`, consumed by the `apply-motion()` SCSS mixin) — forces `transition-duration`/`animation-duration` to near-zero on in-page, CSS-driven components (sidenav, chips, tabs, button-toggle, form fields, progress indicators).
-2. **`.theme-motion-off` class on the CDK overlay container** (also set by `ThemeSyncService`, also consumed by `apply-motion()`) — same forced-duration treatment, scoped to `.cdk-overlay-pane` and its descendants, so it reaches dialogs/menus/snackbars/tooltips without needing view-tree propagation. This is scoped narrowly enough that it does not interfere with button ripples (which are governed separately — see below).
+1. **`data-theme-motion="off"` on `<html>`** (set by `ThemeSyncService`, consumed by the `apply-motion()` SCSS mixin) — a blanket reset. Every element under `<html>`, including `::before`/`::after`, gets near-zero `transition-duration`/`animation-duration` and a single animation iteration, so indeterminate spinners and progress bars stop instead of looping; `scroll-behavior` is set to `auto`. It deliberately doesn't enumerate Material's internal class names, so it keeps working across Material upgrades. *(As of `1.2.0`. Earlier versions used a fixed list of Material classes and did not stop `mat-spinner`.)*
+2. **`.theme-motion-off` class on the CDK overlay container** (also set by `ThemeSyncService`, also consumed by `apply-motion()`) — the same reset applied to the overlay container and all of its descendants, so it reaches dialogs/menus/snackbars/tooltips without needing view-tree propagation.
 3. **`[@.disabled]`**, bound in your own `AppComponent` (recommended in [§2](#2-quick-start)) — Angular's built-in mechanism for disabling any remaining components that genuinely use `@angular/animations` triggers rather than CSS transitions.
 
 Ripples are handled independently of all three, via `MAT_RIPPLE_GLOBAL_OPTIONS`, which the library provides automatically — ripple duration scales proportionally with `motionScale` (not just on/off), and continues to render correctly at every motion setting, including inside dialogs and menus.
+
+**What "Off" looks like.** Each animation jumps to its final keyframe and stops, so indeterminate spinners and progress bars render as a static frame instead of flickering or looping. The reset covers all CSS transitions and animations under `<html>` — including your own — so custom keyframes and transitions in your app stop too.
 
 ### Off vs. Fast — an important asymmetry
 
@@ -431,7 +501,7 @@ Use these instead of hardcoding your own ranges or step sizes: every slider, cyc
 
 `presets` is a curated subset of meaningful stops, not every value the range allows — `DENSITY_SCALE`, for instance, only labels its two endpoints (`Compact` at `-3`, `Comfort` at `0`), even though `-1` and `-2` are valid intermediate values. If you're building a "cycle through presets" control, look up the nearest preset by value rather than assuming every step has a label.
 
-> **The `DENSITY_SCALE.min` value (`-3`) must stay in sync with the SCSS `@for` loop in `apply-density()`** (see [§4](#4-scss-setup)) — the density system requires Angular Material's SCSS mixin to pre-generate each level at build time, so this one range can't be fully derived from a single source across both the TS and SCSS layers. Both locations carry a comment pointing at the other; if you fork the library to widen this range, update both.
+> **The `DENSITY_SCALE.min` value (`-3`) must stay in sync with the SCSS `@for` loop in `apply-density()`** (`styles/theming/_density.scss`; see [§4](#4-scss-setup)) — the density system requires Angular Material's SCSS mixin to pre-generate each level at build time, so this one range can't be fully derived from a single source across both the TS and SCSS layers. Both locations carry a comment pointing at the other; if you fork the library to widen this range, update both.
 
 ### Threshold & limit constants
 
@@ -464,7 +534,8 @@ Because the library is headless — it renders no markup and no strings of its o
 - **Motion "Fast" only accelerates opted-in CSS.** See [§8](#8-the-motion-engine) — this is a deliberate limitation of what's possible with third-party component animations, not an oversight.
 - **Semantic and extended color tokens ignore `SchemeVariant` by design.** See [§7](#7-the-css-custom-properties-contract) — only `primary`/`secondary`/`tertiary` shift with the selected variant.
 - **`ContrastMode` and `CONTRAST_MODES` are deprecated** as of `1.1.0` and will be removed in `2.0.0`. They describe the old flat `'normal' | 'auto' | 'high'` contrast model; the live state uses the independent `autoContrast` boolean plus numeric `contrastLevel`, matched by `CONTRAST_SCALE` (see [§11](#11-convenience-constants-scale-definitions--i18n)). If you're on `1.x`, migrate off these before the next major version.
-- **This package ships pure state/logic + one optional SCSS partial — no Angular Material UI components.** You (or the demo app in this repo) own the actual settings interface.
+- **The SCSS import path `ng-material-preferences/src/styles/theming` is deprecated** as of `1.2.0` and will be removed in `2.0.0`. It still resolves through a compatibility alias on `1.x`. Use `ng-material-preferences/styles/theming` (see [§4](#4-scss-setup)).
+- **This package ships pure state/logic + one optional SCSS entry point (`styles/theming`, backed by internal partials) — no Angular Material UI components.** You (or the demo app in this repo) own the actual settings interface.
 
 ---
 
@@ -472,6 +543,9 @@ Because the library is headless — it renders no markup and no strings of its o
 
 **Blank white screen at app bootstrap, `NG0201: No provider found for InjectionToken PREFERENCES_STORAGE_TOKEN`**
 You're using granular domain providers (`provideColorPreferences()`, etc.) without also providing storage — only `providePreferences()` auto-registers a default. Either switch to `providePreferences()`, or add `{ provide: PREFERENCES_STORAGE_TOKEN, useClass: LocalPreferencesStorageService }` yourself. See [§9](#9-storage-custom-keys--migrations).
+
+**Sass error `Can't find stylesheet to import` for `ng-material-preferences/styles/theming`**
+That path exists as of `1.2.0`. On `1.0.x`/`1.1.x` the entry point is `ng-material-preferences/src/styles/theming`. Upgrade, or keep using the old path (it still works on `1.2.x`, deprecated until `2.0.0`).
 
 **Buttons/chips/menus show a solid opaque color block on hover instead of a subtle tint**
 The M3 state-layer opacity tokens (`--mat-sys-hover-state-layer-opacity`, etc.) aren't defined anywhere in your cascade, so the browser falls back to `opacity: 1`. Make sure `@include prefs.fallback-tokens()` (or `setup-theming()`) is included in your global styles — see [§4](#4-scss-setup) and [§7](#7-the-css-custom-properties-contract).
@@ -481,6 +555,9 @@ Confirm `@include prefs.apply-motion()` (or `setup-theming()`) is included in yo
 
 **Motion "Fast" doesn't make my own custom transitions faster**
 You need to explicitly opt each transition in via `calc(... * var(--theme-motion-scale, 1))` — this is not automatic. See [§8](#8-the-motion-engine).
+
+**Motion is Off and a spinner or progress bar looks frozen**
+Expected. With motion off every animation jumps to its final keyframe and stops, so indeterminate loaders show a static frame. See [§8](#8-the-motion-engine).
 
 **Success/Warning/Info look identical (or all gray) when Theme Variant is set to Monochrome**
 Fixed as of `1.0.1`. If you're still seeing this, confirm you're on `1.0.1` or later — earlier versions derived semantic tokens through the selected `SchemeVariant`, which flattened them under Monochrome. See [§7](#7-the-css-custom-properties-contract) for why semantic tokens are now variant-independent by design.
@@ -547,12 +624,21 @@ This is almost always a hand-authored range that's drifted from another one, rat
 | `isValidHexColor` | Hex color validator used internally, exported for reuse |
 | `ContrastMode`, `CONTRAST_MODES` | **Deprecated as of `1.1.0`**, removal planned for `2.0.0` — use `CONTRAST_SCALE` and the independent `autoContrast`/`contrastLevel` fields instead |
 
-### SCSS (`ng-material-preferences/src/styles/theming`)
+### SCSS (`ng-material-preferences/styles/theming`)
 
 | Mixin | Purpose |
 |---|---|
-| `setup-theming()` | Convenience: includes all four mixins below |
+| `setup-theming()` | Convenience: includes all five mixins below (`fallback-tokens`, `cdk-overrides`, `button-variants`, `apply-density`, `apply-motion`) |
 | `fallback-tokens()` | Semantic color + state-layer opacity token defaults |
 | `cdk-overrides()` | Snackbar/dialog/bottom-sheet shape and color wiring, including action/dismiss button color and natural-width sizing |
+| `snackbar-overrides()`, `overlay-overrides()`, `shape-overrides()`, `list-overrides()` | The parts `cdk-overrides()` is composed of, includable individually (`shape-overrides()` is itself `button-shapes()`, `fab-shapes()`, `chip-shapes()`, `toggle-group-shapes()`) |
+| `button-variants()` | Generates `.btn-*` role color classes for Material buttons and FABs — see [§4](#button-color-variants) |
+| `apply-button-theme($role)` / `apply-container-button-theme($role)` | Helpers for building your own `.btn-*` class for any role with a full token set (e.g. an extended color). Pass the base role name |
 | `apply-density()` | SCSS-time density variant generation. Range must stay in sync with `DENSITY_SCALE.min` |
-| `apply-motion()` | Motion kill-switch selectors for in-page and CDK-overlay components |
+| `apply-motion()` | Blanket motion reset (near-zero durations, single iteration, no smooth scroll) for the page and the CDK overlay container |
+| `kill-motion()` | Emits the reset declarations used by `apply-motion()`; include inside your own selector to scope motion-off to a custom container |
+
+> The legacy path `ng-material-preferences/src/styles/theming` exposes the same API through a compatibility alias. It is deprecated as of `1.2.0` and will be removed in `2.0.0`.
+
+## 15. License
+MIT © 2026 Arthur Motter

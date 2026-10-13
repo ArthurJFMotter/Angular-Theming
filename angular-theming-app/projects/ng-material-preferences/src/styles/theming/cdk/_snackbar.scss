@@ -1,0 +1,58 @@
+/// Snackbar shape + semantic variants (.snackbar-success / -warning / -info / -error).
+/// Any snackbar whose panel class contains "snackbar-" inherits the color mapping.
+@mixin snackbar-overrides() {
+  .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    border-radius: var(--mat-sys-corner-small) !important;
+    min-width: fit-content !important;
+  }
+
+  // A. Variable mappings for the default semantic types
+  .snackbar-success {
+    --mdc-snackbar-container-color: var(--mat-sys-success-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
+  }
+  .snackbar-warning {
+    --mdc-snackbar-container-color: var(--mat-sys-warning-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
+  }
+  .snackbar-info {
+    --mdc-snackbar-container-color: var(--mat-sys-info-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
+  }
+  .snackbar-error {
+    --mdc-snackbar-container-color: var(--mat-sys-error-container);
+    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
+  }
+
+  // B. Applies to ANY snackbar with a class name containing "snackbar-"
+  .mat-mdc-snack-bar-container[class*='snackbar-'] {
+    .mdc-snackbar__surface {
+      background-color: var(--mdc-snackbar-container-color) !important;
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+
+    // Force icons to inherit the text color
+    mat-icon {
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+
+    .mat-mdc-button,
+    .action-btn {
+      --mat-button-text-label-text-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
+      --mat-text-button-state-layer-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+
+    .mat-mdc-icon-button {
+      --mat-icon-button-icon-color: var(--mdc-snackbar-supporting-text-color);
+      --mat-icon-button-state-layer-color: var(
+        --mdc-snackbar-supporting-text-color
+      );
+      color: var(--mdc-snackbar-supporting-text-color) !important;
+    }
+  }
+}

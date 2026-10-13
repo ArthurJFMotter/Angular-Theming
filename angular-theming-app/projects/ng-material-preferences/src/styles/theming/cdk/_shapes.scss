@@ -1,0 +1,61 @@
+/// Shape (corner radius) curve for interactive controls.
+
+@mixin button-shapes() {
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button,
+  .mat-mdc-outlined-button {
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+
+    --mdc-text-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-elevated-button-container-shape: var(--mat-sys-corner-extra-large);
+  }
+}
+
+@mixin fab-shapes() {
+  .mat-mdc-fab,
+  .mat-mdc-mini-fab {
+    border-radius: var(--mat-sys-corner-large) !important;
+
+    --mdc-fab-container-shape: var(--mat-sys-corner-large);
+    --mdc-fab-small-container-shape: var(--mat-sys-corner-medium);
+    --mdc-fab-large-container-shape: var(--mat-sys-corner-extra-large);
+  }
+}
+
+@mixin chip-shapes() {
+  .mat-mdc-chip,
+  .mat-mdc-basic-chip,
+  .mat-mdc-chip-option,
+  .mat-mdc-chip-row,
+  .mdc-evolution-chip,
+  .mdc-evolution-chip__cell,
+  .mdc-evolution-chip__action,
+  .mdc-evolution-chip__action::before,
+  .mdc-evolution-chip__action::after,
+  .mat-mdc-chip-focus-overlay,
+  .mdc-evolution-chip__ripple {
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+
+    --mdc-chip-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-chip-elevated-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-chip-flat-container-shape: var(--mat-sys-corner-extra-large);
+  }
+}
+
+@mixin toggle-group-shapes() {
+  .mat-button-toggle-group {
+    border-radius: var(--mat-sys-corner-extra-small) !important;
+    --mat-standard-button-toggle-shape: var(--mat-sys-corner-extra-small);
+  }
+}
+
+@mixin shape-overrides() {
+  @include button-shapes();
+  @include fab-shapes();
+  @include chip-shapes();
+  @include toggle-group-shapes();
+}

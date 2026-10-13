@@ -1,0 +1,19 @@
+// CDK / Material component overrides.
+// Each concern lives in its own partial; `cdk-overrides` composes them.
+
+@use 'snackbar';
+@use 'overlays';
+@use 'shapes';
+@use 'lists';
+
+@forward 'snackbar';
+@forward 'overlays';
+@forward 'shapes';
+@forward 'lists';
+
+@mixin cdk-overrides() {
+  @include snackbar.snackbar-overrides();
+  @include overlays.overlay-overrides();
+  @include shapes.shape-overrides();
+  @include lists.list-overrides();
+}

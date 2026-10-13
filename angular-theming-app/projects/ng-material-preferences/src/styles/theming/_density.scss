@@ -1,0 +1,16 @@
+@use "@angular/material" as mat;
+
+/// Density generator: emits html[data-theme-density="-N"] rules.
+/// @warning The range (1 through 3) must stay synced with `DENSITY_SCALE.min`
+/// in preferences.constants.ts!
+@mixin apply-density() {
+  @for $i from 1 through 3 {
+    html[data-theme-density="-#{$i}"] {
+      @include mat.theme(
+        (
+          density: -$i,
+        )
+      );
+    }
+  }
+}

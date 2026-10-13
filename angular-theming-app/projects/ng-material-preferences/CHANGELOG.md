@@ -9,8 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
 ## [1.2.0] - 2026-10-13
+
+### Changed
+- Restructured the monolithic `_theming.scss` into focused partials under
+  `styles/theming/`. `_theming.scss` is now a barrel that `@forward`s every
+  module and provides `setup-theming()`. The public API is unchanged: all
+  previously available mixins (`fallback-tokens`, `cdk-overrides`,
+  `button-variants`, `apply-button-theme`, `apply-container-button-theme`,
+  `apply-density`, `apply-motion`, `setup-theming`) remain reachable via
+  `@use '.../styles/theming'`.
+- Grouped component overrides in `styles/theming/cdk/` (`snackbar`, `overlays`,
+  `shapes`, `lists`), composed by `cdk-overrides()`.
+- `apply-density` now lives in `_density.scss`, which owns the
+  `@angular/material` import.
+- `apply-motion` now applies a blanket reset (near-zero durations, a single
+  animation iteration, `scroll-behavior: auto`) under
+  `html[data-theme-motion='off']` and `.cdk-overlay-container.theme-motion-off`,
+  replacing the hand-maintained list of Material class names.
+- Packaging: SCSS assets are copied with their full folder tree and published
+  under `styles/`; added a `sass` export for `./styles/theming`.
+
 ### Added
-- **M3 Button Variants**: Added the `@include button-variants()` SCSS mixin. This restores the ability to quickly style buttons with secondary, tertiary, and error roles using utility classes (e.g., `.btn-secondary`), mitigating the deprecation of the `color=""` attribute in Angular Material 3.
+- Granular, individually includable mixins: `snackbar-overrides`,
+  `overlay-overrides`, `shape-overrides`, `button-shapes`, `fab-shapes`,
+  `chip-shapes`, `toggle-group-shapes`, `list-overrides`, and `kill-motion`.
+- MIT `LICENSE` file, and `license` field in `package.json`.
+
+### Fixed
+- `mat-spinner` (and other indeterminate loaders) kept animating when motion was
+  set to off. The previous selectors referenced MDC classes that do not exist in
+  the spinner DOM, and a 0.001ms duration on infinite animations looped and
+  flickered instead of stopping.
+
+### Notes for upgraders
+- With motion off, all CSS transitions and animations inside the app are now
+  suppressed, including custom ones, not only Material components.
+- Indeterminate loaders render in their final keyframe state while motion is off.
 
 ## [1.1.2] - 2026-10-12
 ### Fixed

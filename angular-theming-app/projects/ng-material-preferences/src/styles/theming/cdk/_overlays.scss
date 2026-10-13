@@ -1,0 +1,10 @@
+/// Corner radius for floating surfaces (dialog, bottom sheet).
+@mixin overlay-overrides() {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: var(--mat-sys-corner-large) !important;
+  }
+  .mat-bottom-sheet-container {
+    border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
+    border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
+  }
+}

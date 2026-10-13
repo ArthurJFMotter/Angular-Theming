@@ -1,0 +1,10 @@
+/// List items: let density shrink the row without clipping descenders.
+@mixin list-overrides() {
+  .mat-mdc-list-item {
+    height: auto !important;
+    min-height: var(--mdc-list-list-item-container-height) !important;
+
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+}

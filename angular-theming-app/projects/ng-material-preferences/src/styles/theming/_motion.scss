@@ -1,0 +1,52 @@
+/// Motion / animation killer.
+///
+/// Triggered by:
+///   - html[data-theme-motion="off"]            → everything in the page
+///   - .cdk-overlay-container.theme-motion-off  → floating surfaces (snackbar, dialog, menu…)
+///
+/// Why a blanket rule instead of a list of Material classes?
+/// Material/MDC animate via many internal classes (spinner container, spinner
+/// layer, left/right circle graphics, linear-progress bars, ripples…). A
+/// hand-maintained list silently misses some and breaks on every Material
+/// upgrade. Selecting everything makes "off" actually mean off.
+///
+/// Why `animation-iteration-count: 1`?
+/// A 0.001ms duration on an *infinite* animation loops ~1000x per ms and
+/// flickers (indeterminate spinners / progress bars). Capping to one iteration
+/// makes it jump straight to its end state and stop.
+///
+/// Durations stay at 0.001ms (not `none`) so transitionend / animationend
+/// still fire for any code that waits on them.
+
+@mixin kill-motion() {
+  transition-duration: 0.001ms !important;
+  transition-delay: 0s !important;
+  animation-duration: 0.001ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+}
+
+@mixin apply-motion() {
+  // In-page components
+  html[data-theme-motion='off'] {
+    scroll-behavior: auto !important;
+
+    &,
+    *,
+    *::before,
+    *::after {
+      @include kill-motion();
+    }
+  }
+
+  // Floating components (kept explicit in case the overlay container is
+  // mounted outside <html> descendants, e.g. a custom overlay host)
+  :root .cdk-overlay-container.theme-motion-off {
+    &,
+    *,
+    *::before,
+    *::after {
+      @include kill-motion();
+    }
+  }
+}
