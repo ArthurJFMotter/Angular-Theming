@@ -136,7 +136,7 @@
             <!-- Delete button -->
             <button
               mat-icon-button
-              color="warn"
+              class="btn-error"
               class="delete-ext-btn"
               (click)="removeExtendedRole(ext.id)"
               matTooltip="Delete custom role"
@@ -175,7 +175,7 @@
             </button>
             <button
               mat-flat-button
-              color="warn"
+              class="btn-error"
               (click)="onDeleteProfileConfirm()"
             >
               Delete
@@ -201,19 +201,18 @@
           @if (isProfileMode()) {
             <button
               mat-stroked-button
-              color="warn"
+              class="btn-error"
               (click)="confirmDelete.set(true)"
             >
               Delete
             </button>
-            <button mat-flat-button color="primary" (click)="onSaveProfile()">
+            <button mat-flat-button (click)="onSaveProfile()">
               Save changes
             </button>
           } @else if (preferencesService.canCreateColorProfile()) {
             <!-- Only shows if under 12 profiles -->
             <button
               mat-flat-button
-              color="primary"
               class="full-width"
               (click)="onSaveProfile()"
             >

@@ -1,22 +1,38 @@
 <div class="state-matrix">
+  <!-- 1. FILLED BUTTONS -->
   <div class="matrix-row">
     <span class="row-label">Filled</span>
-    <button mat-flat-button>Default</button>
-    <button mat-flat-button color="primary">Primary</button>
-    <button mat-flat-button color="accent">Secondary</button>
-    <button mat-flat-button color="warn">Warn</button>
+    <button mat-flat-button>Primary</button>
+    <button mat-flat-button class="btn-secondary">Secondary</button>
+    <button mat-flat-button class="btn-tertiary">Tertiary</button>
+    <button mat-flat-button class="btn-error">Error</button>
     <button mat-flat-button disabled>Disabled</button>
   </div>
+
+  <!-- 2. STROKED BUTTONS -->
   <div class="matrix-row">
     <span class="row-label">Stroked</span>
-    <button mat-stroked-button>Default</button>
-    <button mat-stroked-button color="primary">Primary</button>
+
+    <button mat-stroked-button>Primary</button>
+    <button mat-stroked-button class="btn-secondary">Secondary</button>
+    <button mat-stroked-button class="btn-tertiary">Tertiary</button>
+    <button mat-stroked-button class="btn-error">Error</button>
     <button mat-stroked-button disabled>Disabled</button>
   </div>
+
+  <!-- 3. FABs AND CHIPS -->
   <div class="matrix-row">
     <span class="row-label">FAB & Chips</span>
-    <button mat-fab color="primary"><mat-icon>add</mat-icon></button>
-    <button mat-mini-fab color="accent"><mat-icon>edit</mat-icon></button>
+
+    <button mat-fab><mat-icon>add</mat-icon></button>
+
+    <button mat-mini-fab class="btn-secondary">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-mini-fab class="btn-tertiary">
+      <mat-icon>bookmark</mat-icon>
+    </button>
+
     <mat-chip-listbox>
       <mat-chip-option selected>Selected</mat-chip-option>
       <mat-chip-option>Default</mat-chip-option>

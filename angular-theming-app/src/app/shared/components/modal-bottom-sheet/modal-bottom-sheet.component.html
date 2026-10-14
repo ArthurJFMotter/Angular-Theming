@@ -2,7 +2,7 @@
   @if (prefs.hasColor) {
     <div class="sheet-header">
       <div class="title-group">
-        <mat-icon color="primary">palette</mat-icon>
+        <mat-icon>palette</mat-icon>
         <h2>{{ isExportMode() ? "Share Profile" : "Import Profile" }}</h2>
       </div>
       <button mat-icon-button (click)="close()">
@@ -42,7 +42,6 @@
         <div class="action-row">
           <button
             mat-flat-button
-            color="primary"
             class="full-width"
             (click)="copyToClipboard()"
           >
@@ -87,7 +86,6 @@
         <div class="action-row" style="margin-top: 16px">
           <button
             mat-flat-button
-            color="primary"
             class="full-width"
             [disabled]="!importCode()"
             (click)="importProfile()"
