@@ -1,7 +1,3 @@
-@if (customStyle) {
-  <div [innerHTML]="customStyle" style="display: none"></div>
-}
-
 <div class="custom-snackbar-layout">
   @if (icon) {
     <mat-icon class="status-icon">{{ icon }}</mat-icon>
@@ -16,7 +12,7 @@
       </button>
     }
 
-    <button mat-icon-button (click)="dismiss()">
+    <button mat-icon-button aria-label="Dismiss notification" (click)="dismiss()">
       <mat-icon>close</mat-icon>
     </button>
   </div>
