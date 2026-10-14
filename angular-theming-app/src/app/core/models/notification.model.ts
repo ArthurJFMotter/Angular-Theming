@@ -1,9 +1,4 @@
-export type NotificationType =
-  | 'default'
-  | 'success'
-  | 'warning'
-  | 'info'
-  | 'error';
+export type NotificationType = 'default' | 'success' | 'warning' | 'info' | 'error' | string;
 
 export interface NotificationAction {
   label: string;

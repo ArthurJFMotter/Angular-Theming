@@ -13,7 +13,6 @@ import {
 import { PreferenceSelectComponent } from '../../../preference-select/preference-select.component';
 import {
   NotificationService,
-  NotificationType,
 } from '../../../../../core/services/notification.service';
 
 @Component({

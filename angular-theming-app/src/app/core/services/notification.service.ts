@@ -1,21 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
 import { PreferencesService } from 'ng-material-preferences';
-
-export type NotificationType = 'default' | 'success' | 'warning' | 'info' | 'error';
-
-export interface NotificationAction {
-  label: string;
-  actionFn: () => void;
-}
-
-export interface NotificationData {
-  message: string;
-  type: NotificationType;
-  icon?: string;
-  action?: NotificationAction;
-}
+import { SnackbarComponent } from '../../shared/components/snackbar/snackbar.component';
+import { NotificationType, NotificationAction, NotificationData } from '../models/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -26,16 +13,17 @@ export class NotificationService {
     type: NotificationType, 
     message: string, 
     action?: NotificationAction, 
-    customDuration?: number
+    customDuration?: number,
+    icon?: string
   ): void {
     let panelClass = '';
     if (type !== 'default') panelClass = `snackbar-${type}`;
 
     this.snackBar.openFromComponent(SnackbarComponent, {
-      data: { message, type, action } as NotificationData,
+      data: { message, type, action, icon } as NotificationData,
       duration: customDuration ?? 4000,
-      horizontalPosition: this.prefs.snackbarHPosition?.() || 'center',
-      verticalPosition: this.prefs.snackbarVPosition?.() || 'bottom',
+      horizontalPosition: this.prefs.hasNotifications ? this.prefs.snackbarHPosition() : 'center',
+      verticalPosition: this.prefs.hasNotifications ? this.prefs.snackbarVPosition() : 'bottom',
       panelClass: panelClass ? [panelClass] : undefined
     });
   }

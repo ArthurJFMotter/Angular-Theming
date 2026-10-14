@@ -1,58 +1,78 @@
 /// Snackbar shape + semantic variants (.snackbar-success / -warning / -info / -error).
-/// Any snackbar whose panel class contains "snackbar-" inherits the color mapping.
+///
+/// Colors come from role tokens, exactly like the button variants:
+///   container      -> --mat-sys-<role>-container
+///   text and icons -> --mat-sys-on-<role>-container
+/// Any snackbar whose panel class contains "snackbar-" gets the shared wiring
+/// below (custom-content text, icons and buttons follow the role colors).
+
+/// Roles that get a ready-made `.snackbar-<role>` class.
+$-default-roles: success, warning, info, error;
+
+/// Applies a role's colors to a snackbar panel class.
+/// Pass the BASE role name ('success', 'brand'); `-container` / `on-…-container`
+/// are added internally. Works for any role that has a full token set,
+/// e.g. an extended color:
+///
+///   .snackbar-brand { @include apply-snackbar-theme("brand"); }
+@mixin apply-snackbar-theme($token) {
+  // Library variables: drive the custom-content wiring further down.
+  --mdc-snackbar-container-color: var(--mat-sys-#{$token}-container);
+  --mdc-snackbar-supporting-text-color: var(--mat-sys-on-#{$token}-container);
+
+  // Material's own snackbar tokens: surface, text and the standard action
+  // button (snackBar.open(msg, "Undo")) pick the role colors up natively.
+  --mat-snack-bar-container-color: var(--mat-sys-#{$token}-container);
+  --mat-snack-bar-supporting-text-color: var(--mat-sys-on-#{$token}-container);
+  --mat-snack-bar-button-color: var(--mat-sys-on-#{$token}-container);
+}
+
+/// Generates `.snackbar-<role>` utility classes.
+/// Pass your own list to generate extra roles: `@include snackbar-variants((brand, danger))`.
+@mixin snackbar-variants($roles: $-default-roles) {
+  @each $role in $roles {
+    .snackbar-#{$role} {
+      @include apply-snackbar-theme($role);
+    }
+  }
+}
+
 @mixin snackbar-overrides() {
   .mat-mdc-snack-bar-container .mdc-snackbar__surface {
     border-radius: var(--mat-sys-corner-small) !important;
     min-width: fit-content !important;
   }
 
-  // A. Variable mappings for the default semantic types
-  .snackbar-success {
-    --mdc-snackbar-container-color: var(--mat-sys-success-container);
-    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-success-container);
-  }
-  .snackbar-warning {
-    --mdc-snackbar-container-color: var(--mat-sys-warning-container);
-    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-warning-container);
-  }
-  .snackbar-info {
-    --mdc-snackbar-container-color: var(--mat-sys-info-container);
-    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-info-container);
-  }
-  .snackbar-error {
-    --mdc-snackbar-container-color: var(--mat-sys-error-container);
-    --mdc-snackbar-supporting-text-color: var(--mat-sys-on-error-container);
-  }
+  @include snackbar-variants();
 
-  // B. Applies to ANY snackbar with a class name containing "snackbar-"
-  .mat-mdc-snack-bar-container[class*='snackbar-'] {
+  // Shared wiring: applies to ANY snackbar with a class name containing "snackbar-".
+  // Fallbacks match Material's defaults, so a layout-only panel class such as
+  // `snackbar-wide` (no role colors set) keeps the default look instead of
+  // collapsing to a transparent surface.
+  .mat-mdc-snack-bar-container[class*="snackbar-"] {
+    --_snackbar-text: var(--mdc-snackbar-supporting-text-color, var(--mat-sys-inverse-on-surface));
+
     .mdc-snackbar__surface {
-      background-color: var(--mdc-snackbar-container-color) !important;
-      color: var(--mdc-snackbar-supporting-text-color) !important;
+      background-color: var(--mdc-snackbar-container-color, var(--mat-sys-inverse-surface)) !important;
+      color: var(--_snackbar-text) !important;
     }
 
     // Force icons to inherit the text color
     mat-icon {
-      color: var(--mdc-snackbar-supporting-text-color) !important;
+      color: var(--_snackbar-text) !important;
     }
 
     .mat-mdc-button,
     .action-btn {
-      --mat-button-text-label-text-color: var(
-        --mdc-snackbar-supporting-text-color
-      );
-      --mat-text-button-state-layer-color: var(
-        --mdc-snackbar-supporting-text-color
-      );
-      color: var(--mdc-snackbar-supporting-text-color) !important;
+      --mat-button-text-label-text-color: var(--_snackbar-text);
+      --mat-text-button-state-layer-color: var(--_snackbar-text);
+      color: var(--_snackbar-text) !important;
     }
 
     .mat-mdc-icon-button {
-      --mat-icon-button-icon-color: var(--mdc-snackbar-supporting-text-color);
-      --mat-icon-button-state-layer-color: var(
-        --mdc-snackbar-supporting-text-color
-      );
-      color: var(--mdc-snackbar-supporting-text-color) !important;
+      --mat-icon-button-icon-color: var(--_snackbar-text);
+      --mat-icon-button-state-layer-color: var(--_snackbar-text);
+      color: var(--_snackbar-text) !important;
     }
   }
 }

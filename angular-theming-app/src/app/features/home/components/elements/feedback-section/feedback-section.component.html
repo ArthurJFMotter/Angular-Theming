@@ -1,38 +1,26 @@
 <div class="state-matrix">
-  <div class="matrix-row">
-    <span class="row-label">Progress</span>
-    <mat-progress-bar mode="indeterminate" style="flex: 1"></mat-progress-bar>
-    <mat-spinner diameter="32"></mat-spinner>
-  </div>
-  <div class="matrix-row">
-    <span class="row-label">Trigger Snackbars</span>
-    <button
-      mat-flat-button
-      class="btn-success-container"
-      (click)="triggerToast('success')"
-    >
-      Success
-    </button>
-    <button
-      mat-flat-button
-      class="btn-warning-container"
-      (click)="triggerToast('warning')"
-    >
-      Warning
-    </button>
-    <button
-      mat-flat-button
-      class="btn-info-container"
-      (click)="triggerToast('info')"
-    >
-      Info
-    </button>
-    <button
-      mat-flat-button
-      class="btn-error-container"
-      (click)="triggerToast('error')"
-    >
-      Error
-    </button>
-  </div>
-</div>
+      <div class="matrix-row">
+        <span class="row-label">Progress</span>
+        <mat-progress-bar mode="indeterminate" style="flex: 1;"></mat-progress-bar>
+        <mat-spinner diameter="32"></mat-spinner>
+      </div>
+      
+      <div class="matrix-row">
+        <span class="row-label">Trigger Snackbars</span>
+        <button mat-flat-button class="btn-success-container" (click)="triggerToast('success')">Success</button>
+        <button mat-flat-button class="btn-warning-container" (click)="triggerToast('warning')">Warning</button>
+        <button mat-flat-button class="btn-info-container" (click)="triggerToast('info')">Info</button>
+        <button mat-flat-button class="btn-error-container" (click)="triggerToast('error')">Error</button>
+        
+        <!-- THE FIX: DYNAMIC CUSTOM COLOR BUTTONS -->
+        @for (ext of customRoles(); track ext.id) {
+          <button mat-flat-button 
+                  [style.--mat-button-filled-container-color]="'var(--mat-sys-' + ext.id + ')'"
+                  [style.--mat-button-filled-label-text-color]="'var(--mat-sys-on-' + ext.id + ')'"
+                  [style.--mat-button-filled-state-layer-color]="'var(--mat-sys-on-' + ext.id + ')'"
+                  (click)="triggerCustomToast(ext.id, ext.label)">
+            {{ ext.label }}
+          </button>
+        }
+      </div>
+    </div>
