@@ -12,7 +12,7 @@
         <button mat-flat-button class="btn-info-container" (click)="triggerToast('info')">Info</button>
         <button mat-flat-button class="btn-error-container" (click)="triggerToast('error')">Error</button>
         
-        <!-- THE FIX: DYNAMIC CUSTOM COLOR BUTTONS -->
+        <!-- DYNAMIC CUSTOM COLOR BUTTONS -->
         @for (ext of customRoles(); track ext.id) {
           <button mat-flat-button 
                   [style.--mat-button-filled-container-color]="'var(--mat-sys-' + ext.id + ')'"

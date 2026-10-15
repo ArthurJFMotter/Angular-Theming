@@ -1,0 +1,44 @@
+/// M3 Input & Icon Variants
+/// Uses Local Scope Overrides to trick M3 components into rendering alternative palettes.
+
+@mixin apply-input-theme($token) {
+  /* 
+    THE FIX: Instead of fighting internal MDC variables, we locally redefine 
+    the system tokens. The component thinks it is rendering "Primary", 
+    but we feed it the alternative token! This flawlessly colors Checkboxes, 
+    Radios, and Slide Toggles including their ripples and hover states.
+  */
+  --mat-sys-primary: var(--mat-sys-#{$token}) !important;
+  --mat-sys-on-primary: var(--mat-sys-on-#{$token}) !important;
+  --mat-sys-primary-container: var(--mat-sys-#{$token}-container) !important;
+  --mat-sys-on-primary-container: var(
+    --mat-sys-on-#{$token}-container
+  ) !important;
+
+  /* Explicit color mapping for standard icons or text that rely on the color property */
+  color: var(--mat-sys-#{$token}) !important;
+}
+
+@mixin input-variants() {
+  /* Core Roles */
+  .theme-secondary {
+    @include apply-input-theme("secondary");
+  }
+  .theme-tertiary {
+    @include apply-input-theme("tertiary");
+  }
+  .theme-error {
+    @include apply-input-theme("error");
+  }
+
+  /* Semantic Roles */
+  .theme-success {
+    @include apply-input-theme("success");
+  }
+  .theme-warning {
+    @include apply-input-theme("warning");
+  }
+  .theme-info {
+    @include apply-input-theme("info");
+  }
+}

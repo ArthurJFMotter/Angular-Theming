@@ -19,12 +19,14 @@
 @use "theming/fallback-tokens" as tokens;
 @use "theming/cdk" as cdk;
 @use "theming/button-variants" as buttons;
+@use "theming/input-variants" as inputs;
 @use "theming/density" as density;
 @use "theming/motion" as motion;
 
 @forward "theming/fallback-tokens";
 @forward "theming/cdk";
 @forward "theming/button-variants";
+@forward "theming/input-variants";
 @forward "theming/density";
 @forward "theming/motion";
 
@@ -33,6 +35,7 @@
   @include tokens.fallback-tokens();
   @include cdk.cdk-overrides();
   @include buttons.button-variants();
+  @include inputs.input-variants();
   @include density.apply-density();
   @include motion.apply-motion();
 }
