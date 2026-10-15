@@ -1,4 +1,5 @@
 <div class="state-matrix">
+  <!-- Input Section -->
   <div class="matrix-row inputs-row">
     <mat-form-field appearance="outline">
       <mat-label>Standard Input</mat-label>
@@ -15,25 +16,45 @@
       <input matInput disabled value="Locked value" />
     </mat-form-field>
   </div>
-  
+
+  <!-- Checkbox Section -->
   <div class="matrix-row">
-    <!-- THE FIX: M3 defaults to Primary, so we can remove the color attribute! -->
+    <span class="row-label">Checkboxes</span>
     <mat-checkbox checked>Primary</mat-checkbox>
-    
-    <!-- THE FIX: Use our new library utility class! -->
     <mat-checkbox checked class="theme-secondary">Secondary</mat-checkbox>
-    
-    <mat-radio-group value="1" style="display: flex; gap: 16px; margin: 0 16px">
-      <mat-radio-button value="1">Option 1</mat-radio-button>
-      
-      <!-- THE FIX: Replaced color="warn" with class="theme-error" -->
-      <mat-radio-button value="2" class="theme-error">Warn</mat-radio-button>
-    </mat-radio-group>
-    
-    <mat-slide-toggle checked>Enabled</mat-slide-toggle>
-    <mat-slide-toggle disabled style="margin-left: 16px">Disabled</mat-slide-toggle>
+    <mat-checkbox checked class="theme-tertiary">Tertiary</mat-checkbox>
+    <mat-checkbox checked class="theme-error">Error</mat-checkbox>
+    <mat-checkbox checked disabled>Disabled</mat-checkbox>
   </div>
-  
+  <!-- Toggle Section -->
+  <div class="matrix-row">
+    <span class="row-label">Toggles</span>
+    <mat-slide-toggle checked>Enabled</mat-slide-toggle>
+    <mat-slide-toggle checked class="theme-secondary">Enabled</mat-slide-toggle>
+    <mat-slide-toggle checked class="theme-tertiary">Enabled</mat-slide-toggle>
+    <mat-slide-toggle checked class="theme-error">Enabled</mat-slide-toggle>
+    <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
+  </div>
+
+  <!-- Radio Button Section -->
+  <div class="matrix-row">
+    <span class="row-label">Radio buttons</span>
+    <mat-radio-group value="1">
+      <mat-radio-button value="1">Option 1</mat-radio-button>
+      <mat-radio-button value="2" class="theme-secondary"
+        >Option 2</mat-radio-button
+      >
+      <mat-radio-button value="3" class="theme-tertiary"
+        >Option 3</mat-radio-button
+      >
+      <mat-radio-button value="0" class="theme-error"
+        >Invalid Option</mat-radio-button
+      >
+      <mat-radio-button disabled value="-1">Locked Option</mat-radio-button>
+    </mat-radio-group>
+  </div>
+
+  <!-- Slider Section -->
   <div class="matrix-row">
     <span class="row-label">Slider</span>
     <mat-slider
