@@ -35,79 +35,112 @@
     </mat-form-field>
   </div>
 
-  <!-- Checkbox Section -->
-  <div class="matrix-row">
-    <span class="row-label">Checkboxes</span>
-    <mat-checkbox checked>Primary</mat-checkbox>
-    <mat-checkbox checked class="theme-secondary">Secondary</mat-checkbox>
-    <mat-checkbox checked class="theme-tertiary">Tertiary</mat-checkbox>
-    <mat-checkbox checked class="theme-error">Error</mat-checkbox>
-    <mat-checkbox checked disabled>Disabled</mat-checkbox>
-  </div>
-  <!-- Toggle Section -->
-  <div class="matrix-row">
-    <span class="row-label">Toggles</span>
-    <mat-slide-toggle checked>Enabled</mat-slide-toggle>
-    <mat-slide-toggle checked class="theme-secondary">Enabled</mat-slide-toggle>
-    <mat-slide-toggle checked class="theme-tertiary">Enabled</mat-slide-toggle>
-    <mat-slide-toggle checked class="theme-brand">Enabled</mat-slide-toggle>
-    <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
-  </div>
+  <!-- Complex Inputs (Datepicker & Select) -->
+  <div class="matrix-row inputs-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Choose a date</mat-label>
+      <input matInput [matDatepicker]="picker" />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
 
-  <!-- Radio Button Section -->
-  <div class="matrix-row">
-    <span class="row-label">Radio buttons</span>
-    <mat-radio-group value="1">
-      <mat-radio-button value="1">Option 1</mat-radio-button>
-      <mat-radio-button value="2" class="theme-secondary"
-        >Option 2</mat-radio-button
+    <mat-form-field appearance="outline">
+      <mat-label>Framework</mat-label>
+      <mat-select value="angular">
+        <mat-option value="angular">Angular</mat-option>
+        <mat-option value="react">React</mat-option>
+        <mat-option value="vue">Vue</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div style="flex: 1; min-width: 200px"></div>
+
+    <!-- Checkbox Section -->
+    <div class="matrix-row">
+      <span class="row-label">Checkboxes</span>
+      <mat-checkbox checked>Primary</mat-checkbox>
+      <mat-checkbox checked class="theme-secondary">Secondary</mat-checkbox>
+      <mat-checkbox checked class="theme-tertiary">Tertiary</mat-checkbox>
+      <mat-checkbox checked class="theme-error">Error</mat-checkbox>
+      <mat-checkbox checked disabled>Disabled</mat-checkbox>
+    </div>
+    <!-- Toggle Section -->
+    <div class="matrix-row">
+      <span class="row-label">Toggles</span>
+      <mat-slide-toggle checked>Enabled</mat-slide-toggle>
+      <mat-slide-toggle checked class="theme-secondary"
+        >Enabled</mat-slide-toggle
       >
-      <mat-radio-button value="3" class="theme-tertiary"
-        >Option 3</mat-radio-button
+      <mat-slide-toggle checked class="theme-tertiary"
+        >Enabled</mat-slide-toggle
       >
-      <mat-radio-button value="0" class="theme-error"
-        >Invalid Option</mat-radio-button
+      <mat-slide-toggle checked class="theme-brand">Enabled</mat-slide-toggle>
+      <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
+    </div>
+
+    <!-- Radio Button Section -->
+    <div class="matrix-row">
+      <span class="row-label">Radio buttons</span>
+      <mat-radio-group value="1">
+        <mat-radio-button value="1">Option 1</mat-radio-button>
+        <mat-radio-button value="2" class="theme-secondary"
+          >Option 2</mat-radio-button
+        >
+        <mat-radio-button value="3" class="theme-tertiary"
+          >Option 3</mat-radio-button
+        >
+        <mat-radio-button value="0" class="theme-error"
+          >Invalid Option</mat-radio-button
+        >
+        <mat-radio-button disabled value="-1">Locked Option</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <!-- Slider Section -->
+    <div class="matrix-row">
+      <span class="row-label">Sliders</span>
+      <mat-slider
+        min="0"
+        max="100"
+        value="50"
+        style="flex: 1; min-width: 100px"
       >
-      <mat-radio-button disabled value="-1">Locked Option</mat-radio-button>
-    </mat-radio-group>
-  </div>
+        <input matSliderThumb value="20" />
+      </mat-slider>
 
-  <!-- Slider Section -->
-  <div class="matrix-row">
-    <span class="row-label">Sliders</span>
-    <mat-slider min="0" max="100" value="50" style="flex: 1; min-width: 100px">
-      <input matSliderThumb value="20" />
-    </mat-slider>
+      <mat-slider
+        min="0"
+        max="100"
+        class="theme-secondary"
+        style="flex: 1; min-width: 100px"
+      >
+        <input matSliderThumb value="40" />
+      </mat-slider>
 
-    <mat-slider
-      min="0"
-      max="100"
-      class="theme-secondary"
-      style="flex: 1; min-width: 100px"
-    >
-      <input matSliderThumb value="40" />
-    </mat-slider>
+      <mat-slider
+        min="0"
+        max="100"
+        class="theme-tertiary"
+        style="flex: 1; min-width: 100px"
+      >
+        <input matSliderThumb value="60" />
+      </mat-slider>
 
-    <mat-slider
-      min="0"
-      max="100"
-      class="theme-tertiary"
-      style="flex: 1; min-width: 100px"
-    >
-      <input matSliderThumb value="60" />
-    </mat-slider>
+      <mat-slider
+        min="0"
+        max="100"
+        class="theme-error"
+        style="flex: 1; min-width: 100px"
+      >
+        <input matSliderThumb value="80" />
+      </mat-slider>
 
-    <mat-slider
-      min="0"
-      max="100"
-      class="theme-error"
-      style="flex: 1; min-width: 100px"
-    >
-      <input matSliderThumb value="80" />
-    </mat-slider>
-
-    <mat-slider disabled min="0" max="100" style="flex: 1; min-width: 100px">
-      <input matSliderThumb value="50" />
-    </mat-slider>
+      <mat-slider disabled min="0" max="100" style="flex: 1; min-width: 100px">
+        <input matSliderThumb value="50" />
+      </mat-slider>
+    </div>
   </div>
 </div>

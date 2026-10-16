@@ -1,0 +1,72 @@
+<div class="checkout-container">
+  <mat-stepper [linear]="false" #stepper class="custom-stepper">
+    <!-- STEP 1 -->
+    <mat-step [stepControl]="emailCtrl">
+      <ng-template matStepLabel>Account Details</ng-template>
+      <div class="step-content">
+        <p>Enter your email to continue as a guest or login.</p>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email address</mat-label>
+          <input
+            matInput
+            [formControl]="emailCtrl"
+            placeholder="Ex. name@example.com"
+            required
+          />
+        </mat-form-field>
+        <div class="step-actions">
+          <button mat-flat-button color="primary" matStepperNext>
+            Next to Shipping
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- STEP 2 -->
+    <mat-step>
+      <ng-template matStepLabel>Shipping Address</ng-template>
+      <div class="step-content">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>First name</mat-label>
+            <input matInput />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Last name</mat-label>
+            <input matInput />
+          </mat-form-field>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Address</mat-label>
+          <input matInput />
+        </mat-form-field>
+        <div class="step-actions">
+          <button mat-stroked-button matStepperPrevious>Back</button>
+          <button mat-flat-button color="primary" matStepperNext>
+            Next to Payment
+          </button>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- STEP 3 -->
+    <mat-step>
+      <ng-template matStepLabel>Confirmation</ng-template>
+      <div class="step-content confirmation-step">
+        <mat-icon class="success-icon">check_circle</mat-icon>
+        <h3>Ready to Complete Order</h3>
+        <p>Your items will be shipped to the address provided.</p>
+        <div class="step-actions center">
+          <button mat-stroked-button matStepperPrevious>Edit Details</button>
+          <button
+            mat-flat-button
+            class="btn-success-container"
+            (click)="stepper.reset()"
+          >
+            Submit Order
+          </button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>

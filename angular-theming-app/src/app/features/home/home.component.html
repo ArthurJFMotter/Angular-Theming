@@ -3,35 +3,87 @@
   <aside class="mini-nav">
     <div class="nav-header">
       <h3>Theming Lab</h3>
-      <mat-button-toggle-group [value]="viewMode()" (change)="viewMode.set($event.value)" class="view-toggle">
+      <mat-button-toggle-group
+        [value]="viewMode()"
+        (change)="viewMode.set($event.value)"
+        class="view-toggle"
+      >
         <mat-button-toggle value="elements">Elements</mat-button-toggle>
         <mat-button-toggle value="layouts">Layouts</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
 
-    @if (viewMode() === 'elements') {
+    @if (viewMode() === "elements") {
       <nav class="spy-menu">
-        <button [class.active]="activeSection() === 'actions'" (click)="scrollTo('actions')">Actions</button>
-        <button [class.active]="activeSection() === 'inputs'" (click)="scrollTo('inputs')">Inputs & Forms</button>
-        <button [class.active]="activeSection() === 'surfaces'" (click)="scrollTo('surfaces')">Surfaces</button>
-        <button [class.active]="activeSection() === 'feedback'" (click)="scrollTo('feedback')">Feedback</button>
+        <button
+          [class.active]="activeSection() === 'actions'"
+          (click)="scrollTo('actions')"
+        >
+          Actions
+        </button>
+        <button
+          [class.active]="activeSection() === 'inputs'"
+          (click)="scrollTo('inputs')"
+        >
+          Inputs & Forms
+        </button>
+        <button
+          [class.active]="activeSection() === 'surfaces'"
+          (click)="scrollTo('surfaces')"
+        >
+          Surfaces
+        </button>
+        <button
+          [class.active]="activeSection() === 'feedback'"
+          (click)="scrollTo('feedback')"
+        >
+          Feedback
+        </button>
       </nav>
     }
 
-    @if (viewMode() === 'layouts') {
+    @if (viewMode() === "layouts") {
       <nav class="spy-menu">
-        <button [class.active]="activeLayoutSection() === 'dashboard'" (click)="scrollToLayout('dashboard')">Analytics Dashboard</button>
-        <button [class.active]="activeLayoutSection() === 'table'" (click)="scrollToLayout('table')">Data Table</button>
-        <button [class.active]="activeLayoutSection() === 'kanban'" (click)="scrollToLayout('kanban')">Kanban Board</button>
-        <button [class.active]="activeSection() === 'mobile'" (click)="scrollToLayout('mobile')">Mobile Frame</button>
+        <button
+          [class.active]="activeLayoutSection() === 'dashboard'"
+          (click)="scrollToLayout('dashboard')"
+        >
+          Analytics Dashboard
+        </button>
+        <button
+          [class.active]="activeLayoutSection() === 'table'"
+          (click)="scrollToLayout('table')"
+        >
+          Data Table
+        </button>
+        <button
+          [class.active]="activeLayoutSection() === 'checkout'"
+          (click)="scrollToLayout('checkout')"
+        >
+          Checkout Wizard
+        </button>
+        <button
+          [class.active]="activeLayoutSection() === 'kanban'"
+          (click)="scrollToLayout('kanban')"
+        >
+          Kanban Board
+        </button>
+        <button
+          [class.active]="activeSection() === 'mobile'"
+          (click)="scrollToLayout('mobile')"
+        >
+          Mobile Frame
+        </button>
       </nav>
     }
   </aside>
 
   <!-- RIGHT: THE CANVAS -->
   <main class="canvas">
-    @if (viewMode() === 'elements') {
-      <app-elements-view (sectionScrolled)="activeSection.set($event)"></app-elements-view>
+    @if (viewMode() === "elements") {
+      <app-elements-view
+        (sectionScrolled)="activeSection.set($event)"
+      ></app-elements-view>
     } @else {
       <app-layouts-view></app-layouts-view>
     }
