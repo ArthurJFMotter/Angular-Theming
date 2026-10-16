@@ -1,0 +1,45 @@
+/// Selected-state role variants for `mat-button-toggle` (.toggle-<role>).
+///
+/// Why component tokens instead of the `.theme-*` remap (_input-variants.scss):
+/// the toggle's selected state is painted with secondary-container /
+/// on-secondary-container, NOT primary, so remapping `--mat-sys-primary` cannot
+/// reach it. Only two tokens are involved, so we set them directly (same idea as
+/// the button variants). Apply the class to the group or to a single toggle:
+///
+///   <mat-button-toggle-group class="toggle-tertiary"> … </mat-button-toggle-group>
+///
+/// Note: Material's default is the SECONDARY container, so `secondary` is listed
+/// to let you reset it inside a themed section. `appearance="legacy"` is not
+/// themed by M3 (its tokens are null) and is intentionally not supported here.
+
+/// Roles that get a ready-made `.toggle-<role>` class.
+$-default-roles: primary, secondary, tertiary, error, success, warning, info;
+
+/// Paints a toggle's selected state with a role's container pair.
+/// Pass the BASE role name ('tertiary', 'brand'); `-container` is added internally.
+@mixin apply-toggle-theme($token) {
+  //current
+  --mat-button-toggle-selected-state-background-color: var(
+    --mat-sys-#{$token}-container
+  );
+  --mat-button-toggle-selected-state-text-color: var(
+    --mat-sys-on-#{$token}-container
+  );
+  //legacy
+  --mat-button-toggle-legacy-selected-state-background-color: var(
+    --mat-sys-#{$token}-container
+  );
+  --mat-button-toggle-legacy-selected-state-text-color: var(
+    --mat-sys-on-#{$token}-container
+  );
+}
+
+/// Generates `.toggle-<role>` utility classes.
+/// Pass your own list to add roles: `@include toggle-variants((brand))`.
+@mixin toggle-variants($roles: $-default-roles) {
+  @each $role in $roles {
+    .toggle-#{$role} {
+      @include apply-toggle-theme($role);
+    }
+  }
+}

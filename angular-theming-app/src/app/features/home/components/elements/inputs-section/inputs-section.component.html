@@ -1,5 +1,5 @@
 <div class="state-matrix">
-  <!-- Input Section -->
+  <!-- Input Section (outline) -->
   <div class="matrix-row inputs-row">
     <mat-form-field appearance="outline">
       <mat-label>Standard Input</mat-label>
@@ -12,6 +12,24 @@
       <mat-error>Invalid email format</mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline">
+      <mat-label>Disabled</mat-label>
+      <input matInput disabled value="Locked value" />
+    </mat-form-field>
+  </div>
+
+  <!-- Input Section (fill) -->
+  <div class="matrix-row inputs-row">
+    <mat-form-field>
+      <mat-label>Standard Input</mat-label>
+      <input matInput placeholder="Placeholder" />
+      <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Error State</mat-label>
+      <input matInput [formControl]="emailControl" placeholder="Email" />
+      <mat-error>Invalid email format</mat-error>
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Disabled</mat-label>
       <input matInput disabled value="Locked value" />
     </mat-form-field>
@@ -32,7 +50,7 @@
     <mat-slide-toggle checked>Enabled</mat-slide-toggle>
     <mat-slide-toggle checked class="theme-secondary">Enabled</mat-slide-toggle>
     <mat-slide-toggle checked class="theme-tertiary">Enabled</mat-slide-toggle>
-    <mat-slide-toggle checked class="theme-error">Enabled</mat-slide-toggle>
+    <mat-slide-toggle checked class="theme-brand">Enabled</mat-slide-toggle>
     <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
   </div>
 
@@ -56,15 +74,39 @@
 
   <!-- Slider Section -->
   <div class="matrix-row">
-    <span class="row-label">Slider</span>
+    <span class="row-label">Sliders</span>
+    <mat-slider min="0" max="100" value="50" style="flex: 1; min-width: 100px">
+      <input matSliderThumb value="20" />
+    </mat-slider>
+
     <mat-slider
       min="0"
       max="100"
-      step="10"
-      showTickMarks
-      discrete
-      style="flex: 1; min-width: 200px; margin: 0 16px"
+      class="theme-secondary"
+      style="flex: 1; min-width: 100px"
     >
+      <input matSliderThumb value="40" />
+    </mat-slider>
+
+    <mat-slider
+      min="0"
+      max="100"
+      class="theme-tertiary"
+      style="flex: 1; min-width: 100px"
+    >
+      <input matSliderThumb value="60" />
+    </mat-slider>
+
+    <mat-slider
+      min="0"
+      max="100"
+      class="theme-error"
+      style="flex: 1; min-width: 100px"
+    >
+      <input matSliderThumb value="80" />
+    </mat-slider>
+
+    <mat-slider disabled min="0" max="100" style="flex: 1; min-width: 100px">
       <input matSliderThumb value="50" />
     </mat-slider>
   </div>

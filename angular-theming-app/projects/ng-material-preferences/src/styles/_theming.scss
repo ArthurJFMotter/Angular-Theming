@@ -12,6 +12,7 @@
 //   theming/_fallback-tokens.scss   success / warning / info + state-layer opacities
 //   theming/cdk/                    overlay & component overrides (snackbar, dialog, shapes, lists)
 //   theming/_button-variants.scss   .btn-* utility classes per color role
+//   theming/_input-variants.scss   .theme-* utility classes per color role
 //   theming/_density.scss           html[data-theme-density] generator
 //   theming/_motion.scss            html[data-theme-motion="off"] killer
 // =============================================================================
@@ -20,6 +21,7 @@
 @use "theming/cdk" as cdk;
 @use "theming/button-variants" as buttons;
 @use "theming/input-variants" as inputs;
+@use "theming/toggle-variants" as toggles;
 @use "theming/density" as density;
 @use "theming/motion" as motion;
 
@@ -27,6 +29,7 @@
 @forward "theming/cdk";
 @forward "theming/button-variants";
 @forward "theming/input-variants";
+@forward "theming/toggle-variants";
 @forward "theming/density";
 @forward "theming/motion";
 
@@ -36,6 +39,7 @@
   @include cdk.cdk-overrides();
   @include buttons.button-variants();
   @include inputs.input-variants();
+  @include toggles.toggle-variants();
   @include density.apply-density();
   @include motion.apply-motion();
 }

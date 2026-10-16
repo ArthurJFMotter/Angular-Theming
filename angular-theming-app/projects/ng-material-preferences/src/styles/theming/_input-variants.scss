@@ -1,44 +1,48 @@
-/// M3 Input & Icon Variants
-/// Uses Local Scope Overrides to trick M3 components into rendering alternative palettes.
+/// M3 role variants for Material's primary-driven controls
+/// (checkbox, radio, slide toggle, slider, form-field focus, ripples…).
+///
+/// How it works: Material's components read `--mat-sys-primary` and friends
+/// lazily (`var(--mat-checkbox-selected-icon-color, var(--mat-sys-primary))`).
+/// Re-declaring those system tokens on an element therefore re-colors every
+/// primary-driven control inside it, including ripples and state layers.
+/// No per-component variables to chase, nothing to rewrite on Material upgrades.
+///
+/// Because it is plain CSS inheritance, it also works as SECTION theming:
+///   <section class="theme-tertiary"> …all controls inside become tertiary… </section>
+///
+/// Limitation: it cannot reach component tokens an app has already resolved on
+/// :root/html (e.g. `mat.checkbox-overrides((selected-icon-color: var(--mat-sys-primary)))`
+/// included at root) — those values are fixed before the class is applied.
 
-@mixin apply-input-theme($token) {
-  /* 
-    THE FIX: Instead of fighting internal MDC variables, we locally redefine 
-    the system tokens. The component thinks it is rendering "Primary", 
-    but we feed it the alternative token! This flawlessly colors Checkboxes, 
-    Radios, and Slide Toggles including their ripples and hover states.
-  */
-  --mat-sys-primary: var(--mat-sys-#{$token}) !important;
-  --mat-sys-on-primary: var(--mat-sys-on-#{$token}) !important;
-  --mat-sys-primary-container: var(--mat-sys-#{$token}-container) !important;
-  --mat-sys-on-primary-container: var(
-    --mat-sys-on-#{$token}-container
-  ) !important;
+/// Roles that get a ready-made `.theme-<role>` class ('primary' is the default).
+$-default-roles: secondary, tertiary, error, success, warning, info;
 
-  /* Explicit color mapping for standard icons or text that rely on the color property */
-  color: var(--mat-sys-#{$token}) !important;
+/// Re-scopes the primary system tokens to a role.
+/// Pass the BASE role name ('secondary', 'brand'); the `-container` pair is
+/// derived. Set `$colorize-text: false` to leave inherited text/icon `color` alone,
+/// useful when applying the class to a large section.
+@mixin apply-input-theme($token, $colorize-text: true) {
+  @if $token == "primary" {
+    @error "apply-input-theme(\"primary\") would map --mat-sys-primary to itself, which is a CSS variable cycle and breaks the controls. Primary is already the default: just omit the class.";
+  }
+
+  --mat-sys-primary: var(--mat-sys-#{$token});
+  --mat-sys-on-primary: var(--mat-sys-on-#{$token});
+  --mat-sys-primary-container: var(--mat-sys-#{$token}-container);
+  --mat-sys-on-primary-container: var(--mat-sys-on-#{$token}-container);
+
+  @if $colorize-text {
+    // Explicit color for standard icons or text that rely on the color property
+    color: var(--mat-sys-#{$token}) !important;
+  }
 }
 
-@mixin input-variants() {
-  /* Core Roles */
-  .theme-secondary {
-    @include apply-input-theme("secondary");
-  }
-  .theme-tertiary {
-    @include apply-input-theme("tertiary");
-  }
-  .theme-error {
-    @include apply-input-theme("error");
-  }
-
-  /* Semantic Roles */
-  .theme-success {
-    @include apply-input-theme("success");
-  }
-  .theme-warning {
-    @include apply-input-theme("warning");
-  }
-  .theme-info {
-    @include apply-input-theme("info");
+/// Generates `.theme-<role>` utility classes.
+/// Pass your own list to add roles: `@include input-variants((brand, accent))`.
+@mixin input-variants($roles: $-default-roles) {
+  @each $role in $roles {
+    .theme-#{$role} {
+      @include apply-input-theme($role);
+    }
   }
 }

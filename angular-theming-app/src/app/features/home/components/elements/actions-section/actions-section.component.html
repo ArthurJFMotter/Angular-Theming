@@ -1,5 +1,5 @@
 <div class="state-matrix">
-  <!-- 1. FILLED BUTTONS -->
+  <!-- FILLED BUTTONS -->
   <div class="matrix-row">
     <span class="row-label">Filled</span>
     <button mat-flat-button>Primary</button>
@@ -9,7 +9,7 @@
     <button mat-flat-button disabled>Disabled</button>
   </div>
 
-  <!-- 2. STROKED BUTTONS -->
+  <!-- STROKED BUTTONS -->
   <div class="matrix-row">
     <span class="row-label">Stroked</span>
 
@@ -20,7 +20,33 @@
     <button mat-stroked-button disabled>Disabled</button>
   </div>
 
-  <!-- 3. FABs AND CHIPS -->
+  <!-- BUTTON TOGGLES -->
+  <div class="matrix-row">
+    <span class="row-label">Toggle</span>
+
+    <mat-button-toggle-group
+      value="bold"
+      name="fontStyle"
+      aria-label="Font Style"
+    >
+      <mat-button-toggle value="bold">Bold</mat-button-toggle>
+      <mat-button-toggle value="italic">Italic</mat-button-toggle>
+      <mat-button-toggle value="underline">Underline</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group
+      appearance="legacy"
+      value="bold"
+      name="fontStyle"
+      aria-label="Font Style"
+    >
+      <mat-button-toggle value="bold">Bold</mat-button-toggle>
+      <mat-button-toggle value="italic">Italic</mat-button-toggle>
+      <mat-button-toggle value="underline">Underline</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- FABs AND CHIPS -->
   <div class="matrix-row">
     <span class="row-label">FAB & Chips</span>
 

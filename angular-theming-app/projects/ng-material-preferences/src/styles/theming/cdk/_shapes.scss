@@ -48,8 +48,8 @@
 
 @mixin toggle-group-shapes() {
   .mat-button-toggle-group {
-    border-radius: var(--mat-sys-corner-extra-small) !important;
-    --mat-standard-button-toggle-shape: var(--mat-sys-corner-extra-small);
+    border-radius: var(--mat-sys-corner-extra-large) !important;
+    --mat-standard-button-toggle-shape: var(--mat-sys-corner-extra-large);
   }
 }
 
