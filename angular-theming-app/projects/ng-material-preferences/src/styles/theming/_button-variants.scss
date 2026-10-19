@@ -1,5 +1,38 @@
 /// Button color variants (.btn-*) generated from M3 / semantic role tokens.
 
+/// FAB tokens (large, mini and extended FABs) for a role.
+/// FABs use the role's CONTAINER pair, like M3's container-colored FABs.
+///
+/// Material reads one token set for the large + extended FAB (`--mat-fab-*`) and a
+/// separate one for the mini FAB (`--mat-fab-small-*`), so BOTH must be set.
+/// The foreground token is `--mat-fab-foreground-color` (there is no `*-icon-color`).
+/// Material 19 read `--mdc-fab-*` for the container; kept for that version only.
+@mixin -fab-tokens($token) {
+  --mat-fab-container-color: var(--mat-sys-#{$token}-container);
+  --mat-fab-foreground-color: var(--mat-sys-on-#{$token}-container);
+  --mat-fab-state-layer-color: var(--mat-sys-on-#{$token}-container);
+  --mat-fab-ripple-color: color-mix(
+    in srgb,
+    var(--mat-sys-on-#{$token}-container)
+      calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+    transparent
+  );
+
+  --mat-fab-small-container-color: var(--mat-sys-#{$token}-container);
+  --mat-fab-small-foreground-color: var(--mat-sys-on-#{$token}-container);
+  --mat-fab-small-state-layer-color: var(--mat-sys-on-#{$token}-container);
+  --mat-fab-small-ripple-color: color-mix(
+    in srgb,
+    var(--mat-sys-on-#{$token}-container)
+      calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+    transparent
+  );
+
+  /* Material 19 only */
+  --mdc-fab-container-color: var(--mat-sys-#{$token}-container);
+  --mdc-fab-small-container-color: var(--mat-sys-#{$token}-container);
+}
+
 /// Helper for BASE roles (e.g. 'primary', 'success')
 @mixin apply-button-theme($token) {
   /* Flat / Raised / Unelevated Buttons */
@@ -21,13 +54,7 @@
   --mat-outlined-button-state-layer-color: var(--mat-sys-#{$token});
 
   /* FABs */
-  --mat-fab-container-color: var(--mat-sys-#{$token}-container);
-  --mat-fab-icon-color: var(--mat-sys-on-#{$token}-container);
-  --mat-fab-state-layer-color: var(--mat-sys-on-#{$token}-container);
-
-  --mdc-fab-container-color: var(--mat-sys-#{$token}-container);
-  --mdc-fab-icon-color: var(--mat-sys-on-#{$token}-container);
-  --mat-fab-state-layer-color: var(--mat-sys-on-#{$token}-container);
+  @include -fab-tokens($token);
 }
 
 /// Helper for CONTAINER roles. Pass the base name ('success'); '-container'
@@ -52,13 +79,7 @@
   --mat-outlined-button-state-layer-color: var(--mat-sys-#{$token}-container);
 
   /* FABs */
-  --mat-fab-container-color: var(--mat-sys-#{$token}-container);
-  --mat-fab-icon-color: var(--mat-sys-on-#{$token}-container);
-  --mat-fab-state-layer-color: var(--mat-sys-on-#{$token}-container);
-
-  --mdc-fab-container-color: var(--mat-sys-#{$token}-container);
-  --mdc-fab-icon-color: var(--mat-sys-on-#{$token}-container);
-  --mat-fab-state-layer-color: var(--mat-sys-on-#{$token}-container);
+  @include -fab-tokens($token);
 }
 
 /// Generates utility classes for the standard and semantic roles.

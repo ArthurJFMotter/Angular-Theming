@@ -1,5 +1,10 @@
 <div class="checkout-container">
-  <mat-stepper [linear]="false" #stepper class="custom-stepper">
+  <mat-stepper
+    [linear]="false"
+    [orientation]="uiState.isMobile().matches ? 'vertical' : 'horizontal'"
+    #stepper
+    class="custom-stepper"
+  >
     <!-- STEP 1 -->
     <mat-step [stepControl]="emailCtrl">
       <ng-template matStepLabel>Account Details</ng-template>
