@@ -1,11 +1,16 @@
 @use "../layouts-shared.scss";
 
+/* --- Mobile Frame --- */
 .mobile-frame-wrapper {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 .mobile-device {
   width: 375px;
+  max-width: 100%;
+  box-sizing: border-box;
+
   height: 667px;
   border: 8px solid #222;
   border-radius: 36px;

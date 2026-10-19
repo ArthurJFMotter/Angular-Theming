@@ -1,10 +1,12 @@
 @use "../layouts-shared.scss";
 
-.kanban-board {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
-  align-items: start;
+/* Kanban Board */
+.kanban-board { 
+  display: grid; 
+  /* Shrinks to 100% width automatically on mobile */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); 
+  gap: 24px; 
+  align-items: start; 
 }
 .kanban-col {
   background: var(--mat-sys-surface-container-low);

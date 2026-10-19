@@ -34,3 +34,21 @@ body {
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
+
+/// Material's toolbar height follows density (64 → 52px) and viewport (56 → 44px
+/// under 600px) through these same tokens;
+:root {
+  --app-navbar-offset: var(--mat-toolbar-standard-height, 64px);
+}
+
+@media (max-width: 599px) {
+  :root {
+    --app-navbar-offset: var(--mat-toolbar-mobile-height, 56px);
+  }
+}
+
+/// (hide-on-scroll):
+:root:has(.navbar-hidden) {
+  --app-navbar-offset: 0px;
+}
+

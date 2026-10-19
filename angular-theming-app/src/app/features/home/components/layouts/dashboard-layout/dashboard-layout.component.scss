@@ -18,10 +18,10 @@
   flex-direction: column;
   gap: 32px;
 }
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
+.stats-row { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); 
+  gap: 16px; 
 }
 .stat {
   padding: 24px 16px;

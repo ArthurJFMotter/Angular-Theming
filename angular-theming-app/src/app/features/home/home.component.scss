@@ -5,16 +5,27 @@
   background-color: var(--mat-sys-background);
   color: var(--mat-sys-on-background);
 
+  --sandbox-nav-offset: 0px;
+
   @media (max-width: 900px) {
     flex-direction: column;
+    align-items: stretch;
+    --sandbox-nav-offset: calc(var(--mat-button-toggle-height, 40px) + 29px);
   }
 }
 
 /* --- LEFT NAV (SCROLL SPY) --- */
+/*
+  Sits directly under the navbar. --app-navbar-offset (global, see styles.scss) follows
+  the toolbar's REAL height (density, mobile) and drops to 0 while the navbar is hidden,
+  so the nav never leaves a gap or hides behind it. It moves with the navbar's own
+  duration/easing.
+*/
 .mini-nav {
   position: sticky;
-  top: 64px;
-  height: calc(100vh - 64px);
+  top: var(--app-navbar-offset, 64px);
+  height: calc(100vh - var(--app-navbar-offset, 64px));
+  height: calc(100dvh - var(--app-navbar-offset, 64px));
 
   width: 280px;
   padding: 32px 24px;
@@ -23,15 +34,10 @@
   box-sizing: border-box;
   overflow-y: auto;
   flex-shrink: 0;
-
-  @media (max-width: 900px) {
-    position: static;
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--mat-sys-outline-variant);
-    padding: 24px;
-  }
+  transition:
+    top calc(0.3s * var(--theme-motion-scale, 1)) cubic-bezier(0.4, 0, 0.2, 1),
+    height calc(0.3s * var(--theme-motion-scale, 1))
+      cubic-bezier(0.4, 0, 0.2, 1);
 
   .nav-header {
     margin-bottom: 32px;
@@ -45,12 +51,12 @@
 
   .view-toggle {
     width: 100%;
+    --mat-button-toggle-label-text-size: 0.85rem;
     mat-button-toggle {
       flex: 1;
     }
     ::ng-deep .mat-button-toggle-label-content {
       padding: 0 8px;
-      font-size: 0.85rem;
     }
   }
 
@@ -70,17 +76,70 @@
       font-size: 0.9rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all calc(0.2s * var(--theme-motion-scale, 1)) ease;
+      transition:
+        background-color calc(0.2s * var(--theme-motion-scale, 1)) ease,
+        color calc(0.2s * var(--theme-motion-scale, 1)) ease;
 
       &:hover {
         background: var(--mat-sys-surface-container);
         color: var(--mat-sys-on-surface);
       }
 
+      &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: -2px;
+      }
+
       &.active {
         background: var(--mat-sys-secondary-container);
         color: var(--mat-sys-on-secondary-container);
         font-weight: 600;
+      }
+    }
+  }
+
+  /*
+    Small screens: a compact sticky bar under the navbar (toggle + horizontally
+    scrolling section pills) instead of a tall block that scrolls out of reach.
+    Kept AFTER the base rules so it wins on source order.
+  */
+  @media (max-width: 900px) {
+    z-index: 10;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .nav-header {
+      margin: 0;
+      flex: 0 0 auto;
+      h3 {
+        display: none;
+      }
+      .view-toggle {
+        width: auto;
+      }
+    }
+
+    .spy-menu {
+      flex: 1 1 auto;
+      flex-direction: row;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      
+      -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      padding-right: 24px;
+
+      button {
+        white-space: nowrap;
+        flex: 0 0 auto;
       }
     }
   }
@@ -96,12 +155,17 @@
 
   @media (max-width: 900px) {
     padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: clip;
   }
 }
 
 .canvas-section {
   padding-bottom: 64px;
-  scroll-margin-top: 100px;
+  scroll-margin-top: calc(
+    var(--app-navbar-offset, 64px) + var(--sandbox-nav-offset, 0px) + 24px
+  );
   border-top: 1px solid var(--mat-sys-outline-variant);
   padding-top: 48px;
   margin-top: 24px;
@@ -110,138 +174,5 @@
     border-top: none;
     padding-top: 0;
     margin-top: 0;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0 0 24px;
-    color: var(--mat-sys-on-background);
-  }
-}
-
-/* --- STATE MATRICES --- */
-.state-matrix {
-  display: flex;
-  flex-direction: column;
-  gap: 32px; /* THE FIX: Increased gap between rows */
-  background: var(--mat-sys-surface-container-lowest);
-
-  /* THE FIX: Swapped from dashed to a clean, solid M3 border */
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--mat-sys-corner-large);
-  padding: 32px;
-
-  .matrix-row {
-    display: flex;
-    align-items: center; /* THE FIX: Vertically centers everything in the row! */
-    flex-wrap: wrap;
-    gap: 16px;
-
-    .row-label {
-      width: 120px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--mat-sys-on-surface-variant);
-    }
-  }
-
-  .inputs-row {
-    align-items: flex-start; /* Form fields look better aligned to the top */
-    gap: 24px;
-    mat-form-field {
-      flex: 1;
-      min-width: 200px;
-    }
-  }
-}
-
-.surface-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.loading-placeholder {
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--mat-sys-outline);
-  font-style: italic;
-}
-
-/* --- COMPOSITIONS --- */
-.mock-dashboard {
-  background: var(--mat-sys-surface-container-lowest);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--mat-sys-corner-extra-large);
-  overflow: hidden;
-
-  .mock-toolbar {
-    border-radius: 0;
-    gap: 12px;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-
-  .dashboard-body {
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    background: var(--mat-sys-surface-container-lowest);
-  }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 16px;
-
-    .stat {
-      padding: 24px 16px;
-      text-align: center;
-      h3 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0 0 8px;
-      }
-      p {
-        margin: 0;
-        font-size: 0.85rem;
-        opacity: 0.8;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-    }
-  }
-
-  .mock-table-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 16px;
-    font-size: 0.95rem;
-
-    .badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      &.success {
-        background: var(--mat-sys-success-container);
-        color: var(--mat-sys-on-success-container);
-      }
-      &.warning {
-        background: var(--mat-sys-warning-container);
-        color: var(--mat-sys-on-warning-container);
-      }
-      &.error {
-        background: var(--mat-sys-error-container);
-        color: var(--mat-sys-on-error-container);
-      }
-    }
   }
 }
