@@ -1,0 +1,97 @@
+<div class="dynamic-stepper-container">
+  <mat-stepper
+    [linear]="resolvedConfig.linear!"
+    [orientation]="
+      isMobile().matches ? 'vertical' : resolvedConfig.orientation!
+    "
+    #stepper
+    class="custom-stepper"
+  >
+    @for (step of resolvedConfig.steps; track step.id) {
+      <mat-step
+        [stepControl]="stepForms[step.id]"
+        [optional]="step.optional || false"
+      >
+        <ng-template matStepLabel>{{ step.label }}</ng-template>
+
+        <div
+          class="step-content"
+          [class.confirmation-step]="step.contentType === 'confirmation'"
+        >
+          <!-- TYPE: CONFIRMATION -->
+          @if (step.contentType === "confirmation") {
+            @if (step.icon) {
+              <mat-icon class="step-icon">{{ step.icon }}</mat-icon>
+            }
+            <h3>{{ step.label }}</h3>
+            <p>{{ step.message }}</p>
+          }
+
+          <!-- TYPE: FORM -->
+          @if (step.contentType === "form" && step.fields) {
+            @if (step.message) {
+              <p>{{ step.message }}</p>
+            }
+
+            <form [formGroup]="stepForms[step.id]">
+              <div class="form-grid">
+                @for (field of step.fields; track field.key) {
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>{{ field.label }}</mat-label>
+                    <input
+                      matInput
+                      [formControlName]="field.key"
+                      [type]="field.type || 'text'"
+                      [placeholder]="field.placeholder || ''"
+                    />
+                    @if (
+                      stepForms[step.id].get(field.key)?.hasError("required")
+                    ) {
+                      <mat-error>This field is required</mat-error>
+                    }
+                    @if (stepForms[step.id].get(field.key)?.hasError("email")) {
+                      <mat-error>Please enter a valid email</mat-error>
+                    }
+                  </mat-form-field>
+                }
+              </div>
+            </form>
+          }
+
+          <!-- ACTIONS -->
+          <div
+            class="step-actions"
+            [class.center]="step.contentType === 'confirmation'"
+          >
+            @for (action of step.actions; track action.label) {
+              @if (action.isPrimary) {
+                <button
+                  mat-flat-button
+                  [color]="action.color || 'primary'"
+                  [ngClass]="action.customClass || ''"
+                  [disabled]="
+                    stepForms[step.id] &&
+                    stepForms[step.id].invalid &&
+                    action.type === 'next'
+                  "
+                  (click)="handleAction(action, stepper)"
+                >
+                  {{ action.label }}
+                </button>
+              } @else {
+                <button
+                  mat-stroked-button
+                  [color]="action.color || ''"
+                  [ngClass]="action.customClass || ''"
+                  (click)="handleAction(action, stepper)"
+                >
+                  {{ action.label }}
+                </button>
+              }
+            }
+          </div>
+        </div>
+      </mat-step>
+    }
+  </mat-stepper>
+</div>
