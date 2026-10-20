@@ -13,6 +13,7 @@ import { KanbanLayoutComponent } from '../kanban-layout/kanban-layout.component'
 import { MobileFrameLayoutComponent } from '../mobile-frame-layout/mobile-frame-layout.component';
 import { TableLayoutComponent } from '../table-layout/table-layout.component';
 import { CheckoutLayoutComponent } from '../checkout-layout/checkout-layout.component';
+import { DocsLayoutComponent } from '../docs-layout/docs-layout.component';
 
 @Component({
   selector: 'app-layouts-view',
@@ -21,6 +22,7 @@ import { CheckoutLayoutComponent } from '../checkout-layout/checkout-layout.comp
     DashboardLayoutComponent,
     TableLayoutComponent,
     CheckoutLayoutComponent,
+    DocsLayoutComponent,
     KanbanLayoutComponent,
     MobileFrameLayoutComponent,
   ],

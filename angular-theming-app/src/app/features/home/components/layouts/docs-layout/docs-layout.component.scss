@@ -1,0 +1,75 @@
+@use "../layouts-shared.scss";
+
+.docs-container {
+  display: flex;
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-large);
+  overflow: hidden;
+  min-height: 400px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.docs-sidebar {
+  width: 320px;
+  padding: 16px 0;
+  background: var(--mat-sys-surface-container-low);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+  }
+}
+
+/* Target the tree nodes */
+mat-tree {
+  background: transparent;
+}
+mat-tree-node {
+  cursor: pointer;
+  &:hover {
+    background: var(--mat-sys-surface-container-highest);
+  }
+}
+
+.node-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.node-text {
+  font-size: 0.9rem;
+  color: var(--mat-sys-on-surface);
+}
+
+/* Elegant rotation for the chevron icon that respects the motion scale! */
+.mat-tree-node-toggle-icon {
+  transition: transform calc(0.2s * var(--theme-motion-scale, 1)) ease;
+  &.expanded {
+    transform: rotate(90deg);
+  }
+}
+
+.docs-content {
+  flex: 1;
+  padding: 48px;
+
+  .lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--mat-sys-on-surface-variant);
+    margin-top: 16px;
+    margin-bottom: 32px;
+  }
+  .mock-code-block {
+    background: var(--mat-sys-surface-container);
+    padding: 16px;
+    border-radius: var(--mat-sys-corner-medium);
+    font-family: monospace;
+    font-size: 0.85rem;
+  }
+}
