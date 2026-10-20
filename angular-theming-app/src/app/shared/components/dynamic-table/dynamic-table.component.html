@@ -1,0 +1,78 @@
+<div class="dynamic-table-container">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    [matSortDisabled]="!resolvedConfig.enableSorting"
+    class="mat-elevation-z0"
+  >
+    @for (col of resolvedConfig.columns; track col.key) {
+      <ng-container [matColumnDef]="col.key">
+        <!-- HEADER (Conditional Sorting) -->
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          [mat-sort-header]="col.key"
+          [disabled]="!col.sortable"
+        >
+          {{ col.label }}
+        </th>
+
+        <!-- CELLS -->
+        <td mat-cell *matCellDef="let element">
+          <!-- Type: TEXT -->
+          @if (!col.type || col.type === "text") {
+            {{ element[col.key] }}
+          }
+
+          <!-- Type: BADGE -->
+          @if (col.type === "badge") {
+            <span
+              class="badge"
+              [style.background]="
+                col.badgeColorKey
+                  ? 'var(--mat-sys-' +
+                    element[col.badgeColorKey] +
+                    '-container)'
+                  : 'var(--mat-sys-surface-variant)'
+              "
+              [style.color]="
+                col.badgeColorKey
+                  ? 'var(--mat-sys-on-' +
+                    element[col.badgeColorKey] +
+                    '-container)'
+                  : 'var(--mat-sys-on-surface-variant)'
+              "
+            >
+              {{ element[col.key] }}
+            </span>
+          }
+
+          <!-- Type: ACTION -->
+          @if (col.type === "action") {
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="col.actionFn ? col.actionFn(element) : null"
+            >
+              <mat-icon>{{ col.icon || "edit" }}</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+    }
+
+    <!-- ROW DEFINITIONS -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <!-- PAGINATOR -->
+  @if (resolvedConfig.enablePagination) {
+    <app-dynamic-paginator
+      [pageSize]="resolvedConfig.defaultPageSize!"
+      [pageSizeOptions]="resolvedConfig.pageSizeOptions!"
+    >
+    </app-dynamic-paginator>
+  }
+</div>
