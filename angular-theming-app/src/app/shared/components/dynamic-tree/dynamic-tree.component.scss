@@ -1,0 +1,51 @@
+mat-tree {
+  background: transparent;
+}
+
+.tree-node {
+  cursor: pointer;
+  border-radius: var(--mat-sys-corner-medium, 8px);
+  margin: 2px 8px; /* Breathing room from the edges */
+  transition: background calc(0.2s * var(--theme-motion-scale, 1)) ease;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-highest);
+  }
+
+  /* THE FIX: Highlight the currently selected node! */
+  &.active-node {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+
+    .node-text,
+    .node-icon {
+      color: var(--mat-sys-on-secondary-container) !important;
+    }
+  }
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+}
+
+.node-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.node-text {
+  font-size: 0.9rem;
+  color: var(--mat-sys-on-surface);
+}
+
+/* Respects the library's motion scale */
+.mat-tree-node-toggle-icon {
+  transition: transform calc(0.2s * var(--theme-motion-scale, 1)) ease;
+  &.expanded {
+    transform: rotate(90deg);
+  }
+}

@@ -1,60 +1,38 @@
 <div class="docs-container">
-  <!-- SIDEBAR (TREE NAVIGATION) -->
+  <!-- TREE -->
   <aside class="docs-sidebar">
-    <mat-tree
-      #tree
-      [dataSource]="dataSource"
-      [childrenAccessor]="childrenAccessor"
-    >
-      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-        <button mat-icon-button disabled></button>
-        <span class="node-text">{{ node.name }}</span>
-      </mat-tree-node>
-
-      <mat-tree-node
-        *matTreeNodeDef="let node; when: hasChild"
-        matTreeNodePadding
-        matRipple
-      >
-        <button
-          mat-icon-button
-          matTreeNodeToggle
-          [attr.aria-label]="'Toggle ' + node.name"
-        >
-          <mat-icon
-            class="mat-tree-node-toggle-icon"
-            [class.expanded]="tree.isExpanded(node)"
-          >
-            chevron_right
-          </mat-icon>
-        </button>
-        @if (node.icon) {
-          <mat-icon color="primary" class="node-icon">{{ node.icon }}</mat-icon>
-        }
-        <strong class="node-text">{{ node.name }}</strong>
-      </mat-tree-node>
-    </mat-tree>
+    <app-dynamic-tree [data]="treeData" (nodeSelected)="onNodeSelected($event)">
+    </app-dynamic-tree>
   </aside>
 
-  <mat-divider vertical></mat-divider>
+  <mat-divider vertical class="desktop-divider"></mat-divider>
 
   <!-- CONTENT PANE -->
   <article class="docs-content">
-    <span class="badge info">v1.1.0</span>
-    <h1 style="color: var(--mat-sys-primary)">Documentation</h1>
-    <p class="lead">
-      Select an item from the tree on the left to explore the guides. The tree
-      component automatically maps to your density and typography scales.
-    </p>
+    @if (activeDoc()) {
+      <span class="badge info">v1.1.0</span>
+      <h1 style="color: var(--mat-sys-primary)">{{ activeDoc()?.title }}</h1>
+      <p class="lead">{{ activeDoc()?.body }}</p>
 
-    <div class="mock-code-block">
-      <code>
-        <span style="color: var(--mat-sys-outline)"
-          >// Note how the tree perfectly inherits M3 container colors on
-          hover!</span
-        ><br />
-        npm install ng-material-preferences
-      </code>
-    </div>
+      @if (activeDoc()?.code) {
+        <div class="mock-code-block">
+          <code>{{ activeDoc()?.code }}</code>
+        </div>
+      }
+    } @else {
+      <!-- Empty State -->
+      <div class="empty-state">
+        <mat-icon
+          style="
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: var(--mat-sys-outline-variant);
+          "
+          >menu_book</mat-icon
+        >
+        <p>Select an item from the tree on the left to explore the guides.</p>
+      </div>
+    }
   </article>
 </div>

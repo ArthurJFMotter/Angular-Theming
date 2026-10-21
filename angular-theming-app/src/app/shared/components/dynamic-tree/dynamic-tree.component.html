@@ -1,0 +1,49 @@
+<mat-tree #tree [dataSource]="data" [childrenAccessor]="childrenAccessor">
+  <!-- LEAF NODE (No Children) -->
+  <mat-tree-node
+    *matTreeNodeDef="let node"
+    matTreeNodePadding
+    class="tree-node"
+    [class.active-node]="activeNodeId() === node.id"
+    (click)="selectNode(node)"
+    matRipple
+  >
+    <!-- Invisible button to maintain alignment with parent nodes -->
+    <button
+      mat-icon-button
+      disabled
+      style="visibility: hidden; width: 40px"
+    ></button>
+    <span class="node-text">{{ node.label }}</span>
+  </mat-tree-node>
+
+  <!-- EXPANDABLE NODE (Has Children) -->
+  <mat-tree-node
+    *matTreeNodeDef="let node; when: hasChild"
+    matTreeNodePadding
+    class="tree-node"
+    [class.active-node]="activeNodeId() === node.id"
+    matRipple
+  >
+    <button
+      mat-icon-button
+      matTreeNodeToggle
+      [attr.aria-label]="'Toggle ' + node.label"
+    >
+      <mat-icon
+        class="mat-tree-node-toggle-icon"
+        [class.expanded]="tree.isExpanded(node)"
+      >
+        chevron_right
+      </mat-icon>
+    </button>
+
+    <!-- NODE ROW -->
+    <div class="node-content" (click)="selectNode(node); tree.toggle(node)">
+      @if (node.icon) {
+        <mat-icon color="primary" class="node-icon">{{ node.icon }}</mat-icon>
+      }
+      <strong class="node-text">{{ node.label }}</strong>
+    </div>
+  </mat-tree-node>
+</mat-tree>
