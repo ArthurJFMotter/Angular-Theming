@@ -1,55 +1,60 @@
 /// Shape (corner radius) curve for interactive controls.
+///
+/// Material 20+ components read shape TOKENS (`--mat-button-*-container-shape`,
+/// `--mat-chip-container-shape-radius`, …) for the host AND its inner parts
+/// (ripple, state layer, focus ring), so setting the token is enough: no
+/// `border-radius !important` and no selector lists to maintain.
+///
+/// Defaults are declared inside `:where(:root)` (specificity 0), so any override
+/// by the consumer (on `html`, `:root`, a class or the element itself) wins
+/// without a fight. The tokens point at the same `--mat-sys-corner-*` scale the
+/// corner-radius control writes, so they follow it live.
+///
+/// "Material 19" lines use the pre-v20 token names (verified against 19.2.19);
+/// delete them when the minimum supported Material is 20.
 
 @mixin button-shapes() {
-  .mat-mdc-button,
-  .mat-mdc-raised-button,
-  .mat-mdc-unelevated-button,
-  .mat-mdc-outlined-button {
-    border-radius: var(--mat-sys-corner-extra-large) !important;
+  @at-root :where(:root) {
+    --mat-button-filled-container-shape: var(--mat-sys-corner-extra-large);
+    --mat-button-text-container-shape: var(--mat-sys-corner-extra-large);
+    --mat-button-outlined-container-shape: var(--mat-sys-corner-extra-large);
+    --mat-button-protected-container-shape: var(--mat-sys-corner-extra-large);
+    --mat-button-tonal-container-shape: var(--mat-sys-corner-extra-large);
 
-    --mdc-text-button-container-shape: var(--mat-sys-corner-extra-large);
+    // Material 19
     --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-text-button-container-shape: var(--mat-sys-corner-extra-large);
     --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-elevated-button-container-shape: var(--mat-sys-corner-extra-large);
+    --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-large);
   }
 }
 
+/// @deprecated Intentionally empty. Material's own FAB defaults (large, mini =
+/// medium, extended = large) already use the corner scale and match the M3
+/// spec, so there is nothing to override. Kept so existing `@include`s keep working.
 @mixin fab-shapes() {
-  .mat-mdc-fab,
-  .mat-mdc-mini-fab {
-    border-radius: var(--mat-sys-corner-large) !important;
-
-    --mdc-fab-container-shape: var(--mat-sys-corner-large);
-    --mdc-fab-small-container-shape: var(--mat-sys-corner-medium);
-    --mdc-fab-large-container-shape: var(--mat-sys-corner-extra-large);
-  }
+  // deprecated style
 }
 
 @mixin chip-shapes() {
-  .mat-mdc-chip,
-  .mat-mdc-basic-chip,
-  .mat-mdc-chip-option,
-  .mat-mdc-chip-row,
-  .mdc-evolution-chip,
-  .mdc-evolution-chip__cell,
-  .mdc-evolution-chip__action,
-  .mdc-evolution-chip__action::before,
-  .mdc-evolution-chip__action::after,
-  .mat-mdc-chip-focus-overlay,
-  .mdc-evolution-chip__ripple {
-    border-radius: var(--mat-sys-corner-extra-large) !important;
+  @at-root :where(:root) {
+    --mat-chip-container-shape-radius: var(--mat-sys-corner-extra-large);
 
-    --mdc-chip-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-chip-elevated-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-chip-flat-container-shape: var(--mat-sys-corner-extra-large);
+    // Material 19
+    --mdc-chip-container-shape-radius: var(--mat-sys-corner-extra-large);
   }
 }
 
+/// Button toggles need no radius override: Material's default
+/// (`--mat-sys-corner-extra-large`) is the same curve as the buttons and follows
+/// the corner-radius control. The legacy appearance has no default shape in M3
+/// (its token is null), so it follows the standard one.
 @mixin toggle-group-shapes() {
-  .mat-button-toggle-group {
-    border-radius: var(--mat-sys-corner-extra-large) !important;
-    --mat-standard-button-toggle-shape: var(--mat-sys-corner-extra-large);
+  @at-root :where(.mat-button-toggle-group, .mat-button-toggle-standalone) {
+    --mat-button-toggle-legacy-shape: var(
+      --mat-button-toggle-shape,
+      var(--mat-sys-corner-extra-large)
+    );
   }
 }
 

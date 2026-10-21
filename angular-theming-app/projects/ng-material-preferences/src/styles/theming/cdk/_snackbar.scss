@@ -50,10 +50,16 @@ $-default-roles: success, warning, info, error;
   // `snackbar-wide` (no role colors set) keeps the default look instead of
   // collapsing to a transparent surface.
   .mat-mdc-snack-bar-container[class*="snackbar-"] {
-    --_snackbar-text: var(--mdc-snackbar-supporting-text-color, var(--mat-sys-inverse-on-surface));
+    --_snackbar-text: var(
+      --mdc-snackbar-supporting-text-color,
+      var(--mat-sys-inverse-on-surface)
+    );
 
     .mdc-snackbar__surface {
-      background-color: var(--mdc-snackbar-container-color, var(--mat-sys-inverse-surface)) !important;
+      background-color: var(
+        --mdc-snackbar-container-color,
+        var(--mat-sys-inverse-surface)
+      ) !important;
       color: var(--_snackbar-text) !important;
     }
 
@@ -64,8 +70,8 @@ $-default-roles: success, warning, info, error;
 
     .mat-mdc-button,
     .action-btn {
-      --mat-button-text-label-text-color: var(--_snackbar-text);
-      --mat-text-button-state-layer-color: var(--_snackbar-text);
+      --mat-button-text-state-layer-color: var(--_snackbar-text);
+      --mat-text-button-state-layer-color: var(--_snackbar-text); // Material 19
       color: var(--_snackbar-text) !important;
     }
 

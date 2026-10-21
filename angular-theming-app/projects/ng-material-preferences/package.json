@@ -13,7 +13,11 @@
   },
   "sideEffects": false,
   "exports": {
-  "./styles/theming": { "sass": "./styles/_theming.scss" },
-  "./src/styles/theming": { "sass": "./src/styles/_theming.scss" }
-}
+    "./styles/theming": {
+      "sass": "./styles/_theming.scss"
+    },
+    "./src/styles/theming": {
+      "sass": "./src/styles/_theming.scss"
+    }
+  }
 }

@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "audit:tokens": "node projects/ng-material-preferences/scripts/audit-material-tokens.mjs"
   },
   "private": true,
   "dependencies": {
@@ -37,6 +38,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^20.3.0",
+    "sass": "^1.106.0",
     "typescript": "~5.9.3"
   }
 }
