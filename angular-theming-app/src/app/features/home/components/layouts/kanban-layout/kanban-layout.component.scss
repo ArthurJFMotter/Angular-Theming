@@ -1,17 +1,17 @@
 @use "../layouts-shared.scss";
 
-/* Kanban Board */
-.kanban-board { 
-  display: grid; 
-  /* Shrinks to 100% width automatically on mobile */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); 
-  gap: 24px; 
-  align-items: start; 
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  align-items: start;
 }
+
 .kanban-col {
   background: var(--mat-sys-surface-container-low);
   border-radius: var(--mat-sys-corner-large);
   padding: 16px;
+
   h4 {
     margin: 0 0 16px;
     font-size: 0.85rem;
@@ -19,18 +19,58 @@
     text-transform: uppercase;
   }
 }
-.kanban-card {
-  padding: 16px;
-  margin-bottom: 12px;
+
+.kanban-drop-list {
+  /* Ensure empty columns still have a drop target area! */
+  min-height: 100px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.kanban-card {
+    background-color: var(--mat-sys-surface-container);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: grab; /* Shows the user they can grab it */
+
   p {
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.4;
   }
+  .badge {
+    align-self: flex-start;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
 }
-.kanban-card .badge {
-  align-self: flex-start;
+
+/* --- CDK DRAG & DROP CUSTOMIZATION --- */
+
+/* The placeholder left behind when you pick up a card */
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  border: 2px dashed var(--mat-sys-outline);
+  background: transparent;
+  box-shadow: none !important;
+}
+
+/* The card actively being dragged (Elevate it!) */
+.cdk-drag-preview {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
+  border-radius: var(--mat-sys-corner-medium);
+  background: var(--mat-sys-surface-container-highest);
+}
+
+/* The animation when a card drops into its final slot or shifts out of the way */
+.cdk-drag-animating,
+.kanban-drop-list.cdk-drop-list-dragging
+  .kanban-card:not(.cdk-drag-placeholder) {
+  transition: transform calc(250ms * var(--theme-motion-scale, 1))
+    cubic-bezier(0, 0, 0.2, 1);
 }
