@@ -129,7 +129,9 @@
         (sectionScrolled)="activeSection.set($event)"
       ></app-elements-view>
     } @else {
-      <app-layouts-view></app-layouts-view>
+      <app-layouts-view 
+        (sectionScrolled)="activeLayoutSection.set($event)"
+      ></app-layouts-view>
     }
   </main>
 </div>

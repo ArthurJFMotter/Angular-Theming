@@ -1,53 +1,142 @@
-<div class="mobile-frame-wrapper">
-  <div class="mobile-device">
-    <mat-toolbar  style="height: 56px"
-      ><mat-icon>menu</mat-icon
-      ><span style="font-size: 1rem; margin-left: 12px"
-        >Inbox</span
-      ></mat-toolbar
+<!-- Mobile Frame -->
+@if (!isRealMobile()) {
+  <div class="frame-controls">
+    <button
+      mat-stroked-button
+      [disabled]="isRotating()"
+      (click)="toggleOrientation()"
     >
-    <div class="mobile-content">
-      <div class="mock-list-item">
-        <div
-          class="avatar"
-          style="
-            background: var(--mat-sys-tertiary-container);
-            color: var(--mat-sys-on-tertiary-container);
-          "
-        >
-          S
+      <mat-icon>screen_rotation</mat-icon>
+      Rotate Device
+    </button>
+  </div>
+
+  <div class="mobile-frame-wrapper">
+    <div
+      class="mobile-device"
+      [class.is-landscape]="isHorizontal()"
+      [class.is-rotating]="isRotating()"
+    >
+      <!-- Spinner overlay while rotating -->
+      @if (isRotating()) {
+        <div class="rotate-spinner">
+          <mat-spinner diameter="48"></mat-spinner>
         </div>
-        <div class="text">
-          <strong>Sarah Jenkins</strong><br /><small
-            >Meeting notes from Tuesday</small
+      }
+
+      <!-- Mobile screen content -->
+      <div class="device-content" [attr.aria-hidden]="isRotating()">
+        <!-- Header -->
+        <mat-toolbar color="primary" class="mobile-toolbar">
+          <mat-icon>menu</mat-icon>
+          <span style="font-size: 1rem; margin-left: 12px">Inbox</span>
+        </mat-toolbar>
+
+        <!-- Content -->
+        <div class="mobile-content">
+          <div class="mock-list-item">
+            <div
+              class="avatar"
+              style="
+                background: var(--mat-sys-tertiary-container);
+                color: var(--mat-sys-on-tertiary-container);
+              "
+            >
+              S
+            </div>
+            <div class="text">
+              <strong>Sarah Jenkins</strong><br /><small
+                >Meeting notes from Tuesday</small
+              >
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="mock-list-item">
+            <div
+              class="avatar"
+              style="
+                background: var(--mat-sys-secondary-container);
+                color: var(--mat-sys-on-secondary-container);
+              "
+            >
+              M
+            </div>
+            <div class="text">
+              <strong>Marketing Team</strong><br /><small
+                >New branding assets approved</small
+              >
+            </div>
+          </div>
+
+          <button
+            mat-fab
+            class="btn-tertiary mobile-fab"
+            (click)="sheetOpen.set(true)"
           >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="mock-bottom-nav">
+          <mat-icon class="theme-primary">mail</mat-icon>
+          <mat-icon>videocam</mat-icon>
+          <mat-icon>group</mat-icon>
         </div>
       </div>
-      <mat-divider></mat-divider>
-      <div class="mock-list-item">
-        <div
-          class="avatar"
-          style="
-            background: var(--mat-sys-secondary-container);
-            color: var(--mat-sys-on-secondary-container);
-          "
-        >
-          M
+
+      <!-- MOCK BOTTOM SHEET -->
+      @if (!isRotating()) {
+        @if (sheetOpen()) {
+          <div class="mock-backdrop" (click)="sheetOpen.set(false)"></div>
+        }
+
+        <div class="mock-bottom-sheet" [class.open]="sheetOpen()">
+          <div class="sheet-handle"></div>
+          <h3>Compose</h3>
+          <mat-nav-list>
+            <a mat-list-item (click)="sheetOpen.set(false)"
+              ><mat-icon matListItemIcon>mail</mat-icon> New Email</a
+            >
+            <a mat-list-item (click)="sheetOpen.set(false)"
+              ><mat-icon matListItemIcon>group</mat-icon> New Group Chat</a
+            >
+            <a mat-list-item (click)="sheetOpen.set(false)"
+              ><mat-icon matListItemIcon>schedule</mat-icon> Schedule Send</a
+            >
+          </mat-nav-list>
         </div>
-        <div class="text">
-          <strong>Marketing Team</strong><br /><small
-            >New branding assets approved</small
-          >
-        </div>
-      </div>
-      <button mat-fab class="mobile-fab">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </div>
-    <div class="mock-bottom-nav">
-      <mat-icon >mail</mat-icon>
-      <mat-icon>videocam</mat-icon>
-      <mat-icon>group</mat-icon>
+      }
     </div>
   </div>
-</div>
+}
+
+@if (isRealMobile()) {
+  <div class="real-device-test">
+    <strong class="hint-title"> Mobile viewport detected </strong>
+    <p class="hint">Tap the button below to open the bottom sheet.</p>
+    <button mat-fab extended (click)="sheetOpen.set(true)">
+      <mat-icon>edit</mat-icon>
+      Compose
+    </button>
+
+    @if (sheetOpen()) {
+      <div class="mock-backdrop" (click)="sheetOpen.set(false)"></div>
+    }
+    <div class="mock-bottom-sheet" [class.open]="sheetOpen()">
+      <div class="sheet-handle"></div>
+      <h3>Compose</h3>
+      <mat-nav-list>
+        <a mat-list-item (click)="sheetOpen.set(false)"
+          ><mat-icon matListItemIcon>mail</mat-icon> New Email</a
+        >
+        <a mat-list-item (click)="sheetOpen.set(false)"
+          ><mat-icon matListItemIcon>group</mat-icon> New Group Chat</a
+        >
+        <a mat-list-item (click)="sheetOpen.set(false)"
+          ><mat-icon matListItemIcon>schedule</mat-icon> Schedule Send</a
+        >
+      </mat-nav-list>
+    </div>
+  </div>
+}

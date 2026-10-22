@@ -1,17 +1,25 @@
 @use "../layouts-shared.scss";
 
-/* --- Mobile Frame --- */
+.frame-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
 .mobile-frame-wrapper {
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 695px;
+
   width: 100%;
+  overflow: hidden;
 }
+
 .mobile-device {
   width: 375px;
-  max-width: 100%;
-  box-sizing: border-box;
-
   height: 667px;
+  max-width: 100%;
   border: 8px solid #222;
   border-radius: 36px;
   overflow: hidden;
@@ -20,18 +28,84 @@
   background: var(--mat-sys-background);
   position: relative;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+
+  &.is-landscape {
+    width: 667px;
+    height: 375px;
+  }
+
+  &.is-rotating {
+    animation: rotate-device calc(0.6s * var(--theme-motion-scale, 1))
+      cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
 }
+
+@keyframes rotate-device {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(45deg) scale(0.85);
+  }
+  100% {
+    transform: rotate(90deg) scale(1);
+  }
+}
+
+/* Wrapper that holds all the screen content so we can fade it in/out */
+.device-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  opacity: 1;
+  transition: opacity calc(0.15s * var(--theme-motion-scale, 1)) ease;
+}
+
+.is-rotating .device-content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Spinner overlay shown during the rotate animation */
+.rotate-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 40;
+  animation: counter-rotate-device calc(0.6s * var(--theme-motion-scale, 1))
+    cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes counter-rotate-device {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+}
+
+.mobile-toolbar {
+  height: 56px;
+  border-radius: 0;
+}
+
 .mobile-content {
   flex: 1;
   padding: 0;
   overflow-y: auto;
+  position: relative;
+  min-height: 0;
 }
+
 .mock-list-item {
   display: flex;
   gap: 16px;
   padding: 16px;
   align-items: center;
 }
+
 .text {
   line-height: 1.4;
   strong {
@@ -43,11 +117,14 @@
     font-size: 0.85rem;
   }
 }
+
 .mobile-fab {
   position: absolute;
-  bottom: 80px;
+  bottom: 16px;
   right: 16px;
+  z-index: 10;
 }
+
 .mock-bottom-nav {
   height: 64px;
   background: var(--mat-sys-surface-container);
@@ -58,7 +135,92 @@
   mat-icon {
     color: var(--mat-sys-on-surface-variant);
   }
-  mat-icon[color="primary"] {
-    color: var(--mat-sys-primary);
+}
+
+.mock-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  z-index: 20;
+  animation: fadeIn calc(0.2s * var(--theme-motion-scale, 1)) ease forwards;
+}
+
+.mock-bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--mat-sys-surface-container-low);
+  z-index: 30;
+  padding: 16px 0;
+  border-top-left-radius: var(--mat-sys-corner-extra-large);
+  border-top-right-radius: var(--mat-sys-corner-extra-large);
+  transform: translateY(100%);
+  transition: transform calc(0.3s * var(--theme-motion-scale, 1))
+    cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.open {
+    transform: translateY(0);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  h3 {
+    margin: 0 24px 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface);
+  }
+}
+
+.sheet-handle {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--mat-sys-outline-variant);
+  margin: 0 auto 16px;
+}
+
+/* ---- Real mobile device fallback ---- */
+.real-device-test {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 16px;
+
+  .hint-title {
+    color: var(--mat-sys-on-surface);
+    text-align: center;
+    margin: 0;
+  }
+
+  .hint {
+    color: var(--mat-sys-on-surface-variant);
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Sheet anchored to the viewport on real mobile */
+  .mock-bottom-sheet {
+    position: fixed;
+  }
+  .mock-backdrop {
+    position: fixed;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-device.is-rotating {
+    animation: none;
   }
 }
