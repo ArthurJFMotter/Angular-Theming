@@ -21,7 +21,6 @@
 }
 
 .kanban-drop-list {
-  /* Ensure empty columns still have a drop target area! */
   min-height: 100px;
   display: flex;
   flex-direction: column;
@@ -29,12 +28,18 @@
 }
 
 .kanban-card {
-    background-color: var(--mat-sys-surface-container);
+  background-color: var(--mat-sys-surface-container);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  cursor: grab; /* Shows the user they can grab it */
+  transition: box-shadow calc(0.2s * var(--theme-motion-scale, 1)) ease;
+
+  &:hover {
+    cursor: grab;
+    border: 1px solid var(--mat-sys-outline);
+    box-shadow: 0 2px 4px var(--mat-sys-outline-variant);
+  }
 
   p {
     margin: 0;
@@ -52,7 +57,7 @@
 
 /* --- CDK DRAG & DROP CUSTOMIZATION --- */
 
-/* The placeholder left behind when you pick up a card */
+/* placeholder */
 .cdk-drag-placeholder {
   opacity: 0.3;
   border: 2px dashed var(--mat-sys-outline);
@@ -60,14 +65,14 @@
   box-shadow: none !important;
 }
 
-/* The card actively being dragged (Elevate it!) */
+/* drag condition */
 .cdk-drag-preview {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
   border-radius: var(--mat-sys-corner-medium);
   background: var(--mat-sys-surface-container-highest);
 }
 
-/* The animation when a card drops into its final slot or shifts out of the way */
+/* drag animation */
 .cdk-drag-animating,
 .kanban-drop-list.cdk-drop-list-dragging
   .kanban-card:not(.cdk-drag-placeholder) {
