@@ -48,6 +48,16 @@
         </button>
         <button
           type="button"
+          [class.active]="activeSection() === 'overlays'"
+          [attr.aria-current]="
+            activeSection() === 'overlays' ? 'location' : null
+          "
+          (click)="scrollTo('overlays')"
+        >
+          Overlays
+        </button>
+        <button
+          type="button"
           [class.active]="activeSection() === 'feedback'"
           [attr.aria-current]="
             activeSection() === 'feedback' ? 'location' : null
@@ -129,7 +139,7 @@
         (sectionScrolled)="activeSection.set($event)"
       ></app-elements-view>
     } @else {
-      <app-layouts-view 
+      <app-layouts-view
         (sectionScrolled)="activeLayoutSection.set($event)"
       ></app-layouts-view>
     }

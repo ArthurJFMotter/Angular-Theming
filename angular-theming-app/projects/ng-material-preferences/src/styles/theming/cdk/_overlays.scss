@@ -1,10 +1,15 @@
 /// Corner radius for floating surfaces (dialog, bottom sheet).
+///
+/// Set through Material's shape tokens, declared in `:where(:root)` (specificity 0):
+/// no `border-radius !important`, no dependence on internal class names, and any
+/// consumer override wins. They point at the `--mat-sys-corner-*` scale, so the
+/// corner-radius control reaches them.
 @mixin overlay-overrides() {
-  .mat-mdc-dialog-container .mdc-dialog__surface {
-    border-radius: var(--mat-sys-corner-large) !important;
-  }
-  .mat-bottom-sheet-container {
-    border-top-left-radius: var(--mat-sys-corner-extra-large) !important;
-    border-top-right-radius: var(--mat-sys-corner-extra-large) !important;
+  @at-root :where(:root) {
+    --mat-dialog-container-shape: var(--mat-sys-corner-large);
+    --mat-bottom-sheet-container-shape: var(--mat-sys-corner-extra-large);
+
+    // Material 19
+    --mdc-dialog-container-shape: var(--mat-sys-corner-large);
   }
 }

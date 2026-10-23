@@ -33,7 +33,7 @@
 /// medium, extended = large) already use the corner scale and match the M3
 /// spec, so there is nothing to override. Kept so existing `@include`s keep working.
 @mixin fab-shapes() {
-  // deprecated style
+  // Deprecated
 }
 
 @mixin chip-shapes() {
@@ -58,9 +58,22 @@
   }
 }
 
+/// Select panel. Unlike the menu, autocomplete and timepicker panels (which already
+/// fall back to the small corner and follow the corner-radius control), Material
+/// hard-codes `border-radius: 4px` on the select panel and has no token for it, so
+/// it ignored the control. The selector needs more specificity than Material's own
+/// `div.mat-mdc-select-panel`; Material's flat-top rule for panels that open BELOW
+/// the field is more specific still, so that attached look is kept.
+@mixin panel-shapes() {
+  .cdk-overlay-pane .mat-mdc-select-panel {
+    border-radius: var(--mat-sys-corner-extra-small);
+  }
+}
+
 @mixin shape-overrides() {
   @include button-shapes();
   @include fab-shapes();
   @include chip-shapes();
   @include toggle-group-shapes();
+  @include panel-shapes();
 }

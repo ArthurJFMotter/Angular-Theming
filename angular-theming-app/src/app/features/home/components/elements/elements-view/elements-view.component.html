@@ -1,4 +1,4 @@
- <app-palette-strip></app-palette-strip>
+<app-palette-strip></app-palette-strip>
  
 <section id="actions" #spyTarget class="canvas-section">
   <h2 class="section-title">Actions</h2>
@@ -20,6 +20,15 @@
     <app-surfaces-section />
   } @placeholder {
     <div class="loading-placeholder">Loading Surfaces...</div>
+  }
+</section>
+<mat-divider></mat-divider>
+<section id="overlays" #spyTarget class="canvas-section">
+  <h2 class="section-title">Overlays</h2>
+  @defer (on viewport) {
+    <app-overlays-section />
+  } @placeholder {
+    <div class="loading-placeholder">Loading Overlays...</div>
   }
 </section>
 <mat-divider></mat-divider>

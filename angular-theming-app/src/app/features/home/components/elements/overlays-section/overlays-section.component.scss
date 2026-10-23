@@ -1,0 +1,41 @@
+@use "../../sandbox-shared.scss";
+
+/*
+  Same matrix styles as the other sections (copied from home.component.scss).
+  If you keep them in _sandbox-shared.scss, replace this file's contents with the
+  same @use line the other section stylesheets have, and delete the copy below.
+*/
+.state-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background: var(--mat-sys-surface-container-lowest);
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: var(--mat-sys-corner-large);
+  padding: 32px;
+
+  .matrix-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .row-label {
+      width: 120px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mat-sys-on-surface-variant);
+    }
+  }
+
+  .inputs-row {
+    align-items: flex-start;
+    gap: 24px;
+    mat-form-field {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+}

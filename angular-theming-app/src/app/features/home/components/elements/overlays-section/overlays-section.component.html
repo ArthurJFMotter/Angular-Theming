@@ -1,0 +1,162 @@
+<div class="state-matrix">
+  <!-- DIALOGS -->
+  <div class="matrix-row">
+    <span class="row-label">Dialogs</span>
+    <button mat-stroked-button (click)="openAlert()">Alert</button>
+    <button mat-stroked-button (click)="openConfirm()">Confirm</button>
+    <button mat-stroked-button class="btn-error" (click)="openDanger()">
+      Danger
+    </button>
+    <button mat-flat-button (click)="openWithControls()">With controls</button>
+  </div>
+
+  <!-- BOTTOM SHEET -->
+  <div class="matrix-row">
+    <span class="row-label">Bottom sheet</span>
+    <button mat-stroked-button (click)="openSheet()">Open sheet</button>
+  </div>
+
+  <!-- MENUS (with a submenu: two stacked panels) -->
+  <div class="matrix-row">
+    <span class="row-label">Menus</span>
+    <button mat-stroked-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_vert</mat-icon>
+      Actions menu
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>content_copy</mat-icon>
+        <span>Duplicate</span>
+      </button>
+      <button mat-menu-item [matMenuTriggerFor]="moveMenu">
+        <mat-icon>drive_file_move</mat-icon>
+        <span>Move to</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item disabled>
+        <mat-icon>lock</mat-icon>
+        <span>Locked</span>
+      </button>
+    </mat-menu>
+    <mat-menu #moveMenu="matMenu">
+      <button mat-menu-item>Documents</button>
+      <button mat-menu-item>Archive</button>
+    </mat-menu>
+  </div>
+
+  <!-- TOOLTIPS -->
+  <div class="matrix-row">
+    <span class="row-label">Tooltips</span>
+    <button
+      mat-stroked-button
+      matTooltip="Above the button"
+      matTooltipPosition="above"
+    >
+      Above
+    </button>
+    <button
+      mat-stroked-button
+      matTooltip="Below the button"
+      matTooltipPosition="below"
+    >
+      Below
+    </button>
+    <button
+      mat-stroked-button
+      matTooltip="A longer tooltip, to show how the text wraps inside the surface."
+      matTooltipPosition="right"
+    >
+      Long text
+    </button>
+  </div>
+
+  <!-- SELECT + AUTOCOMPLETE PANELS -->
+  <div class="matrix-row inputs-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Select</mat-label>
+      <mat-select value="angular">
+        <mat-optgroup label="Core">
+          @for (o of coreOptions; track o.value) {
+            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+          }
+        </mat-optgroup>
+        <mat-optgroup label="Tooling">
+          @for (o of toolingOptions; track o.value) {
+            <mat-option [value]="o.value" [disabled]="o.disabled">{{
+              o.label
+            }}</mat-option>
+          }
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Multiple</mat-label>
+      <mat-select multiple [value]="multipleDefault">
+        @for (o of coreOptions; track o.value) {
+          <mat-option [value]="o.value">{{ o.label }}</mat-option>
+        }
+        @for (o of toolingOptions; track o.value) {
+          <mat-option [value]="o.value" [disabled]="o.disabled">{{
+            o.label
+          }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Autocomplete</mat-label>
+      <input
+        matInput
+        [matAutocomplete]="auto"
+        (input)="onQuery($event)"
+        placeholder="Type to filter"
+      />
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (label of suggestions(); track label) {
+          <mat-option [value]="label">{{ label }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+
+  <!-- DATE + TIME PICKERS -->
+  <div class="matrix-row inputs-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Date</mat-label>
+      <input matInput [matDatepicker]="datePicker" />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="datePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Date range</mat-label>
+      <mat-date-range-input [rangePicker]="rangePicker">
+        <input matStartDate placeholder="Start" />
+        <input matEndDate placeholder="End" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="rangePicker"
+      ></mat-datepicker-toggle>
+      <mat-date-range-picker #rangePicker></mat-date-range-picker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Time</mat-label>
+      <input matInput [matTimepicker]="timePicker" />
+      <mat-timepicker-toggle
+        matIconSuffix
+        [for]="timePicker"
+      ></mat-timepicker-toggle>
+      <mat-timepicker #timePicker></mat-timepicker>
+    </mat-form-field>
+  </div>
+</div>

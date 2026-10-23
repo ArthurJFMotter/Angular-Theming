@@ -9,6 +9,7 @@
         "--mat-outlined-button-state-layer-color": "--mat-button-outlined-state-layer-color",
         "--mat-text-button-state-layer-color": "--mat-button-text-state-layer-color",
         "--mdc-chip-container-shape-radius": "--mat-chip-container-shape-radius",
+        "--mdc-dialog-container-shape": "--mat-dialog-container-shape",
         "--mdc-fab-container-color": "--mat-fab-container-color",
         "--mdc-fab-small-container-color": "--mat-fab-small-container-color",
         "--mdc-filled-button-container-color": "--mat-button-filled-container-color",

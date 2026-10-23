@@ -13,6 +13,7 @@ import { ActionsSectionComponent } from '../actions-section/actions-section.comp
 import { FeedbackSectionComponent } from '../feedback-section/feedback-section.component';
 import { InputsSectionComponent } from '../inputs-section/inputs-section.component';
 import { SurfacesSectionComponent } from '../surfaces-section/surfaces-section.component';
+import { OverlaysSectionComponent } from '../overlays-section/overlays-section.component';
 import { PaletteStripComponent } from '../palette-strip/palette-strip.component';
 
 @Component({
@@ -23,6 +24,7 @@ import { PaletteStripComponent } from '../palette-strip/palette-strip.component'
     ActionsSectionComponent,
     InputsSectionComponent,
     SurfacesSectionComponent,
+    OverlaysSectionComponent,
     FeedbackSectionComponent,
     PaletteStripComponent,
   ],
