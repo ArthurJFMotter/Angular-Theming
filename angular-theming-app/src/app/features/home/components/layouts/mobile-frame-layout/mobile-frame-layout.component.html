@@ -28,54 +28,87 @@
       <div class="device-content" [attr.aria-hidden]="isRotating()">
         <!-- Header -->
         <mat-toolbar color="primary" class="mobile-toolbar">
-          <mat-icon>menu</mat-icon>
+          <button mat-icon-button (click)="mobileDrawer.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
           <span style="font-size: 1rem; margin-left: 12px">Inbox</span>
         </mat-toolbar>
 
-        <!-- Content -->
-        <div class="mobile-content">
-          <div class="mock-list-item">
-            <div
-              class="avatar"
-              style="
-                background: var(--mat-sys-tertiary-container);
-                color: var(--mat-sys-on-tertiary-container);
-              "
-            >
-              S
-            </div>
-            <div class="text">
-              <strong>Sarah Jenkins</strong><br /><small
-                >Meeting notes from Tuesday</small
+        <!-- Sidenav Container -->
+        <mat-sidenav-container class="mobile-sidenav-container" [hasBackdrop]="true">
+          <!-- Hidden Side Menu -->
+          <mat-sidenav #mobileDrawer mode="over" class="mobile-drawer">
+            <div class="drawer-header">
+              <div
+                class="avatar"
+                style="
+                  background: var(--mat-sys-primary);
+                  color: var(--mat-sys-on-primary);
+                "
               >
+                A
+              </div>
+              <strong>arthur&#64;example.com</strong>
             </div>
-          </div>
-          <mat-divider></mat-divider>
-          <div class="mock-list-item">
-            <div
-              class="avatar"
-              style="
-                background: var(--mat-sys-secondary-container);
-                color: var(--mat-sys-on-secondary-container);
-              "
-            >
-              M
-            </div>
-            <div class="text">
-              <strong>Marketing Team</strong><br /><small
-                >New branding assets approved</small
+            <mat-divider></mat-divider>
+            <mat-nav-list>
+              <a mat-list-item class="active-route"
+                ><mat-icon matListItemIcon>inbox</mat-icon> Inbox</a
               >
-            </div>
-          </div>
+              <a mat-list-item
+                ><mat-icon matListItemIcon>send</mat-icon> Sent</a
+              >
+              <a mat-list-item
+                ><mat-icon matListItemIcon>delete</mat-icon> Trash</a
+              >
+            </mat-nav-list>
+          </mat-sidenav>
 
-          <button
-            mat-fab
-            class="btn-tertiary mobile-fab"
-            (click)="sheetOpen.set(true)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-        </div>
+          <!-- Main Mobile Content -->
+          <mat-sidenav-content class="mobile-content">
+            <div class="mock-list-item">
+              <div
+                class="avatar"
+                style="
+                  background: var(--mat-sys-tertiary-container);
+                  color: var(--mat-sys-on-tertiary-container);
+                "
+              >
+                S
+              </div>
+              <div class="text">
+                <strong>Sarah Jenkins</strong><br /><small
+                  >Meeting notes from Tuesday</small
+                >
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="mock-list-item">
+              <div
+                class="avatar"
+                style="
+                  background: var(--mat-sys-secondary-container);
+                  color: var(--mat-sys-on-secondary-container);
+                "
+              >
+                M
+              </div>
+              <div class="text">
+                <strong>Marketing Team</strong><br /><small
+                  >New branding assets approved</small
+                >
+              </div>
+            </div>
+
+            <button
+              mat-fab
+              class="btn-tertiary mobile-fab"
+              (click)="sheetOpen.set(true)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </mat-sidenav-content>
+        </mat-sidenav-container>
 
         <!-- Bottom Nav -->
         <div class="mock-bottom-nav">

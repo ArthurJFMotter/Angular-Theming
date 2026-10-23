@@ -11,9 +11,8 @@
   justify-content: center;
   align-items: center;
   min-height: 695px;
-
   width: 100%;
-  overflow: hidden;
+  padding: 32px;
 }
 
 .mobile-device {
@@ -22,12 +21,13 @@
   max-width: 100%;
   border: 8px solid #222;
   border-radius: 36px;
-  overflow: hidden;
+  overflow: hidden; /* Keeps the inner toolbar from poking out the top */
   display: flex;
   flex-direction: column;
   background: var(--mat-sys-background);
   position: relative;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
 
   &.is-landscape {
     width: 667px;
@@ -52,7 +52,6 @@
   }
 }
 
-/* Wrapper that holds all the screen content so we can fade it in/out */
 .device-content {
   display: flex;
   flex-direction: column;
@@ -89,6 +88,44 @@
 .mobile-toolbar {
   height: 56px;
   border-radius: 0;
+}
+
+.mobile-sidenav-container {
+  flex: 1;
+  background: var(--mat-sys-background);
+
+  ::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+  }
+}
+
+.mobile-drawer {
+  width: 280px;
+  max-width: 80%;
+  background: var(--mat-sys-surface-container-low);
+
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+
+  .drawer-header {
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    strong {
+      color: var(--mat-sys-on-surface);
+      font-size: 0.9rem;
+    }
+  }
+
+  .active-route {
+    background: var(--mat-sys-secondary-container);
+    color: var(--mat-sys-on-secondary-container);
+    mat-icon {
+      color: inherit !important;
+    }
+  }
 }
 
 .mobile-content {

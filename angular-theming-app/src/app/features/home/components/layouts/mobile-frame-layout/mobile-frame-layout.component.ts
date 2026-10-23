@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
@@ -21,6 +22,7 @@ import { map } from 'rxjs/operators';
     MatDividerModule,
     MatListModule,
     MatProgressSpinnerModule,
+    MatSidenavModule
   ],
   templateUrl: './mobile-frame-layout.component.html',
   styleUrl: './mobile-frame-layout.component.scss',
