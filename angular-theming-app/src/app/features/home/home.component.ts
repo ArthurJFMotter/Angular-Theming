@@ -1,36 +1,31 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { PreferencesService } from 'ng-material-preferences';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { ElementsViewComponent } from './components/elements/elements-view/elements-view.component';
 import { LayoutsViewComponent } from './components/layouts/layouts-view/layouts-view.component';
+import { SandboxNavComponent } from './components/navigation/sandbox-nav/sandbox-nav.component';
+import { ELEMENT_SECTIONS, LAYOUT_SECTIONS } from './data/sandbox.data';
+import { SandboxViewMode } from './models/sandbox.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush, 
-  imports: [CommonModule, MatButtonToggleModule, ElementsViewComponent, LayoutsViewComponent],
-  templateUrl: './home.component.html',
+  imports: [SandboxNavComponent, ElementsViewComponent, LayoutsViewComponent],
+    templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  readonly prefs = inject(PreferencesService);
-  
-  readonly viewMode = signal<'elements' | 'layouts'>('elements');
-  readonly activeSection = signal<string>('actions');
-  readonly activeLayoutSection = signal<string>('dashboard');
+  readonly elements = ELEMENT_SECTIONS;
+  readonly layouts = LAYOUT_SECTIONS;
 
-  scrollToLayout(id: string) {
-    this.activeLayoutSection.set(id);
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: this.prefs.motionScale() === 0 ? 'instant' : 'smooth', block: 'start' });
+  readonly viewMode = signal<SandboxViewMode>('elements');
+  readonly activeSectionId = signal<string>(this.elements[0].id);
+
+  currentSections() {
+    return this.viewMode() === 'elements' ? this.elements : this.layouts;
   }
 
-  scrollTo(id: string) {
-    this.activeSection.set(id);
-    document.getElementById(id)?.scrollIntoView({ 
-      behavior: this.prefs.motionScale() === 0 ? 'instant' : 'smooth', 
-      block: 'start' 
-    });
+  switchMode(mode: SandboxViewMode) {
+    this.viewMode.set(mode);
+    this.activeSectionId.set(mode === 'elements' ? this.elements[0].id : this.layouts[0].id);
   }
 }

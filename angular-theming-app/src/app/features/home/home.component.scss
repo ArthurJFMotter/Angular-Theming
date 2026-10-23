@@ -14,137 +14,6 @@
   }
 }
 
-/* --- LEFT NAV (SCROLL SPY) --- */
-/*
-  Sits directly under the navbar. --app-navbar-offset (global, see styles.scss) follows
-  the toolbar's REAL height (density, mobile) and drops to 0 while the navbar is hidden,
-  so the nav never leaves a gap or hides behind it. It moves with the navbar's own
-  duration/easing.
-*/
-.mini-nav {
-  position: sticky;
-  top: var(--app-navbar-offset, 64px);
-  height: calc(100vh - var(--app-navbar-offset, 64px));
-  height: calc(100dvh - var(--app-navbar-offset, 64px));
-
-  width: 280px;
-  padding: 32px 24px;
-  border-right: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface);
-  box-sizing: border-box;
-  overflow-y: auto;
-  flex-shrink: 0;
-  transition:
-    top calc(0.3s * var(--theme-motion-scale, 1)) cubic-bezier(0.4, 0, 0.2, 1),
-    height calc(0.3s * var(--theme-motion-scale, 1))
-      cubic-bezier(0.4, 0, 0.2, 1);
-
-  .nav-header {
-    margin-bottom: 32px;
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin: 0 0 16px;
-      color: var(--mat-sys-on-background);
-    }
-  }
-
-  .view-toggle {
-    width: 100%;
-    --mat-button-toggle-label-text-size: 0.85rem;
-    mat-button-toggle {
-      flex: 1;
-    }
-    ::ng-deep .mat-button-toggle-label-content {
-      padding: 0 8px;
-    }
-  }
-
-  .spy-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    button {
-      background: transparent;
-      border: none;
-      text-align: left;
-      padding: 12px 16px;
-      border-radius: var(--mat-sys-corner-medium);
-      color: var(--mat-sys-on-surface-variant);
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition:
-        background-color calc(0.2s * var(--theme-motion-scale, 1)) ease,
-        color calc(0.2s * var(--theme-motion-scale, 1)) ease;
-
-      &:hover {
-        background: var(--mat-sys-surface-container);
-        color: var(--mat-sys-on-surface);
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--mat-sys-primary);
-        outline-offset: -2px;
-      }
-
-      &.active {
-        background: var(--mat-sys-secondary-container);
-        color: var(--mat-sys-on-secondary-container);
-        font-weight: 600;
-      }
-    }
-  }
-
-  /*
-    Small screens: a compact sticky bar under the navbar (toggle + horizontally
-    scrolling section pills) instead of a tall block that scrolls out of reach.
-    Kept AFTER the base rules so it wins on source order.
-  */
-  @media (max-width: 900px) {
-    z-index: 10;
-    width: 100%;
-    height: auto;
-    overflow: visible;
-    border-right: none;
-    border-bottom: 1px solid var(--mat-sys-outline-variant);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .nav-header {
-      margin: 0;
-      flex: 0 0 auto;
-      h3 {
-        display: none;
-      }
-      .view-toggle {
-        width: auto;
-      }
-    }
-
-    .spy-menu {
-      flex: 1 1 auto;
-      flex-direction: row;
-      min-width: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-      
-      -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-      mask-image: linear-gradient(to right, black 85%, transparent 100%);
-      padding-right: 24px;
-
-      button {
-        white-space: nowrap;
-        flex: 0 0 auto;
-      }
-    }
-  }
-}
-
 /* --- CANVAS --- */
 .canvas {
   flex: 1;
@@ -163,16 +32,17 @@
 
 .canvas-section {
   padding-bottom: 64px;
+  padding-top: 48px;
+  
+  /* Keeps the scroll-spy accurate when navigating */
   scroll-margin-top: calc(
     var(--app-navbar-offset, 64px) + var(--sandbox-nav-offset, 0px) + 24px
   );
-  border-top: 1px solid var(--mat-sys-outline-variant);
-  padding-top: 48px;
-  margin-top: 24px;
 
+  /* Remove the border-top and margin-top here, 
+     because the <mat-divider> in the HTML will handle the line */
+  
   &:first-child {
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
+    padding-top: 0; /* No top padding for the very first section */
   }
 }

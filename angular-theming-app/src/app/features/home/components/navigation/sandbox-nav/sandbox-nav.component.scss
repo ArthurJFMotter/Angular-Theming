@@ -1,0 +1,135 @@
+:host {
+  /* --- LEFT NAV (SCROLL SPY) --- */
+  position: sticky;
+  top: var(--app-navbar-offset, 64px);
+  height: calc(100vh - var(--app-navbar-offset, 64px));
+  height: calc(100dvh - var(--app-navbar-offset, 64px));
+
+  width: 280px;
+  padding: 32px 24px;
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface);
+  box-sizing: border-box;
+  overflow-y: auto;
+  flex-shrink: 0;
+  transition:
+    top calc(0.3s * var(--theme-motion-scale, 1)) cubic-bezier(0.4, 0, 0.2, 1),
+    height calc(0.3s * var(--theme-motion-scale, 1))
+      cubic-bezier(0.4, 0, 0.2, 1);
+
+  .nav-header {
+    margin-bottom: 32px;
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 16px;
+      color: var(--mat-sys-on-background);
+    }
+  }
+
+  .view-toggle {
+    width: 100%;
+    --mat-button-toggle-label-text-size: 0.85rem;
+    mat-button-toggle {
+      flex: 1;
+    }
+    ::ng-deep .mat-button-toggle-label-content {
+      padding: 0 8px;
+    }
+  }
+
+  .spy-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      background: transparent;
+      border: none;
+      text-align: left;
+      padding: 12px 16px;
+      border-radius: var(--mat-sys-corner-medium);
+      color: var(--mat-sys-on-surface-variant);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition:
+        background-color calc(0.2s * var(--theme-motion-scale, 1)) ease,
+        color calc(0.2s * var(--theme-motion-scale, 1)) ease;
+
+      &:hover {
+        background: var(--mat-sys-surface-container);
+        color: var(--mat-sys-on-surface);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--mat-sys-primary);
+        outline-offset: -2px;
+      }
+
+      &.active {
+        background: var(--mat-sys-secondary-container);
+        color: var(--mat-sys-on-secondary-container);
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* ... existing desktop styles ... */
+
+  @media (max-width: 900px) {
+    z-index: 10;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+    padding: 12px 16px;
+
+    /* FORCE ROW LAYOUT */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+
+    .nav-header {
+      margin: 0;
+      flex: 0 0 auto; /* Prevents the toggle from shrinking */
+
+      h3 {
+        display: none; /* Hide title to save space */
+      }
+
+      .view-toggle {
+        width: auto;
+      }
+    }
+
+    .spy-menu {
+      flex: 1 1 auto; /* Takes up remaining width */
+      flex-direction: row;
+      min-width: 0; /* CRITICAL: Allows flex child to shrink and scroll */
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none; /* Firefox */
+
+      /* Fade out effect on the right edge */
+      -webkit-mask-image: linear-gradient(
+        to right,
+        black 85%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(to right, black 85%, transparent 100%);
+
+      padding-right: 24px; /* Space for the fade */
+      margin: 0;
+
+      button {
+        white-space: nowrap;
+        flex: 0 0 auto;
+        padding: 8px 16px; /* Slightly tighter padding for mobile */
+      }
+    }
+  }
+}

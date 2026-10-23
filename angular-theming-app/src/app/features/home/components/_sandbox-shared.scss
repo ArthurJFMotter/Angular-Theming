@@ -42,3 +42,13 @@
   color: var(--mat-sys-outline);
   font-style: italic;
 }
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-divider {
+  margin: 4rem 0px;
+}

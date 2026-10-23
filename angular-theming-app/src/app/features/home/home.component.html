@@ -1,146 +1,24 @@
 <div class="sandbox-layout">
-  <!-- LEFT: MINI NAVIGATION -->
-  <aside class="mini-nav">
-    <!-- selector -->
-    <div class="nav-header">
-      <h3>Theming Lab</h3>
-      <mat-button-toggle-group
-        [value]="viewMode()"
-        (change)="viewMode.set($event.value)"
-        class="view-toggle"
-        aria-label="Sandbox view"
-      >
-        <mat-button-toggle value="elements">Elements</mat-button-toggle>
-        <mat-button-toggle value="layouts">Layouts</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
+  <!-- DYNAMIC NAVIGATION -->
+  <app-sandbox-nav
+    [viewMode]="viewMode()"
+    (viewModeChange)="switchMode($event)"
+    [sections]="currentSections()"
+    [activeSectionId]="activeSectionId()"
+  >
+  </app-sandbox-nav>
 
-    <!-- element options -->
-    @if (viewMode() === "elements") {
-      <nav class="spy-menu" aria-label="Element sections">
-        <button
-          type="button"
-          [class.active]="activeSection() === 'actions'"
-          [attr.aria-current]="
-            activeSection() === 'actions' ? 'location' : null
-          "
-          (click)="scrollTo('actions')"
-        >
-          Actions
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'inputs'"
-          [attr.aria-current]="activeSection() === 'inputs' ? 'location' : null"
-          (click)="scrollTo('inputs')"
-        >
-          Inputs & Forms
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'surfaces'"
-          [attr.aria-current]="
-            activeSection() === 'surfaces' ? 'location' : null
-          "
-          (click)="scrollTo('surfaces')"
-        >
-          Surfaces
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'overlays'"
-          [attr.aria-current]="
-            activeSection() === 'overlays' ? 'location' : null
-          "
-          (click)="scrollTo('overlays')"
-        >
-          Overlays
-        </button>
-        <button
-          type="button"
-          [class.active]="activeSection() === 'feedback'"
-          [attr.aria-current]="
-            activeSection() === 'feedback' ? 'location' : null
-          "
-          (click)="scrollTo('feedback')"
-        >
-          Feedback
-        </button>
-      </nav>
-    }
-
-    <!-- layouts options -->
-    @if (viewMode() === "layouts") {
-      <nav class="spy-menu" aria-label="Layout sections">
-        <button
-          type="button"
-          [class.active]="activeLayoutSection() === 'dashboard'"
-          [attr.aria-current]="
-            activeLayoutSection() === 'dashboard' ? 'location' : null
-          "
-          (click)="scrollToLayout('dashboard')"
-        >
-          Analytics Dashboard
-        </button>
-        <button
-          type="button"
-          [class.active]="activeLayoutSection() === 'table'"
-          [attr.aria-current]="
-            activeLayoutSection() === 'table' ? 'location' : null
-          "
-          (click)="scrollToLayout('table')"
-        >
-          Data Table
-        </button>
-        <button
-          type="button"
-          [class.active]="activeLayoutSection() === 'checkout'"
-          [attr.aria-current]="
-            activeLayoutSection() === 'checkout' ? 'location' : null
-          "
-          (click)="scrollToLayout('checkout')"
-        >
-          Checkout Wizard
-        </button>
-        <button
-          [class.active]="activeLayoutSection() === 'docs'"
-          (click)="scrollToLayout('docs')"
-        >
-          Docs Browser
-        </button>
-        <button
-          type="button"
-          [class.active]="activeLayoutSection() === 'kanban'"
-          [attr.aria-current]="
-            activeLayoutSection() === 'kanban' ? 'location' : null
-          "
-          (click)="scrollToLayout('kanban')"
-        >
-          Kanban Board
-        </button>
-        <button
-          type="button"
-          [class.active]="activeLayoutSection() === 'mobile'"
-          [attr.aria-current]="
-            activeLayoutSection() === 'mobile' ? 'location' : null
-          "
-          (click)="scrollToLayout('mobile')"
-        >
-          Mobile Frame
-        </button>
-      </nav>
-    }
-  </aside>
-
-  <!-- RIGHT: THE CANVAS -->
+  <!-- DYNAMIC CANVAS -->
   <main class="canvas">
     @if (viewMode() === "elements") {
       <app-elements-view
-        (sectionScrolled)="activeSection.set($event)"
+        [sections]="elements"
+        (sectionScrolled)="activeSectionId.set($event)"
       ></app-elements-view>
     } @else {
       <app-layouts-view
-        (sectionScrolled)="activeLayoutSection.set($event)"
+        [sections]="layouts"
+        (sectionScrolled)="activeSectionId.set($event)"
       ></app-layouts-view>
     }
   </main>

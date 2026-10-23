@@ -1,54 +1,24 @@
-<!-- 1. ANALYTICS DASHBOARD -->
-<section id="dashboard" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Analytics Dashboard</h2>
-  <p class="section-desc">
-    Tests tertiary usage, token mapping to charts, and data density.
-  </p>
-  <app-dashboard-layout />
-</section>
+@for (section of visibleSections(); track section.id; let last = $last) {
+  <section [id]="section.id" #spyTarget class="canvas-section">
+    <div class="section-header-row">
+      <h2 class="section-title">{{ section.title }}</h2>
+      <!-- Placeholder for future granular actions (e.g. "View Code" button) -->
+      @if (section.actionTemplate) {
+        <ng-container
+          *ngComponentOutlet="section.actionTemplate"
+        ></ng-container>
+      }
+    </div>
 
-<!-- 2. DATA TABLE -->
-<section id="table" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Data Table View</h2>
-  <p class="section-desc">
-    Tests dense list structures, hover states, and pagination scales.
-  </p>
-  <app-table-layout />
-</section>
+    @if (section.description) {
+      <p class="section-desc">{{ section.description }}</p>
+    }
 
-<!-- 3. CHECKOUT WIZARD -->
-<section id="checkout" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Checkout Wizard</h2>
-  <p class="section-desc">
-    Tests Stepper integration, multi-stage form validation, and layout wrapping.
-  </p>
-  <app-checkout-layout />
-</section>
+    <!-- Dynamic Component Render -->
+    <ng-container *ngComponentOutlet="section.component"></ng-container>
+  </section>
 
-<!-- 4. DOCS BROWSER -->
-<section id="docs" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Documentation Browser</h2>
-  <p class="section-desc">
-    Tests nested MatTree integration, deep typography hierarchies, and surface
-    contrasts.
-  </p>
-  <app-docs-layout />
-</section>
-
-<!-- 5. KANBAN BOARD -->
-<section id="kanban" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Kanban Project Board</h2>
-  <p class="section-desc">
-    Tests surface hierarchy, elevation, and card corner radius.
-  </p>
-  <app-kanban-layout />
-</section>
-
-<!-- 6. MOBILE APP FRAME -->
-<section id="mobile" #spyTarget class="canvas-section compositions">
-  <h2 class="section-title">Mobile Frame</h2>
-  <p class="section-desc">
-    Tests constrained small-screen density, bottom sheets, and FABs.
-  </p>
-  <app-mobile-frame-layout />
-</section>
+  @if (!last) {
+    <mat-divider class="section-divider"></mat-divider>
+  }
+}

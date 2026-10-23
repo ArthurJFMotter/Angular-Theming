@@ -1,42 +1,26 @@
 <app-palette-strip></app-palette-strip>
- 
-<section id="actions" #spyTarget class="canvas-section">
-  <h2 class="section-title">Actions</h2>
-  <app-actions-section />
-</section>
-<mat-divider></mat-divider>
-<section id="inputs" #spyTarget class="canvas-section">
-  <h2 class="section-title">Inputs & Forms</h2>
-  @defer (on viewport) {
-    <app-inputs-section />
-  } @placeholder {
-    <div class="loading-placeholder">Loading Forms...</div>
+
+@for (section of visibleSections(); track section.id; let last = $last) {
+  <section [id]="section.id" #spyTarget class="canvas-section">
+    <div class="section-header-row">
+      <h2 class="section-title">{{ section.title }}</h2>
+      <!-- Placeholder for future granular actions (e.g. "View Code" button) -->
+      @if (section.actionTemplate) {
+        <ng-container
+          *ngComponentOutlet="section.actionTemplate"
+        ></ng-container>
+      }
+    </div>
+
+    @if (section.description) {
+      <p class="section-desc">{{ section.description }}</p>
+    }
+
+    <!-- Dynamic Component Render -->
+    <ng-container *ngComponentOutlet="section.component"></ng-container>
+  </section>
+
+  @if (!last) {
+    <mat-divider class="section-divider"></mat-divider>
   }
-</section>
-<mat-divider></mat-divider>
-<section id="surfaces" #spyTarget class="canvas-section">
-  <h2 class="section-title">Surfaces & Containers</h2>
-  @defer (on viewport) {
-    <app-surfaces-section />
-  } @placeholder {
-    <div class="loading-placeholder">Loading Surfaces...</div>
-  }
-</section>
-<mat-divider></mat-divider>
-<section id="overlays" #spyTarget class="canvas-section">
-  <h2 class="section-title">Overlays</h2>
-  @defer (on viewport) {
-    <app-overlays-section />
-  } @placeholder {
-    <div class="loading-placeholder">Loading Overlays...</div>
-  }
-</section>
-<mat-divider></mat-divider>
-<section id="feedback" #spyTarget class="canvas-section">
-  <h2 class="section-title">Feedback & Alerts</h2>
-  @defer (on viewport) {
-    <app-feedback-section />
-  } @placeholder {
-    <div class="loading-placeholder">Loading Feedback...</div>
-  }
-</section>
+}

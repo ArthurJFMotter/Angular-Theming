@@ -7,32 +7,34 @@ import {
   ViewChildren,
   Output,
   EventEmitter,
+  Input,
+  inject,
+  computed,
 } from '@angular/core';
-import { DashboardLayoutComponent } from '../dashboard-layout/dashboard-layout.component';
-import { KanbanLayoutComponent } from '../kanban-layout/kanban-layout.component';
-import { MobileFrameLayoutComponent } from '../mobile-frame-layout/mobile-frame-layout.component';
-import { TableLayoutComponent } from '../table-layout/table-layout.component';
-import { CheckoutLayoutComponent } from '../checkout-layout/checkout-layout.component';
-import { DocsLayoutComponent } from '../docs-layout/docs-layout.component';
-
+import { NgComponentOutlet } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { AppUiStateService } from '../../../../../core/services/app-ui-state.service';
+import { SandboxSection } from '../../../models/sandbox.model';
 @Component({
   selector: 'app-layouts-view',
   standalone: true,
-  imports: [
-    DashboardLayoutComponent,
-    TableLayoutComponent,
-    CheckoutLayoutComponent,
-    DocsLayoutComponent,
-    KanbanLayoutComponent,
-    MobileFrameLayoutComponent,
-  ],
+  imports: [NgComponentOutlet, MatDividerModule],
   templateUrl: './layouts-view.component.html',
   styleUrl: './layouts-view.component.scss',
 })
 export class LayoutsViewComponent implements AfterViewInit, OnDestroy {
-  @ViewChildren('spyTarget') spyTargets!: QueryList<ElementRef<HTMLElement>>;
+ private uiState = inject(AppUiStateService);
+
+  @Input({ required: true }) sections: SandboxSection[] = [];
   @Output() sectionScrolled = new EventEmitter<string>();
+
+  @ViewChildren('spyTarget') spyTargets!: QueryList<ElementRef<HTMLElement>>;
   private observer: IntersectionObserver | null = null;
+
+  readonly visibleSections = computed(() => {
+    const isMobile = this.uiState.isMobile()?.matches;
+    return this.sections.filter((s) => !(s.hideOnMobile && isMobile));
+  });
 
   ngAfterViewInit() {
     this.observer = new IntersectionObserver(
@@ -42,12 +44,10 @@ export class LayoutsViewComponent implements AfterViewInit, OnDestroy {
       },
       { rootMargin: '-10% 0px -70% 0px' },
     );
-
     this.spyTargets.forEach((target) =>
       this.observer?.observe(target.nativeElement),
     );
   }
-
   ngOnDestroy() {
     this.observer?.disconnect();
   }
