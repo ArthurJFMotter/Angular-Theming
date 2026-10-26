@@ -7,19 +7,57 @@
     {{ data.title }}
   </h2>
 
-  <!-- Content -->
   <mat-dialog-content>
     <p class="modal-message">{{ data.message }}</p>
 
-    <!-- ADD THE PREVIEW BLOCK -->
+    <!-- Dynamic Code Snippets-->
     @if (data.previewSnippet) {
       <div class="modal-preview">
         <code>{{ data.previewSnippet }}</code>
       </div>
     }
+
+    <!-- Dynamic Text Inputs -->
+    @if (data.inputs) {
+      <div class="modal-form-fields">
+        @for (input of data.inputs; track input.id) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ input.label }}</mat-label>
+            <input
+              matInput
+              [type]="input.type || 'text'"
+              [placeholder]="input.placeholder || ''"
+              [required]="input.isRequired || false"
+              [(ngModel)]="input.value"
+            />
+          </mat-form-field>
+        }
+      </div>
+    }
+
+    <!-- Dynamic Selects -->
+    @if (data.selects) {
+      <div class="modal-form-fields">
+        @for (select of data.selects; track select.id) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ select.label }}</mat-label>
+            <mat-select
+              [required]="select.isRequired || false"
+              [(ngModel)]="select.value"
+            >
+              @for (option of select.options; track option.value) {
+                <mat-option [value]="option.value">{{
+                  option.label
+                }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+    }
   </mat-dialog-content>
 
-  <!-- Actions -->
+  <!-- Actions-->
   <mat-dialog-actions align="center">
     @if (data.showCloseButton !== false) {
       <button mat-button mat-dialog-close>Close</button>
@@ -30,6 +68,7 @@
         <button
           mat-flat-button
           [color]="action.color || 'primary'"
+          [disabled]="action.returnsPayload && isFormInvalid()"
           (click)="handleAction(action)"
         >
           {{ action.label }}

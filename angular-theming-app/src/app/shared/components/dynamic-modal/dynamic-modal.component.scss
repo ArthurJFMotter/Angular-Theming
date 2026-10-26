@@ -14,6 +14,17 @@
     margin: 0 0 16px;
   }
 
+  .modal-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+
+    .full-width {
+      width: 100%;
+    }
+  }
+
   .modal-preview {
     background: var(--mat-sys-surface-container-lowest);
     border: 1px dashed var(--mat-sys-outline-variant);

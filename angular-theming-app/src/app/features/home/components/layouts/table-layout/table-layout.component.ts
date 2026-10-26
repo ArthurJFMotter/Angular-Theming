@@ -117,32 +117,116 @@ export class TableLayoutComponent {
     ],
   };
 
+  // Reusable Color Map
+  private readonly statusColorMap: Record<string, UserData['statusColor']> = {
+    Active: 'success',
+    Review: 'warning',
+    Pending: 'info',
+    Offline: 'error',
+  };
+
   // --- CRUD ACTIONS ---
   setFilter(filter: 'All' | 'Active' | 'Pending' | 'Review' | 'Offline') {
     this.activeFilter.set(filter);
   }
 
   inviteUser() {
-    const newUser: UserData = {
-      id: Date.now(),
-      name: 'New Teammate',
-      role: 'Guest',
-      status: 'Pending',
-      statusColor: 'info',
-    };
+    this.modals
+      .open<any>({
+        title: 'Invite Team Member',
+        icon: 'person_add',
+        message: 'Enter the details for the new team member.',
+        showCloseButton: true,
+        inputs: [
+          {
+            id: 'name',
+            label: 'Full Name',
+            value: '',
+            placeholder: 'Enter full name...',
+            isRequired: true,
+          },
+        ],
+        selects: [
+          {
+            id: 'role',
+            label: 'Role',
+            value: 'Guest',
+            isRequired: true,
+            options: [
+              { label: 'Principal Architect', value: 'Principal Architect' },
+              { label: 'Developer', value: 'Developer' },
+              { label: 'Designer', value: 'Designer' },
+              { label: 'QA Engineer', value: 'QA Engineer' },
+              { label: 'Product Manager', value: 'Product Manager' },
+              { label: 'Frontend Dev', value: 'Frontend Dev' },
+              { label: 'Guest', value: 'Guest' },
+            ],
+          },
+          {
+            id: 'status',
+            label: 'Status',
+            value: 'Pending',
+            options: [
+              { label: 'Active', value: 'Active' },
+              { label: 'Review', value: 'Review' },
+              { label: 'Pending', value: 'Pending' },
+              { label: 'Offline', value: 'Offline' },
+            ],
+          },
+        ],
+        actions: [
+          {
+            label: 'Send Invitation',
+            value: 'save',
+            returnsPayload: true,
+            isPrimary: true,
+            color: 'primary',
+          },
+        ],
+      })
+      .subscribe((result) => {
+        if (result && result.action === 'save') {
+          const newName = result.inputs
+            ?.find((i: any) => i.id === 'name')
+            ?.value?.trim();
+          if (!newName) return;
 
-    // Add to the top of the list
-    this.users.update((list) => [newUser, ...list]);
-    this.notify.show('success', 'Invitation sent!');
+          const newRole =
+            result.selects?.find((s: any) => s.id === 'role')?.value || 'Guest';
+          const newStatus =
+            result.selects?.find((s: any) => s.id === 'status')?.value ||
+            'Pending';
+
+          const newUser: UserData = {
+            id: Date.now(),
+            name: newName,
+            role: newRole,
+            status: newStatus,
+            statusColor: this.statusColorMap[newStatus],
+          };
+
+          this.users.update((list) => [newUser, ...list]);
+          this.notify.show('success', `Invitation sent to ${newName}!`);
+        }
+      });
   }
 
   editUser(user: UserData) {
     this.modals
       .open<any>({
-        title: `Edit ${user.name}`,
+        title: `Edit Team Member`,
         icon: 'edit',
-        message: 'Update the role or status of this team member.',
+        message: 'Update the name, role, or status of this team member.',
         showCloseButton: true,
+        inputs: [
+          {
+            id: 'name',
+            label: 'Full Name',
+            value: user.name,
+            placeholder: 'Enter full name...',
+            isRequired: true,
+          },
+        ],
         selects: [
           {
             id: 'role',
@@ -153,6 +237,8 @@ export class TableLayoutComponent {
               { label: 'Developer', value: 'Developer' },
               { label: 'Designer', value: 'Designer' },
               { label: 'QA Engineer', value: 'QA Engineer' },
+              { label: 'Product Manager', value: 'Product Manager' },
+              { label: 'Frontend Dev', value: 'Frontend Dev' },
               { label: 'Guest', value: 'Guest' },
             ],
           },
@@ -172,6 +258,7 @@ export class TableLayoutComponent {
           { label: 'Delete User', value: 'delete', color: 'warn' },
           {
             label: 'Save Changes',
+            value: 'save',
             returnsPayload: true,
             isPrimary: true,
             color: 'primary',
@@ -182,35 +269,35 @@ export class TableLayoutComponent {
         if (result === 'delete') {
           this.users.update((list) => list.filter((u) => u.id !== user.id));
           this.notify.show('error', `${user.name} removed from team.`);
-        } else if (result && result.selects) {
-          const newRole = result.selects.find(
-            (s: any) => s.id === 'role',
-          ).value;
-          const newStatus = result.selects.find(
-            (s: any) => s.id === 'status',
-          ).value;
+          return;
+        }
 
-          const colorMap: any = {
-            Active: 'success',
-            Review: 'warning',
-            Pending: 'info',
-            Offline: 'error',
-          };
+        if (result && result.action === 'save') {
+          const newName =
+            result.inputs?.find((i: any) => i.id === 'name')?.value?.trim() ||
+            user.name;
+          const newRole =
+            result.selects?.find((s: any) => s.id === 'role')?.value ||
+            user.role;
+          const newStatus =
+            result.selects?.find((s: any) => s.id === 'status')?.value ||
+            user.status;
 
           this.users.update((list) =>
             list.map((u) =>
               u.id === user.id
                 ? {
                     ...u,
+                    name: newName,
                     role: newRole,
                     status: newStatus,
-                    statusColor: colorMap[newStatus],
+                    statusColor: this.statusColorMap[newStatus],
                   }
                 : u,
             ),
           );
 
-          this.notify.show('success', `${user.name} updated.`);
+          this.notify.show('success', `${newName} updated.`);
         }
       });
   }
