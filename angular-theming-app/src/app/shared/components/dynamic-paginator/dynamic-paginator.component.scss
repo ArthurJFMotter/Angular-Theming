@@ -3,3 +3,15 @@
   border-top: 1px solid var(--mat-sys-outline-variant);
   background: var(--mat-sys-surface-container-lowest);
 }
+
+::ng-deep .mat-mdc-paginator-container {
+  display: flex;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  padding: 8px !important; 
+  min-height: 56px;
+}
+
+::ng-deep .mat-mdc-paginator-page-size {
+  margin-right: 16px !important;
+}
