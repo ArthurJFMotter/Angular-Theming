@@ -15,12 +15,11 @@ import { NgComponentOutlet } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { AppUiStateService } from '../../../../../core/services/app-ui-state.service';
 import { SandboxSection } from '../../../models/sandbox.model';
-import { PaletteStripComponent } from '../palette-strip/palette-strip.component';
 
 @Component({
   selector: 'app-elements-view',
   standalone: true,
-  imports: [NgComponentOutlet, MatDividerModule, PaletteStripComponent],
+  imports: [NgComponentOutlet, MatDividerModule],
   templateUrl: './elements-view.component.html',
   styleUrl: './elements-view.component.scss',
 })

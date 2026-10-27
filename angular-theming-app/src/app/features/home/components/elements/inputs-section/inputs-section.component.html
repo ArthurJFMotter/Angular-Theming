@@ -1,146 +1,142 @@
-<div class="state-matrix">
-  <!-- Input Section (outline) -->
-  <div class="matrix-row inputs-row">
-    <mat-form-field appearance="outline">
-      <mat-label>Standard Input</mat-label>
-      <input matInput placeholder="Placeholder" />
-      <mat-icon matSuffix>person</mat-icon>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Error State</mat-label>
-      <input matInput [formControl]="emailControl" placeholder="Email" />
-      <mat-error>Invalid email format</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Disabled</mat-label>
-      <input matInput disabled value="Locked value" />
-    </mat-form-field>
-  </div>
+<div class="sandbox-controls">
+  <app-preference-select
+    label="Component"
+    [value]="selectedView()"
+    [options]="viewOptions"
+    (valueChange)="selectedView.set($event)"
+  >
+  </app-preference-select>
 
-  <!-- Input Section (fill) -->
-  <div class="matrix-row inputs-row">
-    <mat-form-field>
-      <mat-label>Standard Input</mat-label>
-      <input matInput placeholder="Placeholder" />
-      <mat-icon matSuffix>person</mat-icon>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Error State</mat-label>
-      <input matInput [formControl]="emailControl" placeholder="Email" />
-      <mat-error>Invalid email format</mat-error>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Disabled</mat-label>
-      <input matInput disabled value="Locked value" />
-    </mat-form-field>
-  </div>
+  <app-preference-select
+    label="Color Scheme"
+    [value]="selectedColor()"
+    [options]="colorOptions()"
+    (valueChange)="selectedColor.set($event)"
+  >
+  </app-preference-select>
+</div>
+@if (!activeRole().isBase) {
+  <style>
+    .Overrided-overlay-panel {
+      --mat-sys-primary: var(--mat-sys-{{activeRole() .id}}) !important;
+      --mat-sys-on-primary: var(--mat-sys-on-{{activeRole() .id}}) !important;
+      --mat-sys-primary-container: var(
+        --mat-sys-{{activeRole() .id}}-container
+      ) !important;
+      --mat-sys-on-primary-container: var(
+        --mat-sys-on-{{activeRole() .id}}-container
+      ) !important;
 
-  <!-- Complex Inputs (Datepicker & Select) -->
-  <div class="matrix-row inputs-row">
-    <mat-form-field appearance="outline">
-      <mat-label>Choose a date</mat-label>
-      <input matInput [matDatepicker]="picker" />
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+      --mat-sys-secondary: var(--mat-sys-{{activeRole() .id}}) !important;
+      --mat-sys-on-secondary: var(--mat-sys-on-{{activeRole() .id}}) !important;
+      --mat-sys-secondary-container: var(
+        --mat-sys-{{activeRole() .id}}-container
+      ) !important;
+      --mat-sys-on-secondary-container: var(
+        --mat-sys-on-{{activeRole() .id}}-container
+      ) !important;
+    }
+  </style>
+}
 
-    <mat-form-field appearance="outline">
-      <mat-label>Framework</mat-label>
-      <mat-select value="angular">
-        <mat-option value="angular">Angular</mat-option>
-        <mat-option value="react">React</mat-option>
-        <mat-option value="vue">Vue</mat-option>
-      </mat-select>
-    </mat-form-field>
+<div class="state-matrix" [style]="getOverridedStyle(activeRole())">
+  @if (selectedView() === "text") {
+    <div class="matrix-row inputs-row">
+      <mat-form-field appearance="outline" [ngClass]="activeRole().themeClass">
+        <mat-label>Standard Input</mat-label>
+        <input matInput placeholder="Placeholder" />
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" [ngClass]="activeRole().themeClass">
+        <mat-label>Error State*</mat-label>
+        <input matInput [formControl]="emailControl" placeholder="Email" />
+        <mat-error>Invalid email format</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Disabled</mat-label>
+        <input matInput disabled value="Locked value" />
+      </mat-form-field>
+    </div>
+  }
 
-    <div style="flex: 1; min-width: 200px"></div>
+  @if (selectedView() === "date") {
+    <div class="matrix-row inputs-row">
+      <mat-form-field appearance="outline" [ngClass]="activeRole().themeClass">
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" />
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
 
-    <!-- Checkbox Section -->
+        <mat-datepicker
+          #picker
+          panelClass="Overrided-overlay-panel"
+        ></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" [ngClass]="activeRole().themeClass">
+        <mat-label>Framework</mat-label>
+
+        <mat-select value="angular" panelClass="Overrided-overlay-panel">
+          <mat-option value="angular">Angular</mat-option>
+          <mat-option value="react">React</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div style="flex: 1; min-width: 200px"></div>
+    </div>
+  }
+
+  @if (selectedView() === "checkbox") {
     <div class="matrix-row">
-      <span class="row-label">Checkboxes</span>
-      <mat-checkbox checked>Primary</mat-checkbox>
-      <mat-checkbox checked class="theme-secondary">Secondary</mat-checkbox>
-      <mat-checkbox checked class="theme-tertiary">Tertiary</mat-checkbox>
-      <mat-checkbox checked class="theme-error">Error</mat-checkbox>
+      <mat-checkbox checked [ngClass]="activeRole().themeClass"
+        >Checked</mat-checkbox
+      >
+      <mat-checkbox [ngClass]="activeRole().themeClass">Unchecked</mat-checkbox>
       <mat-checkbox checked disabled>Disabled</mat-checkbox>
     </div>
-    <!-- Toggle Section -->
-    <div class="matrix-row">
-      <span class="row-label">Toggles</span>
-      <mat-slide-toggle checked>Enabled</mat-slide-toggle>
-      <mat-slide-toggle checked class="theme-secondary"
-        >Enabled</mat-slide-toggle
-      >
-      <mat-slide-toggle checked class="theme-tertiary"
-        >Enabled</mat-slide-toggle
-      >
-      <mat-slide-toggle checked class="theme-brand">Enabled</mat-slide-toggle>
-      <mat-slide-toggle disabled>Disabled</mat-slide-toggle>
-    </div>
+  }
 
-    <!-- Radio Button Section -->
+  @if (selectedView() === "toggle") {
     <div class="matrix-row">
-      <span class="row-label">Radio buttons</span>
-      <mat-radio-group value="1">
-        <mat-radio-button value="1">Option 1</mat-radio-button>
-        <mat-radio-button value="2" class="theme-secondary"
+      <mat-slide-toggle checked [ngClass]="activeRole().themeClass"
+        >Enabled</mat-slide-toggle
+      >
+      <mat-slide-toggle [ngClass]="activeRole().themeClass"
+        >Disabled</mat-slide-toggle
+      >
+      <mat-slide-toggle disabled>Locked</mat-slide-toggle>
+    </div>
+  }
+
+  @if (selectedView() === "radio") {
+    <div class="matrix-row">
+      <mat-radio-group value="1" style="display: flex; gap: 16px">
+        <mat-radio-button value="1" [ngClass]="activeRole().themeClass"
+          >Option 1</mat-radio-button
+        >
+        <mat-radio-button value="2" [ngClass]="activeRole().themeClass"
           >Option 2</mat-radio-button
         >
-        <mat-radio-button value="3" class="theme-tertiary"
-          >Option 3</mat-radio-button
-        >
-        <mat-radio-button value="0" class="theme-error"
-          >Invalid Option</mat-radio-button
-        >
-        <mat-radio-button disabled value="-1">Locked Option</mat-radio-button>
+        <mat-radio-button value="3" disabled>Disabled</mat-radio-button>
       </mat-radio-group>
     </div>
+  }
 
-    <!-- Slider Section -->
+  @if (selectedView() === "slider") {
     <div class="matrix-row">
-      <span class="row-label">Sliders</span>
       <mat-slider
         min="0"
         max="100"
-        value="50"
-        style="flex: 1; min-width: 100px"
+        step="10"
+        showTickMarks
+        discrete
+        style="flex: 1; min-width: 200px"
+        [ngClass]="activeRole().themeClass"
       >
-        <input matSliderThumb value="20" />
-      </mat-slider>
-
-      <mat-slider
-        min="0"
-        max="100"
-        class="theme-secondary"
-        style="flex: 1; min-width: 100px"
-      >
-        <input matSliderThumb value="40" />
-      </mat-slider>
-
-      <mat-slider
-        min="0"
-        max="100"
-        class="theme-tertiary"
-        style="flex: 1; min-width: 100px"
-      >
-        <input matSliderThumb value="60" />
-      </mat-slider>
-
-      <mat-slider
-        min="0"
-        max="100"
-        class="theme-error"
-        style="flex: 1; min-width: 100px"
-      >
-        <input matSliderThumb value="80" />
-      </mat-slider>
-
-      <mat-slider disabled min="0" max="100" style="flex: 1; min-width: 100px">
         <input matSliderThumb value="50" />
       </mat-slider>
     </div>
-  </div>
+  }
 </div>

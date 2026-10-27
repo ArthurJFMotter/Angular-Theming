@@ -1,79 +1,92 @@
-<div class="state-matrix">
-  <!-- FILLED BUTTONS -->
-  <div class="matrix-row">
-    <span class="row-label">Filled</span>
-    <button mat-flat-button>Primary</button>
-    <button mat-flat-button class="btn-secondary">Secondary</button>
-    <button mat-flat-button class="btn-tertiary">Tertiary</button>
-    <button mat-flat-button class="btn-error">Error</button>
-    <button mat-flat-button disabled>Disabled</button>
-  </div>
+<div class="sandbox-controls">
+  <app-preference-select
+    label="Component"
+    [value]="selectedView()"
+    [options]="viewOptions"
+    (valueChange)="selectedView.set($event)"
+  >
+  </app-preference-select>
 
-  <!-- STROKED BUTTONS -->
-  <div class="matrix-row">
-    <span class="row-label">Stroked</span>
+  <app-preference-select
+    label="Color Scheme"
+    [value]="selectedColor()"
+    [options]="colorOptions()"
+    (valueChange)="selectedColor.set($event)"
+  >
+  </app-preference-select>
+</div>
 
-    <button mat-stroked-button>Primary</button>
-    <button mat-stroked-button class="btn-secondary">Secondary</button>
-    <button mat-stroked-button class="btn-tertiary">Tertiary</button>
-    <button mat-stroked-button class="btn-error">Error</button>
-    <button mat-stroked-button disabled>Disabled</button>
-  </div>
+<div class="state-matrix" [style]="getOverridedStyle(activeRole())">
+  @if (selectedView() === "text") {
+    <div class="matrix-row">
+      <button mat-button [ngClass]="activeRole().btnClass">Enabled</button>
+      <button mat-button [ngClass]="activeRole().btnClass" disabled>
+        Disabled
+      </button>
+    </div>
+  }
 
-   <!-- RAISED BUTTONS -->
-  <div class="matrix-row">
-    <span class="row-label">Raised</span>
+  @if (selectedView() === "filled") {
+    <div class="matrix-row">
+      <button mat-flat-button [ngClass]="activeRole().btnClass">Enabled</button>
+      <button mat-flat-button [ngClass]="activeRole().btnClass" disabled>
+        Disabled
+      </button>
+    </div>
+  }
 
-    <button mat-raised-button>Primary</button>
-    <button mat-raised-button class="btn-secondary">Secondary</button>
-    <button mat-raised-button class="btn-tertiary">Tertiary</button>
-    <button mat-raised-button class="btn-error">Error</button>
-    <button mat-raised-button disabled>Disabled</button>
-  </div>
+  @if (selectedView() === "stroked") {
+    <div class="matrix-row">
+      <button mat-stroked-button [ngClass]="activeRole().btnClass">
+        Enabled
+      </button>
+      <button mat-stroked-button [ngClass]="activeRole().btnClass" disabled>
+        Disabled
+      </button>
+    </div>
+  }
 
-  <!-- BUTTON TOGGLES -->
-  <div class="matrix-row">
-    <span class="row-label">Toggle</span>
+  @if (selectedView() === "raised") {
+    <div class="matrix-row">
+      <button mat-raised-button [ngClass]="activeRole().btnClass">
+        Enabled
+      </button>
+      <button mat-raised-button [ngClass]="activeRole().btnClass" disabled>
+        Disabled
+      </button>
+    </div>
+  }
 
-    <mat-button-toggle-group
-      value="bold"
-      name="fontStyle"
-      aria-label="Font Style"
-    >
-      <mat-button-toggle value="bold">Bold</mat-button-toggle>
-      <mat-button-toggle value="italic">Italic</mat-button-toggle>
-      <mat-button-toggle value="underline">Underline</mat-button-toggle>
-    </mat-button-toggle-group>
+  @if (selectedView() === "toggle") {
+    <div class="matrix-row">
+      <mat-button-toggle-group multiple>
+        <mat-button-toggle value="bold" checked>Bold</mat-button-toggle>
+        <mat-button-toggle value="italic">Italic</mat-button-toggle>
+        <mat-button-toggle value="underline" disabled
+          >Underline</mat-button-toggle
+        >
+      </mat-button-toggle-group>
+    </div>
+  }
 
-    <mat-button-toggle-group
-      appearance="legacy"
-      value="bold"
-      name="fontStyle"
-      aria-label="Font Style"
-    >
-      <mat-button-toggle value="bold">Bold</mat-button-toggle>
-      <mat-button-toggle value="italic">Italic</mat-button-toggle>
-      <mat-button-toggle value="underline">Underline</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
+  @if (selectedView() === "fab") {
+    <div class="matrix-row" style="align-items: center">
+      <button mat-fab [ngClass]="activeRole().btnClass">
+        <mat-icon>add</mat-icon>
+      </button>
+      <button mat-mini-fab [ngClass]="activeRole().btnClass">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </div>
+  }
 
-  <!-- FABs AND CHIPS -->
-  <div class="matrix-row">
-    <span class="row-label">FAB & Chips</span>
-
-    <button mat-fab><mat-icon>add</mat-icon></button>
-
-    <button mat-mini-fab class="btn-secondary">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-mini-fab class="btn-tertiary">
-      <mat-icon>bookmark</mat-icon>
-    </button>
-
-    <mat-chip-listbox>
-      <mat-chip-option selected>Selected</mat-chip-option>
-      <mat-chip-option>Default</mat-chip-option>
-      <mat-chip-option disabled>Disabled</mat-chip-option>
-    </mat-chip-listbox>
-  </div>
+  @if (selectedView() === "chip") {
+    <div class="matrix-row" style="align-items: center">
+      <mat-chip-listbox style="margin-left: 16px">
+        <mat-chip-option selected>Selected</mat-chip-option>
+        <mat-chip-option>Default</mat-chip-option>
+        <mat-chip-option disabled>Disabled</mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  }
 </div>

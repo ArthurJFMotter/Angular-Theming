@@ -3,6 +3,7 @@ import { ActionsSectionComponent } from '../components/elements/actions-section/
 import { FeedbackSectionComponent } from '../components/elements/feedback-section/feedback-section.component';
 import { InputsSectionComponent } from '../components/elements/inputs-section/inputs-section.component';
 import { OverlaysSectionComponent } from '../components/elements/overlays-section/overlays-section.component';
+import { PaletteStripComponent } from '../components/elements/palette-strip/palette-strip.component';
 import { SurfacesSectionComponent } from '../components/elements/surfaces-section/surfaces-section.component';
 //LAYOUTS
 import { CheckoutLayoutComponent } from '../components/layouts/checkout-layout/checkout-layout.component';
@@ -15,6 +16,7 @@ import { TableLayoutComponent } from '../components/layouts/table-layout/table-l
 import { SandboxSection } from '../models/sandbox.model';
 
 export const ELEMENT_SECTIONS: SandboxSection[] = [
+  { id: 'palletes', title: 'Palletes', component: PaletteStripComponent },
   { id: 'actions', title: 'Actions', component: ActionsSectionComponent },
   { id: 'inputs', title: 'Inputs & Forms', component: InputsSectionComponent },
   {
