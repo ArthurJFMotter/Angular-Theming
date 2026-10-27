@@ -1,10 +1,29 @@
-/// List items: let density shrink the row without clipping descenders.
+/// List rows: Material's density floor, but never clip the text.
+///
+/// Material gives each row a FIXED height from a per-line-count token
+/// (`--mat-list-list-item-{one-line,two-line,three-line}-container-height`; density
+/// moves them, e.g. 48 → 36px). At tight densities, or with larger text, that fixed
+/// height clips descenders. So the row keeps Material's token as a FLOOR
+/// (`min-height`) and grows with its content (`height: auto`): the same height as
+/// Material by default, the density scale respected, no clipping.
+///
+/// `height: auto` needs `!important`: Material's own height rule is more specific
+/// than any simple selector. `min-height` is not set by Material, so it needs none.
+/// The fallbacks are Material's own defaults.
 @mixin list-overrides() {
   .mat-mdc-list-item {
     height: auto !important;
-    min-height: var(--mdc-list-list-item-container-height) !important;
+  }
 
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
+  .mat-mdc-list-item.mdc-list-item--with-one-line {
+    min-height: var(--mat-list-list-item-one-line-container-height, 48px);
+  }
+
+  .mat-mdc-list-item.mdc-list-item--with-two-lines {
+    min-height: var(--mat-list-list-item-two-line-container-height, 64px);
+  }
+
+  .mat-mdc-list-item.mdc-list-item--with-three-lines {
+    min-height: var(--mat-list-list-item-three-line-container-height, 88px);
   }
 }

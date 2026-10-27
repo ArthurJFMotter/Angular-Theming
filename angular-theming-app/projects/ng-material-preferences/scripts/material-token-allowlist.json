@@ -1,27 +1,6 @@
 {
-  "_comment": "Tokens the library sets that the INSTALLED Material may not read, with the reason. 'replacedBy' maps a legacy token to the modern one; the audit then requires the modern token to be set AND read, so a legacy name can never be used on its own.",
+  "_comment": "Tokens the library sets that Material may not read, with the reason. A group may also carry 'replacedBy' (legacy token -> modern token): the audit then requires the modern token to be set AND read, so a legacy name can never be used on its own. The library supports Material ^20.0.0, so no legacy group is needed today.",
   "groups": [
-    {
-      "name": "legacy-material-19",
-      "reason": "Pre-v20 token names. Read only by Material 19.x (verified against 19.2.19, 4-12 reads each). Delete this group and the matching '// Material 19' lines in the SCSS when the minimum supported Material is 20.",
-      "replacedBy": {
-        "--mat-filled-button-state-layer-color": "--mat-button-filled-state-layer-color",
-        "--mat-outlined-button-state-layer-color": "--mat-button-outlined-state-layer-color",
-        "--mat-text-button-state-layer-color": "--mat-button-text-state-layer-color",
-        "--mdc-chip-container-shape-radius": "--mat-chip-container-shape-radius",
-        "--mdc-dialog-container-shape": "--mat-dialog-container-shape",
-        "--mdc-fab-container-color": "--mat-fab-container-color",
-        "--mdc-fab-small-container-color": "--mat-fab-small-container-color",
-        "--mdc-filled-button-container-color": "--mat-button-filled-container-color",
-        "--mdc-filled-button-container-shape": "--mat-button-filled-container-shape",
-        "--mdc-filled-button-label-text-color": "--mat-button-filled-label-text-color",
-        "--mdc-outlined-button-container-shape": "--mat-button-outlined-container-shape",
-        "--mdc-outlined-button-label-text-color": "--mat-button-outlined-label-text-color",
-        "--mdc-outlined-button-outline-color": "--mat-button-outlined-outline-color",
-        "--mdc-protected-button-container-shape": "--mat-button-protected-container-shape",
-        "--mdc-text-button-container-shape": "--mat-button-text-container-shape"
-      }
-    },
     {
       "name": "library-private",
       "reason": "Variables owned by the library (read by its own snackbar wiring rules), not Material tokens. Their names are public API until 2.0.0.",

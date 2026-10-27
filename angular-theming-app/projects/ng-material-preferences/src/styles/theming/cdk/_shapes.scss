@@ -9,9 +9,6 @@
 /// by the consumer (on `html`, `:root`, a class or the element itself) wins
 /// without a fight. The tokens point at the same `--mat-sys-corner-*` scale the
 /// corner-radius control writes, so they follow it live.
-///
-/// "Material 19" lines use the pre-v20 token names (verified against 19.2.19);
-/// delete them when the minimum supported Material is 20.
 
 @mixin button-shapes() {
   @at-root :where(:root) {
@@ -20,12 +17,6 @@
     --mat-button-outlined-container-shape: var(--mat-sys-corner-extra-large);
     --mat-button-protected-container-shape: var(--mat-sys-corner-extra-large);
     --mat-button-tonal-container-shape: var(--mat-sys-corner-extra-large);
-
-    // Material 19
-    --mdc-filled-button-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-text-button-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-outlined-button-container-shape: var(--mat-sys-corner-extra-large);
-    --mdc-protected-button-container-shape: var(--mat-sys-corner-extra-large);
   }
 }
 
@@ -39,9 +30,6 @@
 @mixin chip-shapes() {
   @at-root :where(:root) {
     --mat-chip-container-shape-radius: var(--mat-sys-corner-extra-large);
-
-    // Material 19
-    --mdc-chip-container-shape-radius: var(--mat-sys-corner-extra-large);
   }
 }
 

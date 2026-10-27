@@ -6,7 +6,6 @@
 /// Material reads one token set for the large + extended FAB (`--mat-fab-*`) and a
 /// separate one for the mini FAB (`--mat-fab-small-*`), so BOTH must be set.
 /// The foreground token is `--mat-fab-foreground-color` (there is no `*-icon-color`).
-/// Material 19 read `--mdc-fab-*` for the container; kept for that version only.
 @mixin -fab-tokens($token) {
   --mat-fab-container-color: var(--mat-sys-#{$token}-container);
   --mat-fab-foreground-color: var(--mat-sys-on-#{$token}-container);
@@ -27,10 +26,6 @@
       calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
     transparent
   );
-
-  /* Material 19 only */
-  --mdc-fab-container-color: var(--mat-sys-#{$token}-container);
-  --mdc-fab-small-container-color: var(--mat-sys-#{$token}-container);
 }
 
 /// Helper for BASE roles (e.g. 'primary', 'success')
@@ -40,18 +35,20 @@
   --mat-button-filled-label-text-color: var(--mat-sys-on-#{$token});
   --mat-button-filled-state-layer-color: var(--mat-sys-on-#{$token});
 
-  --mdc-filled-button-container-color: var(--mat-sys-#{$token});
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-#{$token});
-  --mat-filled-button-state-layer-color: var(--mat-sys-on-#{$token});
-
   /* Outlined / Stroked Buttons */
   --mat-button-outlined-label-text-color: var(--mat-sys-#{$token});
   --mat-button-outlined-outline-color: var(--mat-sys-#{$token});
   --mat-button-outlined-state-layer-color: var(--mat-sys-#{$token});
 
-  --mdc-outlined-button-label-text-color: var(--mat-sys-#{$token});
-  --mdc-outlined-button-outline-color: var(--mat-sys-#{$token});
-  --mat-outlined-button-state-layer-color: var(--mat-sys-#{$token});
+  /* Text Buttons */
+  --mat-button-text-label-text-color: var(--mat-sys-#{$token});
+  --mat-button-text-state-layer-color: var(--mat-sys-#{$token});
+  --mat-button-text-ripple-color: color-mix(
+    in srgb,
+    var(--mat-sys-#{$token})
+      calc(var(--mat-sys-pressed-state-layer-opacity) * 100%),
+    transparent
+  );
 
   /* FABs */
   @include -fab-tokens($token);
@@ -65,18 +62,10 @@
   --mat-button-filled-label-text-color: var(--mat-sys-on-#{$token}-container);
   --mat-button-filled-state-layer-color: var(--mat-sys-on-#{$token}-container);
 
-  --mdc-filled-button-container-color: var(--mat-sys-#{$token}-container);
-  --mdc-filled-button-label-text-color: var(--mat-sys-on-#{$token}-container);
-  --mat-filled-button-state-layer-color: var(--mat-sys-on-#{$token}-container);
-
   /* Outlined / Stroked Buttons */
   --mat-button-outlined-label-text-color: var(--mat-sys-#{$token}-container);
   --mat-button-outlined-outline-color: var(--mat-sys-#{$token}-container);
   --mat-button-outlined-state-layer-color: var(--mat-sys-#{$token}-container);
-
-  --mdc-outlined-button-label-text-color: var(--mat-sys-#{$token}-container);
-  --mdc-outlined-button-outline-color: var(--mat-sys-#{$token}-container);
-  --mat-outlined-button-state-layer-color: var(--mat-sys-#{$token}-container);
 
   /* FABs */
   @include -fab-tokens($token);
