@@ -1,76 +1,319 @@
-<div class="surface-grid">
-  <mat-card appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>Outlined Card</mat-card-title>
-      <mat-card-subtitle>Surface container low</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content
-      ><p>
-        Cards automatically inherit corner radius and density scaling.
-      </p></mat-card-content
-    >
-    <mat-card-actions align="end"
-      ><button mat-button>Cancel</button
-      ><button mat-flat-button >Action</button></mat-card-actions
-    >
-  </mat-card>
-
-  <mat-card appearance="raised">
-    <mat-card-header>
-      <mat-card-title>Elevated Card</mat-card-title>
-      <mat-card-subtitle>Shadows & Surface Tints</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content
-      ><p>
-        Material 3 uses tinted backgrounds instead of heavy drop shadows for
-        elevation.
-      </p></mat-card-content
-    >
-  </mat-card>
-
-  <mat-accordion class="full-width" style="grid-column: 1 / -1">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Expansion Panel</mat-panel-title>
-        <mat-panel-description>Click to expand</mat-panel-description>
-      </mat-expansion-panel-header>
-      <p>
-        Notice how the background color subtly shifts when expanded, obeying the
-        M3 surface system.
-      </p>
-    </mat-expansion-panel>
-  </mat-accordion>
-
-  <mat-card
-    appearance="outlined"
-    class="full-width"
-    style="grid-column: 1 / -1; padding: 0"
+<div class="sandbox-controls">
+  <app-preference-select
+    label="Component"
+    [value]="selectedView()"
+    [options]="viewOptions"
+    (valueChange)="selectedView.set($event)"
   >
-    <mat-tab-group>
-      <mat-tab label="Data List">
+  </app-preference-select>
+
+  <app-preference-select
+    label="Color Scheme"
+    [value]="selectedColor()"
+    [options]="colorOptions()"
+    (valueChange)="selectedColor.set($event)"
+  >
+  </app-preference-select>
+</div>
+
+<div class="state-matrix" [style]="getOverridedStyle(activeRole())">
+  <!-- CARDS VIEW-->
+  @if (selectedView() === "card") {
+    <div class="matrix-row cards-layout">
+      <!-- Outlined Card -->
+      <mat-card appearance="outlined" class="showcase-card">
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar-box outlined-avatar">
+            <mat-icon>dashboard_customize</mat-icon>
+          </div>
+          <mat-card-title>Outlined Surface</mat-card-title>
+          <mat-card-subtitle>Container low • 1px border</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p class="card-desc">
+            Outlined cards emphasize structural boundaries without heavy drop
+            shadows. Ideal for dense layouts and data-heavy dashboards.
+          </p>
+
+          <div class="badge-pill-group">
+            <span class="preview-pill">Elevation: 0</span>
+            <span class="preview-pill">Border: Outline-variant</span>
+            <span class="preview-pill">Shape: Medium</span>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end" class="card-action-bar">
+          <button mat-button>Dismiss</button>
+          <button mat-flat-button>Explore Specs</button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Elevated Themed Card -->
+      <mat-card
+        appearance="raised"
+        class="showcase-card elevated-themed-card"
+        [style.background-color]="activeRole().containerColor"
+        [style.color]="activeRole().onContainerColor"
+      >
+        <mat-card-header>
+          <div mat-card-avatar class="card-avatar-box elevated-avatar">
+            <mat-icon>auto_awesome</mat-icon>
+          </div>
+          <mat-card-title>Elevated & Tinted</mat-card-title>
+          <mat-card-subtitle>Toned Surface Container</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p class="card-desc">
+            Material 3 pairs subtle ambient lighting with background tonal
+            tints. Containers automatically adapt to whatever role is active.
+          </p>
+
+          <div class="badge-pill-group">
+            <span class="preview-pill active-pill"
+              >Role: {{ activeRole().id | titlecase }}</span
+            >
+            <span class="preview-pill active-pill">Tonal Elevation</span>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions align="end" class="card-action-bar">
+          <button mat-button class="themed-sub-btn">Details</button>
+          <button mat-flat-button>Confirm</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+
+  <!-- EXPANSION PANEL (ACCORDION) VIEW -->
+  @if (selectedView() === "accordion") {
+    <div class="matrix-row full-width">
+      <mat-accordion class="showcase-accordion" multi>
+        <!-- Panel 1: Theme & Visual Tokens (Expanded by default) -->
+        <mat-expansion-panel [expanded]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="panel-icon">palette</mat-icon>
+              <span>Dynamic Color Token System</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Active: {{ activeRole().id | titlecase }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="panel-content-body">
+            <p>
+              In Material 3, expansion panels use
+              <code>surface-container-high</code> when open to elevate content
+              without muddy dark shadows.
+            </p>
+
+            <div class="token-chips-grid">
+              <div class="token-mini-card">
+                <span class="token-key">Primary Token</span>
+                <code>--mat-sys-primary</code>
+              </div>
+              <div class="token-mini-card">
+                <span class="token-key">Container Token</span>
+                <code>--mat-sys-primary-container</code>
+              </div>
+              <div class="token-mini-card">
+                <span class="token-key">Surface Level</span>
+                <code>--mat-sys-surface-container</code>
+              </div>
+            </div>
+          </div>
+
+          <mat-action-row>
+            <button mat-button>Reset Defaults</button>
+            <button mat-flat-button>Save Preferences</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <!-- Panel 2: Surface Hierarchy & Density -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="panel-icon">layers</mat-icon>
+              <span>Surface Hierarchy & Spacing</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              5 tonal surface tiers
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="panel-content-body">
+            <p>
+              M3 discards rigid elevation numbers in favor of contextual
+              containers:
+            </p>
+            <ul class="spec-bullet-list">
+              <li>
+                <strong>Lowest / Low:</strong> Page backdrops and subtle
+                groupings.
+              </li>
+              <li>
+                <strong>Container:</strong> Default card & accordion
+                backgrounds.
+              </li>
+              <li>
+                <strong>High / Highest:</strong> Dialogs, flyouts, and active
+                expansions.
+              </li>
+            </ul>
+          </div>
+
+          <mat-action-row>
+            <button mat-button>Documentation</button>
+            <button mat-flat-button>Inspect Tiers</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <!-- Panel 3: Disabled Panel Showcase -->
+        <mat-expansion-panel [disabled]="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon class="panel-icon">lock</mat-icon>
+              <span>Security & Access Control</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Locked (Requires Admin)
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  }
+
+  <!-- LIST GRID -->
+  @if (selectedView() === "list") {
+    <div class="surface-list-grid">
+      <!-- Text Only (Single & Multi-line) -->
+      <mat-card appearance="outlined" class="list-card">
+        <div class="card-title-header">
+          <span class="badge">Text Only</span>
+          <h4>Single & Two-line</h4>
+        </div>
         <mat-list>
-          <mat-list-item>
-            <mat-icon matListItemIcon >folder</mat-icon>
-            <div matListItemTitle>Project Alpha</div>
-            <div matListItemLine>Updated 2 hours ago</div>
+          <mat-list-item>Favorites</mat-list-item>
+          <mat-list-item>All items</mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item lines="2">
+            <span matListItemTitle>Alice Johnson</span>
+            <span matListItemLine class="text-secondary"
+              >Lunch tomorrow at 12?</span
+            >
           </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon >folder</mat-icon>
-            <div matListItemTitle>Design Assets</div>
-            <div matListItemLine>Updated 5 hours ago</div>
-          </mat-list-item>
-          <mat-list-item>
-            <mat-icon matListItemIcon >description</mat-icon>
-            <div matListItemTitle>Q3 Report.pdf</div>
-            <div matListItemLine>Updated yesterday</div>
+          <mat-list-item lines="2">
+            <span matListItemTitle>Bob Martinez</span>
+            <span matListItemLine class="text-secondary"
+              >Review moved to 3 PM.</span
+            >
           </mat-list-item>
         </mat-list>
-      </mat-tab>
-      <mat-tab label="Settings">
-        <div style="padding: 24px; color: var(--mat-sys-on-surface-variant)">
-          Tabs and Lists are the best way to verify your Density scale settings.
+      </mat-card>
+
+      <!-- Icons & Avatars -->
+      <mat-card appearance="outlined" class="list-card">
+        <div class="card-title-header">
+          <span class="badge">Visuals</span>
+          <h4>Icons & Avatars</h4>
         </div>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card>
+        <mat-list>
+          <mat-list-item lines="2">
+            <div matListItemAvatar class="avatar-badge">CN</div>
+            <span matListItemTitle>Carla Nguyen</span>
+            <span matListItemLine class="text-secondary"
+              >Sent revised spec.</span
+            >
+          </mat-list-item>
+
+          <mat-list-item>
+            <mat-icon matListItemIcon class="color-themed">folder</mat-icon>
+            <span matListItemTitle>Documents</span>
+            <span matListItemLine class="text-secondary">14 items</span>
+          </mat-list-item>
+
+          <mat-list-item lines="2">
+            <mat-icon matListItemIcon class="color-themed"
+              >local_shipping</mat-icon
+            >
+            <span matListItemTitle>Order shipped</span>
+            <span matListItemLine class="text-secondary"
+              >Track in real time.</span
+            >
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+
+      <!-- Navigation List -->
+      <mat-card appearance="outlined" class="list-card">
+        <div class="card-title-header">
+          <span class="badge">Navigation</span>
+          <h4>Nav List</h4>
+        </div>
+        <mat-nav-list>
+          <a
+            mat-list-item
+            [activated]="activeNav() === 'home'"
+            (click)="activeNav.set('home')"
+          >
+            <mat-icon matListItemIcon>home</mat-icon>
+            <span matListItemTitle>Home</span>
+          </a>
+          <a
+            mat-list-item
+            [activated]="activeNav() === 'settings'"
+            (click)="activeNav.set('settings')"
+          >
+            <mat-icon matListItemIcon>settings</mat-icon>
+            <span matListItemTitle>Settings</span>
+          </a>
+          <a
+            mat-list-item
+            [activated]="activeNav() === 'notifications'"
+            (click)="activeNav.set('notifications')"
+          >
+            <mat-icon matListItemIcon>notifications</mat-icon>
+            <span matListItemTitle>Notifications</span>
+          </a>
+        </mat-nav-list>
+      </mat-card>
+
+      <!-- Selection & Action List -->
+      <mat-card appearance="outlined" class="list-card">
+        <div class="card-title-header">
+          <div class="badge-row">
+            <span class="badge">Interactive</span>
+            <span class="count-badge">
+              Selected: {{ shoes.selectedOptions.selected.length }}
+            </span>
+          </div>
+          <h4>Selection & Actions</h4>
+        </div>
+
+        <mat-selection-list #shoes [multiple]="true">
+          <mat-list-option value="boots">Boots</mat-list-option>
+          <mat-list-option value="sneakers" [selected]="true"
+            >Sneakers</mat-list-option
+          >
+          <mat-list-option value="sandals">Sandals</mat-list-option>
+        </mat-selection-list>
+
+        <mat-divider></mat-divider>
+
+        <mat-action-list>
+          <button mat-list-item>
+            <mat-icon matListItemIcon class="color-themed">save</mat-icon>
+            <span matListItemTitle>Save Changes</span>
+          </button>
+          <button mat-list-item>
+            <mat-icon matListItemIcon>undo</mat-icon>
+            <span matListItemTitle>Undo</span>
+          </button>
+        </mat-action-list>
+      </mat-card>
+    </div>
+  }
 </div>

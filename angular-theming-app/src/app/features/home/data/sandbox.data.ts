@@ -16,7 +16,7 @@ import { TableLayoutComponent } from '../components/layouts/table-layout/table-l
 import { SandboxSection } from '../models/sandbox.model';
 
 export const ELEMENT_SECTIONS: SandboxSection[] = [
-  { id: 'palletes', title: 'Palletes', component: PaletteStripComponent },
+  { id: 'palletes', title: 'Palettes', component: PaletteStripComponent },
   { id: 'actions', title: 'Actions', component: ActionsSectionComponent },
   { id: 'inputs', title: 'Inputs & Forms', component: InputsSectionComponent },
   {
