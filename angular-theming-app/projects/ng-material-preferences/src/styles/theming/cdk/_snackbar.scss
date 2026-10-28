@@ -37,9 +37,16 @@ $-default-roles: success, warning, info, error;
   }
 }
 
+/// Shape goes through Material's token (zero specificity, follows the corner-radius
+/// control); the role colors come from the tokens `apply-snackbar-theme()` sets, so the
+/// wiring below needs no `!important`. Only `min-width` keeps it: Material's own rule
+/// has the same specificity and is injected later.
 @mixin snackbar-overrides() {
+  @at-root :where(:root) {
+    --mat-snack-bar-container-shape: var(--mat-sys-corner-small);
+  }
+
   .mat-mdc-snack-bar-container .mdc-snackbar__surface {
-    border-radius: var(--mat-sys-corner-small) !important;
     min-width: fit-content !important;
   }
 
@@ -59,25 +66,26 @@ $-default-roles: success, warning, info, error;
       background-color: var(
         --mdc-snackbar-container-color,
         var(--mat-sys-inverse-surface)
-      ) !important;
-      color: var(--_snackbar-text) !important;
+      );
+      color: var(--_snackbar-text);
     }
 
     // Force icons to inherit the text color
     mat-icon {
-      color: var(--_snackbar-text) !important;
+      color: var(--_snackbar-text);
     }
 
     .mat-mdc-button,
     .action-btn {
+      --mat-button-text-label-text-color: var(--_snackbar-text);
       --mat-button-text-state-layer-color: var(--_snackbar-text);
-      color: var(--_snackbar-text) !important;
+      color: var(--_snackbar-text);
     }
 
     .mat-mdc-icon-button {
       --mat-icon-button-icon-color: var(--_snackbar-text);
       --mat-icon-button-state-layer-color: var(--_snackbar-text);
-      color: var(--_snackbar-text) !important;
+      color: var(--_snackbar-text);
     }
   }
 }
