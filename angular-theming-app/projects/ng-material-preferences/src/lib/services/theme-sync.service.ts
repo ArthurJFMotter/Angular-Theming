@@ -1,6 +1,7 @@
-import { Injectable, Inject, Optional, effect } from '@angular/core';
+import { Injectable, Inject, Optional, effect, inject } from '@angular/core';
 import { PreferencesService } from './preferences.service';
 import { DomService } from './dom.service';
+import { SnackbarRoleStylesService } from './snackbar-role-styles.service';
 import { ColorEngine } from '../utils/engines/color-engine';
 import {
   PREFERENCES_STORAGE_TOKEN,
@@ -11,6 +12,8 @@ import { HIGH_CONTRAST_THRESHOLD } from '../models/preferences.constants';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeSyncService {
+  private readonly snackbarRoles = inject(SnackbarRoleStylesService);
+
   constructor(
     private prefs: PreferencesService,
     private dom: DomService,
@@ -47,13 +50,20 @@ export class ThemeSyncService {
           this.dom.removeAttribute('data-theme-contrast');
         }
 
+        const colors = this.prefs.activeCustomColors();
         const tokens = ColorEngine.buildTokens(
-          this.prefs.activeCustomColors(),
+          colors,
           activeMode,
           contrastValue,
           state.color.variant,
         );
         this.dom.applyTokens(tokens);
+
+        // Custom (extended) roles also get a `.snackbar-<role>` rule, so a snackbar only
+        // needs `panelClass: 'snackbar-<role>'`. Unchanged input is a no-op.
+        this.snackbarRoles.sync(
+          (colors.extended ?? []).map((c: { id: string }) => c.id),
+        );
       }
 
       // --- ACCESSIBILITY DOMAIN ---
