@@ -1,6 +1,5 @@
 // ELEMENTS
 import { ActionsSectionComponent } from '../components/elements/actions-section/actions-section.component';
-import { FeedbackSectionComponent } from '../components/elements/feedback-section/feedback-section.component';
 import { InputsSectionComponent } from '../components/elements/inputs-section/inputs-section.component';
 import { OverlaysSectionComponent } from '../components/elements/overlays-section/overlays-section.component';
 import { PaletteStripComponent } from '../components/elements/palette-strip/palette-strip.component';
@@ -25,11 +24,6 @@ export const ELEMENT_SECTIONS: SandboxSection[] = [
     component: SurfacesSectionComponent,
   },
   { id: 'overlays', title: 'Overlays', component: OverlaysSectionComponent },
-  {
-    id: 'feedback',
-    title: 'Feedback & Alerts',
-    component: FeedbackSectionComponent,
-  },
 ];
 
 export const LAYOUT_SECTIONS: SandboxSection[] = [

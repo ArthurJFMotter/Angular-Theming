@@ -1,41 +1,329 @@
 @use "../../sandbox-shared.scss";
 
-/*
-  Same matrix styles as the other sections (copied from home.component.scss).
-  If you keep them in _sandbox-shared.scss, replace this file's contents with the
-  same @use line the other section stylesheets have, and delete the copy below.
-*/
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.sandbox-controls {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
 .state-matrix {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  background: var(--mat-sys-surface-container-lowest);
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: var(--mat-sys-corner-large);
-  padding: 32px;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
 
-  .matrix-row {
+.matrix-row {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  &.full-width {
+    flex-direction: column;
+  }
+
+  &.cards-layout {
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+/* ========================================================
+   OVERLAY CARD CONTAINER STYLING
+   ======================================================== */
+.overlay-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: var(--mat-sys-surface-container-low, rgba(255, 255, 255, 0.04));
+  box-sizing: border-box;
+  min-width: 0;
+
+  .card-title-header {
+    margin-bottom: 4px;
+
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.6;
+    }
+
+    .count-badge {
+      font-size: 0.72rem;
+      font-weight: 500;
+      background: var(
+        --mat-sys-surface-container-high,
+        rgba(255, 255, 255, 0.1)
+      );
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    h4 {
+      margin: 4px 0 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.15px;
+    }
+  }
+
+  .section-desc {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    opacity: 0.75;
+    margin: 4px 0 16px 0;
+  }
+
+  .action-wrap-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+}
+
+/* ========================================================
+   SNACKBARS VIEW
+   ======================================================== */
+/* ========================================================
+   ENRICHED SNACKBARS STYLING
+   ======================================================== */
+.primary-trigger-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+  }
+}
+
+.mock-snackbars-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0 16px;
+
+  .mock-toast {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
+    justify-content: space-between;
+    padding: 6px 12px 6px 16px;
+    border-radius: 8px;
+    background: var(--mat-sys-inverse-surface, #e4e1e9);
+    color: var(--mat-sys-inverse-on-surface, #303036);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 
-    .row-label {
-      width: 120px;
-      font-size: 0.75rem;
+    .mock-toast-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mock-toast-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .mock-toast-text {
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .mock-toast-action {
+      font-size: 0.8rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--mat-sys-on-surface-variant);
+      color: var(--mat-sys-inverse-primary, #4a58a9) !important;
+      min-width: unset;
+      padding: 0 8px;
+    }
+  }
+}
+
+.spec-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  opacity: 0.55;
+  border-top: 1px solid
+    var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
+  padding-top: 12px;
+}
+
+.sub-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  margin: 14px 0 10px 0;
+  display: block;
+}
+
+.pill-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+
+  .role-pill-btn {
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600;
+    height: 32px !important;
+    line-height: 32px !important;
+    padding: 0 14px !important;
+    transition: transform 0.15s ease, filter 0.15s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+  }
+}
+
+/* ========================================================
+   MOCK PREVIEWS (Dialog & Bottom Sheet)
+   ======================================================== */
+.mock-preview-card {
+  background: var(--mat-sys-surface-container, rgba(255, 255, 255, 0.06));
+}
+
+.mock-dialog {
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
+  padding: 16px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.1));
+
+  .mock-dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    h5 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
     }
   }
 
-  .inputs-row {
-    align-items: flex-start;
-    gap: 24px;
-    mat-form-field {
-      flex: 1;
-      min-width: 200px;
+  .mock-dialog-body {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    opacity: 0.75;
+    margin: 0 0 14px 0;
+  }
+
+  .mock-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+.mock-sheet {
+  border-radius: 14px 14px 4px 4px;
+  background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
+  padding: 12px 16px 8px;
+  border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.1));
+
+  .sheet-drag-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--mat-sys-outline, rgba(255, 255, 255, 0.3));
+    margin: 0 auto 12px;
+  }
+
+  .sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 0.85rem;
+    opacity: 0.85;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
     }
   }
+}
+
+/* ========================================================
+   LOADERS & SPINNERS
+   ======================================================== */
+.loaders-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .loader-caption {
+    font-size: 0.78rem;
+    opacity: 0.65;
+  }
+
+  mat-progress-bar {
+    border-radius: 4px;
+  }
+}
+
+.spinners-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+
+  .loading-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+.color-themed {
+  color: var(--mat-sys-primary, inherit);
 }

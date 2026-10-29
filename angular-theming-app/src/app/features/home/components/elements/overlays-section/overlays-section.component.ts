@@ -1,75 +1,125 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ModalService } from '../../../../../core/services/modal.service';
-
-interface Option {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { PreferencesService } from 'ng-material-preferences';
+import { PreferenceSelectComponent } from '../../../../../shared/components/preference-select/preference-select.component';
+import { NotificationType } from '../../../../../core/models/notification.model';
 
 @Component({
   selector: 'app-overlays-section',
   standalone: true,
   imports: [
-    MatAutocompleteModule,
+    CommonModule,
+    MatCardModule,
     MatButtonModule,
-    MatDatepickerModule,
-    MatDividerModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
     MatMenuModule,
-    MatSelectModule,
-    MatTimepickerModule,
     MatTooltipModule,
+    MatDividerModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    PreferenceSelectComponent,
   ],
-  providers: [provideNativeDateAdapter()],
   templateUrl: './overlays-section.component.html',
   styleUrl: './overlays-section.component.scss',
 })
 export class OverlaysSectionComponent {
   private readonly modal = inject(ModalService);
+  private readonly notify = inject(NotificationService);
+  private readonly prefs = inject(PreferencesService);
 
-  readonly coreOptions: Option[] = [
-    { value: 'angular', label: 'Angular' },
-    { value: 'material', label: 'Angular Material' },
-    { value: 'cdk', label: 'Angular CDK' },
-  ];
-  readonly toolingOptions: Option[] = [
-    { value: 'sass', label: 'Sass' },
-    { value: 'typescript', label: 'TypeScript' },
-    { value: 'rxjs', label: 'RxJS (disabled)', disabled: true },
-  ];
-  readonly multipleDefault = ['angular', 'sass'];
+  readonly selectedView = signal('dialogs');
+  readonly selectedColor = signal('primary');
 
-  // Autocomplete: a plain signal is enough, no forms module needed.
-  private readonly allLabels = [
-    ...this.coreOptions,
-    ...this.toolingOptions,
-  ].map((o) => o.label);
-  readonly query = signal('');
-  readonly suggestions = computed(() => {
-    const q = this.query().trim().toLowerCase();
-    return this.allLabels.filter((label) => label.toLowerCase().includes(q));
+  readonly viewOptions = [
+    { label: 'Dialogs', value: 'dialogs' },
+    { label: 'Snackbars', value: 'snackbars' },
+    { label: 'Menus & Tooltips', value: 'menus' },
+    { label: 'Bottom Sheet', value: 'sheet' },
+    { label: 'Loading & Activity', value: 'loading' },
+  ];
+
+  readonly customRoles = computed(
+    () => this.prefs.activeCustomColors().extended || [],
+  );
+
+  readonly semanticRoles = [
+    { id: 'success', label: 'Success' },
+    { id: 'warning', label: 'Warning' },
+    { id: 'info', label: 'Info' },
+    { id: 'error', label: 'Error' },
+  ] as const;
+
+  readonly colorOptions = computed(() => {
+    const base = [
+      { label: 'Primary', value: 'primary' },
+      { label: 'Secondary', value: 'secondary' },
+      { label: 'Tertiary', value: 'tertiary' },
+      { label: 'Success', value: 'success' },
+      { label: 'Warning', value: 'warning' },
+      { label: 'Info', value: 'info' },
+      { label: 'Error', value: 'error' },
+    ];
+    return [
+      ...base,
+      ...this.customRoles().map((c) => ({ label: c.label, value: c.id })),
+    ];
   });
 
-  onQuery(event: Event): void {
-    this.query.set((event.target as HTMLInputElement).value);
+  readonly activeRole = computed(() => {
+    const id = this.selectedColor();
+    const isBase = [
+      'primary',
+      'secondary',
+      'tertiary',
+      'success',
+      'warning',
+      'info',
+      'error',
+    ].includes(id);
+
+    return {
+      id,
+      isBase,
+      btnClass: isBase && id !== 'primary' ? `btn-${id}` : '',
+      containerColor: `var(--mat-sys-${id}-container)`,
+      onContainerColor: `var(--mat-sys-on-${id}-container)`,
+    };
+  });
+
+  getOverridedStyle(role: any) {
+    if (!role || role.id === 'primary') return null;
+
+    const overrides: Record<string, string> = {
+      '--mat-sys-primary': `var(--mat-sys-${role.id})`,
+      '--mat-sys-on-primary': `var(--mat-sys-on-${role.id})`,
+      '--mat-sys-primary-container': `var(--mat-sys-${role.id}-container)`,
+      '--mat-sys-on-primary-container': `var(--mat-sys-on-${role.id}-container)`,
+    };
+
+    // Prevent circular reference on secondary
+    if (role.id !== 'secondary') {
+      overrides['--mat-sys-secondary'] = `var(--mat-sys-${role.id})`;
+      overrides['--mat-sys-on-secondary'] = `var(--mat-sys-on-${role.id})`;
+      overrides['--mat-sys-secondary-container'] =
+        `var(--mat-sys-${role.id}-container)`;
+      overrides['--mat-sys-on-secondary-container'] =
+        `var(--mat-sys-on-${role.id}-container)`;
+    }
+
+    return overrides;
   }
 
-  // ---- Dialogs (through the app's ModalService) ----
+  // ---- Dialog Triggers ----
   openAlert(): void {
     this.modal.alert(
       'Heads up',
@@ -93,13 +143,11 @@ export class OverlaysSectionComponent {
     );
   }
 
-  /** Controls inside a dialog: the select panel opens a SECOND overlay on top of the dialog. */
   openWithControls(): void {
     this.modal.open({
       title: 'Display settings',
       icon: 'tune',
-      message:
-        'Open the select: its panel is a second overlay stacked above this dialog.',
+      message: 'Configure system performance and animation preferences.',
       showCloseButton: true,
       selects: [
         {
@@ -131,8 +179,47 @@ export class OverlaysSectionComponent {
     });
   }
 
-  // ---- Bottom sheet ----
+  // ---- Bottom Sheet ----
   openSheet(): void {
     this.modal.initModalBottomSheet();
+  }
+
+  // ---- Snackbars ----
+  triggerActiveToast(): void {
+    const id = this.selectedColor();
+    this.notify.show(
+      id as NotificationType,
+      `Simulated toast rendered with "${id}" role tokens.`,
+      { label: 'Dismiss', actionFn: () => {} },
+      4000,
+      'notifications',
+    );
+  }
+
+  triggerToast(type: NotificationType): void {
+    this.notify.show(type, `This is a simulated ${type} alert.`, {
+      label: 'Dismiss',
+      actionFn: () => {},
+    });
+  }
+
+  triggerActionToast(): void {
+    this.notify.show(
+      'info',
+      'Item moved to trash.',
+      { label: 'Undo', actionFn: () => console.log('Undone') },
+      6000,
+      'delete',
+    );
+  }
+
+  triggerCustomToast(id: string, label: string): void {
+    this.notify.show(
+      id as any,
+      `Custom toast using "${label}" role tokens.`,
+      { label: 'Dismiss', actionFn: () => {} },
+      4000,
+      'star',
+    );
   }
 }

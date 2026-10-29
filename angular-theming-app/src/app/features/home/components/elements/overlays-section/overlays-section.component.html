@@ -1,162 +1,392 @@
-<div class="state-matrix">
-  <!-- DIALOGS -->
-  <div class="matrix-row">
-    <span class="row-label">Dialogs</span>
-    <button mat-stroked-button (click)="openAlert()">Alert</button>
-    <button mat-stroked-button (click)="openConfirm()">Confirm</button>
-    <button mat-stroked-button class="btn-error" (click)="openDanger()">
-      Danger
-    </button>
-    <button mat-flat-button (click)="openWithControls()">With controls</button>
-  </div>
+<div class="sandbox-controls">
+  <app-preference-select
+    label="Component"
+    [value]="selectedView()"
+    [options]="viewOptions"
+    (valueChange)="selectedView.set($event)"
+  >
+  </app-preference-select>
 
-  <!-- BOTTOM SHEET -->
-  <div class="matrix-row">
-    <span class="row-label">Bottom sheet</span>
-    <button mat-stroked-button (click)="openSheet()">Open sheet</button>
-  </div>
+  <app-preference-select
+    label="Color Scheme"
+    [value]="selectedColor()"
+    [options]="colorOptions()"
+    (valueChange)="selectedColor.set($event)"
+    [disabled]="selectedView() === 'snackbars'"
+  >
+  </app-preference-select>
+</div>
 
-  <!-- MENUS (with a submenu: two stacked panels) -->
-  <div class="matrix-row">
-    <span class="row-label">Menus</span>
-    <button mat-stroked-button [matMenuTriggerFor]="menu">
-      <mat-icon>more_vert</mat-icon>
-      Actions menu
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>
-        <mat-icon>edit</mat-icon>
-        <span>Edit</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>content_copy</mat-icon>
-        <span>Duplicate</span>
-      </button>
-      <button mat-menu-item [matMenuTriggerFor]="moveMenu">
-        <mat-icon>drive_file_move</mat-icon>
-        <span>Move to</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item disabled>
-        <mat-icon>lock</mat-icon>
-        <span>Locked</span>
-      </button>
-    </mat-menu>
-    <mat-menu #moveMenu="matMenu">
-      <button mat-menu-item>Documents</button>
-      <button mat-menu-item>Archive</button>
-    </mat-menu>
-  </div>
+<div class="state-matrix" [style]="getOverridedStyle(activeRole())">
+  <!-- ================= 1. DIALOGS ================= -->
+  @if (selectedView() === "dialogs") {
+    <div class="matrix-row cards-layout">
+      <!-- Triggers Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Modal Overlays</span>
+          <h4>Dialog Launchers</h4>
+        </div>
+        <p class="section-desc">
+          Material 3 dialogs feature modal scrims, high-contrast surface
+          container elevations, and contextual actions.
+        </p>
 
-  <!-- TOOLTIPS -->
-  <div class="matrix-row">
-    <span class="row-label">Tooltips</span>
-    <button
-      mat-stroked-button
-      matTooltip="Above the button"
-      matTooltipPosition="above"
-    >
-      Above
-    </button>
-    <button
-      mat-stroked-button
-      matTooltip="Below the button"
-      matTooltipPosition="below"
-    >
-      Below
-    </button>
-    <button
-      mat-stroked-button
-      matTooltip="A longer tooltip, to show how the text wraps inside the surface."
-      matTooltipPosition="right"
-    >
-      Long text
-    </button>
-  </div>
+        <div class="action-wrap-grid">
+          <button mat-stroked-button (click)="openAlert()">
+            <mat-icon>info</mat-icon>
+            Alert
+          </button>
+          <button mat-stroked-button (click)="openConfirm()">
+            <mat-icon>help_outline</mat-icon>
+            Confirm
+          </button>
+          <button mat-stroked-button class="btn-error" (click)="openDanger()">
+            <mat-icon>warning</mat-icon>
+            Danger
+          </button>
+          <button mat-flat-button (click)="openWithControls()">
+            <mat-icon>tune</mat-icon>
+            With Controls
+          </button>
+        </div>
+      </mat-card>
 
-  <!-- SELECT + AUTOCOMPLETE PANELS -->
-  <div class="matrix-row inputs-row">
-    <mat-form-field appearance="outline">
-      <mat-label>Select</mat-label>
-      <mat-select value="angular">
-        <mat-optgroup label="Core">
-          @for (o of coreOptions; track o.value) {
-            <mat-option [value]="o.value">{{ o.label }}</mat-option>
+      <!-- Mock Preview Card -->
+      <mat-card appearance="outlined" class="overlay-card mock-preview-card">
+        <div class="card-title-header">
+          <span class="badge">Structure</span>
+          <h4>M3 Dialog Anatomy</h4>
+        </div>
+
+        <div class="mock-dialog">
+          <div class="mock-dialog-header">
+            <mat-icon class="color-themed">verified_user</mat-icon>
+            <h5>Session Security</h5>
+          </div>
+          <p class="mock-dialog-body">
+            Verify authentication parameters before writing tokens to session
+            storage.
+          </p>
+          <div class="mock-dialog-actions">
+            <button mat-button disabled>Cancel</button>
+            <button mat-flat-button>Authenticate</button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- ================= 2. SNACKBARS (ENRICHED 2-COLUMN LAYOUT) ================= -->
+  @if (selectedView() === "snackbars") {
+    <div class="matrix-row cards-layout">
+      <!-- Card 1: Interactive Launchers -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <div class="badge-row">
+            <span class="badge">Triggers</span>
+            <span class="count-badge"
+              >Active: {{ activeRole().id | titlecase }}</span
+            >
+          </div>
+          <h4>Live Toast Triggers</h4>
+        </div>
+        <p class="section-desc">
+          Trigger transient notifications painted with system or custom role
+          tokens.
+        </p>
+
+        <!-- Active Theme Trigger -->
+        <div class="primary-trigger-bar">
+          <button mat-flat-button (click)="triggerActiveToast()">
+            <mat-icon>notifications_active</mat-icon>
+            Trigger {{ activeRole().id | titlecase }} Toast
+          </button>
+
+          <button mat-stroked-button (click)="triggerActionToast()">
+            <mat-icon>replay</mat-icon>
+            With Undo Action
+          </button>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Semantic Roles with True Colors -->
+        <span class="sub-label">Semantic Roles Quick Launch</span>
+        <div class="pill-buttons-row">
+          @for (role of semanticRoles; track role.id) {
+            <button
+              mat-flat-button
+              class="role-pill-btn"
+              [style.--mat-button-filled-container-color]="
+                'var(--mat-sys-' + role.id + ')'
+              "
+              [style.--mat-button-filled-label-text-color]="
+                'var(--mat-sys-on-' + role.id + ')'
+              "
+              [style.--mat-button-filled-state-layer-color]="
+                'var(--mat-sys-on-' + role.id + ')'
+              "
+              (click)="triggerToast(role.id)"
+            >
+              {{ role.label }}
+            </button>
           }
-        </mat-optgroup>
-        <mat-optgroup label="Tooling">
-          @for (o of toolingOptions; track o.value) {
-            <mat-option [value]="o.value" [disabled]="o.disabled">{{
-              o.label
-            }}</mat-option>
-          }
-        </mat-optgroup>
-      </mat-select>
-    </mat-form-field>
+        </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Multiple</mat-label>
-      <mat-select multiple [value]="multipleDefault">
-        @for (o of coreOptions; track o.value) {
-          <mat-option [value]="o.value">{{ o.label }}</mat-option>
+        <!-- Extended Custom Roles with True Colors -->
+        @if (customRoles().length > 0) {
+          <span class="sub-label">Extended Custom Roles</span>
+          <div class="pill-buttons-row">
+            @for (ext of customRoles(); track ext.id) {
+              <button
+                mat-flat-button
+                class="role-pill-btn"
+                [style.--mat-button-filled-container-color]="
+                  'var(--mat-sys-' + ext.id + ')'
+                "
+                [style.--mat-button-filled-label-text-color]="
+                  'var(--mat-sys-on-' + ext.id + ')'
+                "
+                [style.--mat-button-filled-state-layer-color]="
+                  'var(--mat-sys-on-' + ext.id + ')'
+                "
+                (click)="triggerCustomToast(ext.id, ext.label)"
+              >
+                {{ ext.label }}
+              </button>
+            }
+          </div>
         }
-        @for (o of toolingOptions; track o.value) {
-          <mat-option [value]="o.value" [disabled]="o.disabled">{{
-            o.label
-          }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      </mat-card>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Autocomplete</mat-label>
-      <input
-        matInput
-        [matAutocomplete]="auto"
-        (input)="onQuery($event)"
-        placeholder="Type to filter"
-      />
-      <mat-autocomplete #auto="matAutocomplete">
-        @for (label of suggestions(); track label) {
-          <mat-option [value]="label">{{ label }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
-  </div>
+      <!-- Card 2: Anatomy & In-App Mockup Preview -->
+      <mat-card appearance="outlined" class="overlay-card mock-preview-card">
+        <div class="card-title-header">
+          <span class="badge">Anatomy</span>
+          <h4>M3 Snackbar Anatomy</h4>
+        </div>
+        <p class="section-desc">
+          Material 3 snackbars use high-contrast surfaces, supporting
+          single-line alerts and optional single-action handlers.
+        </p>
 
-  <!-- DATE + TIME PICKERS -->
-  <div class="matrix-row inputs-row">
-    <mat-form-field appearance="outline">
-      <mat-label>Date</mat-label>
-      <input matInput [matDatepicker]="datePicker" />
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="datePicker"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #datePicker></mat-datepicker>
-    </mat-form-field>
+        <div class="mock-snackbars-stack">
+          <!-- Mock 1: Single line with action -->
+          <div class="mock-toast">
+            <span class="mock-toast-text">Changes saved to cloud storage.</span>
+            <button mat-button class="mock-toast-action">Undo</button>
+          </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Date range</mat-label>
-      <mat-date-range-input [rangePicker]="rangePicker">
-        <input matStartDate placeholder="Start" />
-        <input matEndDate placeholder="End" />
-      </mat-date-range-input>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="rangePicker"
-      ></mat-datepicker-toggle>
-      <mat-date-range-picker #rangePicker></mat-date-range-picker>
-    </mat-form-field>
+          <!-- Mock 2: Informational with icon -->
+          <div class="mock-toast">
+            <div class="mock-toast-content">
+              <mat-icon class="mock-toast-icon"
+                >check_circle</mat-icon
+              >
+              <span class="mock-toast-text">Project snapshot created.</span>
+            </div>
+            <button mat-button class="mock-toast-action">Dismiss</button>
+          </div>
+        </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Time</mat-label>
-      <input matInput [matTimepicker]="timePicker" />
-      <mat-timepicker-toggle
-        matIconSuffix
-        [for]="timePicker"
-      ></mat-timepicker-toggle>
-      <mat-timepicker #timePicker></mat-timepicker>
-    </mat-form-field>
-  </div>
+        <div class="spec-notes">
+          <span>• Position: Top / Bottom center</span>
+          <span>• Duration: 4000ms - 10000ms</span>
+        </div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- ================= 3. MENUS & TOOLTIPS ================= -->
+  @if (selectedView() === "menus") {
+    <div class="matrix-row cards-layout">
+      <!-- Menus Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Floating</span>
+          <h4>Menus & Submenus</h4>
+        </div>
+        <p class="section-desc">
+          Menus anchor to an interactive trigger, featuring leading icons,
+          nested submenus, and disabled states.
+        </p>
+
+        <div class="action-wrap-grid">
+          <button mat-flat-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+            Actions Menu
+          </button>
+        </div>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <mat-icon class="color-themed">edit</mat-icon>
+            <span>Edit Entry</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon class="color-themed">content_copy</mat-icon>
+            <span>Duplicate</span>
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="moveMenu">
+            <mat-icon>drive_file_move</mat-icon>
+            <span>Move To...</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item disabled>
+            <mat-icon>lock</mat-icon>
+            <span>Locked Item</span>
+          </button>
+        </mat-menu>
+
+        <mat-menu #moveMenu="matMenu">
+          <button mat-menu-item>Documents</button>
+          <button mat-menu-item>Archive</button>
+        </mat-menu>
+      </mat-card>
+
+      <!-- Tooltips Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Hover & Focus</span>
+          <h4>Positioned Tooltips</h4>
+        </div>
+        <p class="section-desc">
+          Contextual labels displaying brief helper descriptions on hover or
+          long-press.
+        </p>
+
+        <div class="action-wrap-grid">
+          <button
+            mat-stroked-button
+            matTooltip="Above tooltip label"
+            matTooltipPosition="above"
+          >
+            Above
+          </button>
+          <button
+            mat-stroked-button
+            matTooltip="Below tooltip label"
+            matTooltipPosition="below"
+          >
+            Below
+          </button>
+          <button
+            mat-stroked-button
+            matTooltip="Multi-line tooltip that cleanly wraps across multiple lines of text."
+            matTooltipPosition="right"
+          >
+            Long Wrapped
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- ================= 4. BOTTOM SHEET ================= -->
+  @if (selectedView() === "sheet") {
+    <div class="matrix-row cards-layout">
+      <!-- Launcher Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Mobile & Desktop</span>
+          <h4>Modal Bottom Sheet</h4>
+        </div>
+        <p class="section-desc">
+          Bottom sheets slide up from the bottom of the screen to reveal
+          contextual options, especially convenient for mobile layouts.
+        </p>
+
+        <div class="action-wrap-grid">
+          <button mat-flat-button (click)="openSheet()">
+            <mat-icon>vertical_align_top</mat-icon>
+            Launch Bottom Sheet
+          </button>
+        </div>
+      </mat-card>
+
+      <!-- Mock Sheet Preview -->
+      <mat-card appearance="outlined" class="overlay-card mock-preview-card">
+        <div class="card-title-header">
+          <span class="badge">Preview</span>
+          <h4>Anatomy Preview</h4>
+        </div>
+
+        <div class="mock-sheet">
+          <div class="sheet-drag-handle"></div>
+          <div class="sheet-item">
+            <mat-icon class="color-themed">share</mat-icon>
+            <span>Share Resource</span>
+          </div>
+          <div class="sheet-item">
+            <mat-icon class="color-themed">link</mat-icon>
+            <span>Copy Direct Link</span>
+          </div>
+          <div class="sheet-item">
+            <mat-icon>delete_outline</mat-icon>
+            <span>Remove</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  }
+
+  <!-- ================= 5. LOADING & ACTIVITY ================= -->
+  @if (selectedView() === "loading") {
+    <div class="matrix-row cards-layout">
+      <!-- Linear Progress Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Linear</span>
+          <h4>Progress Bars</h4>
+        </div>
+        <p class="section-desc">
+          Indeterminate and determinate linear status loaders.
+        </p>
+
+        <div class="loaders-stack">
+          <span class="loader-caption">Indeterminate Activity</span>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+
+          <span class="loader-caption">Determinate (65%)</span>
+          <mat-progress-bar mode="determinate" value="65"></mat-progress-bar>
+
+          <span class="loader-caption">Buffer Mode</span>
+          <mat-progress-bar
+            mode="buffer"
+            value="40"
+            bufferValue="70"
+          ></mat-progress-bar>
+        </div>
+      </mat-card>
+
+      <!-- Circular Spinners & Button Loaders Card -->
+      <mat-card appearance="outlined" class="overlay-card">
+        <div class="card-title-header">
+          <span class="badge">Circular</span>
+          <h4>Spinners & Button States</h4>
+        </div>
+        <p class="section-desc">
+          Discrete progress indicators for inline operations and overlays.
+        </p>
+
+        <div class="spinners-row">
+          <mat-spinner diameter="36"></mat-spinner>
+          <mat-progress-spinner
+            mode="determinate"
+            [value]="75"
+            diameter="36"
+          ></mat-progress-spinner>
+
+          <!-- Fixed Button Loading State -->
+          <button mat-flat-button disabled>
+            <div class="loading-btn">
+              <mat-spinner diameter="18"></mat-spinner>
+              <span>Processing...</span>
+            </div>
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  }
 </div>
