@@ -1,0 +1,161 @@
+<div class="dynamic-sheet-container">
+  <!-- M3 Drag Handle -->
+  @if (data.showDragHandle !== false) {
+    <div class="sheet-drag-handle"></div>
+  }
+
+  <!-- Header -->
+  @if (data.title || data.showCloseButton) {
+    <div class="sheet-header">
+      <div class="title-group">
+        @if (data.icon) {
+          <mat-icon class="header-icon">{{ data.icon }}</mat-icon>
+        }
+        <div>
+          @if (data.title) {
+            <h2 class="sheet-title">{{ data.title }}</h2>
+          }
+          @if (data.subtitle) {
+            <p class="sheet-subtitle">{{ data.subtitle }}</p>
+          }
+        </div>
+      </div>
+
+      @if (data.showCloseButton) {
+        <button mat-icon-button (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
+
+  <div class="sheet-body">
+    <!-- Message text -->
+    @if (data.message) {
+      <p class="sheet-message">{{ data.message }}</p>
+    }
+
+    <!-- Code Preview Snippet -->
+    @if (data.previewSnippet) {
+      <div class="sheet-preview">
+        <code>{{ data.previewSnippet }}</code>
+      </div>
+    }
+
+    <!-- 1. Interactive Action List (Share, Select, Route) -->
+    @if (data.items && data.items.length > 0) {
+      <mat-action-list class="sheet-action-list">
+        @for (item of data.items; track item.label) {
+          <button
+            mat-list-item
+            [disabled]="item.disabled"
+            (click)="selectItem(item)"
+          >
+            @if (item.icon) {
+              <mat-icon matListItemIcon [color]="item.color || 'primary'">{{
+                item.icon
+              }}</mat-icon>
+            }
+            <span matListItemTitle>{{ item.label }}</span>
+            @if (item.sublabel) {
+              <span matListItemLine class="item-sublabel">{{
+                item.sublabel
+              }}</span>
+            }
+          </button>
+        }
+      </mat-action-list>
+    }
+
+    <!-- 2. Text Inputs -->
+    @if (data.inputs && data.inputs.length > 0) {
+      <div class="sheet-form-fields">
+        @for (input of data.inputs; track input.id) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ input.label }}</mat-label>
+            <input
+              matInput
+              [type]="input.type || 'text'"
+              [placeholder]="input.placeholder || ''"
+              [required]="input.isRequired || false"
+              [(ngModel)]="input.value"
+            />
+          </mat-form-field>
+        }
+      </div>
+    }
+
+    <!-- 3. Select Fields -->
+    @if (data.selects && data.selects.length > 0) {
+      <div class="sheet-form-fields">
+        @for (select of data.selects; track select.id) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ select.label }}</mat-label>
+            <mat-select
+              [required]="select.isRequired || false"
+              [(ngModel)]="select.value"
+            >
+              @for (option of select.options; track option.value) {
+                <mat-option [value]="option.value">{{
+                  option.label
+                }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+      </div>
+    }
+
+    <!-- 4. Toggles -->
+    @if (data.toggles && data.toggles.length > 0) {
+      <div class="sheet-toggle-group">
+        @for (toggle of data.toggles; track toggle.id) {
+          <mat-slide-toggle [(ngModel)]="toggle.checked" color="primary">
+            {{ toggle.label }}
+          </mat-slide-toggle>
+        }
+      </div>
+    }
+
+    <!-- 5. Checklist -->
+    @if (data.checklist && data.checklist.length > 0) {
+      <div class="sheet-checklist-group">
+        @for (check of data.checklist; track check.id) {
+          <mat-checkbox
+            [(ngModel)]="check.checked"
+            [disabled]="check.disabled || false"
+            color="primary"
+          >
+            {{ check.label }}
+          </mat-checkbox>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  @if (data.actions && data.actions.length > 0) {
+    <div class="sheet-actions">
+      @for (action of data.actions; track action.label) {
+        @if (action.isPrimary) {
+          <button
+            mat-flat-button
+            [color]="action.color || 'primary'"
+            [disabled]="action.returnsPayload && isFormInvalid()"
+            (click)="handleAction(action)"
+          >
+            {{ action.label }}
+          </button>
+        } @else {
+          <button
+            mat-button
+            [color]="action.color || 'primary'"
+            (click)="handleAction(action)"
+          >
+            {{ action.label }}
+          </button>
+        }
+      }
+    </div>
+  }
+</div>

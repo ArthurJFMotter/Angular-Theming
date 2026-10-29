@@ -290,6 +290,31 @@
   }
 }
 
+.sheet-result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
+  font-size: 0.82rem;
+  color: var(--mat-sys-on-surface-variant);
+  width: fit-content;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--mat-sys-primary);
+  }
+
+  strong {
+    color: var(--mat-sys-primary);
+  }
+}
+
 /* ========================================================
    LOADERS & SPINNERS
    ======================================================== */

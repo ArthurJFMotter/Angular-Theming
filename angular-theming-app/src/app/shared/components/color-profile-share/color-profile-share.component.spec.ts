@@ -2,12 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { signal } from '@angular/core';
-import { ModalBottomSheetComponent } from './modal-bottom-sheet.component';
+import { ColorProfileShareComponent } from './color-profile-share.component';
 import { PreferencesService } from 'ng-material-preferences';
 import { NotificationService } from '../../../core/services/notification.service';
 
-describe('ModalBottomSheetComponent - Domain Omission', () => {
-  let fixture: ComponentFixture<ModalBottomSheetComponent>;
+describe('ColorProfileShareComponent - Domain Omission', () => {
+  let fixture: ComponentFixture<ColorProfileShareComponent>;
   let mockPrefs: any;
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('ModalBottomSheetComponent - Domain Omission', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ModalBottomSheetComponent, NoopAnimationsModule],
+      imports: [ColorProfileShareComponent, NoopAnimationsModule],
       providers: [
         { provide: PreferencesService, useValue: mockPrefs },
         { provide: NotificationService, useValue: { show: jasmine.createSpy() } },
@@ -25,7 +25,7 @@ describe('ModalBottomSheetComponent - Domain Omission', () => {
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ModalBottomSheetComponent);
+    fixture = TestBed.createComponent(ColorProfileShareComponent);
   });
 
   it('should render the fallback warning if the Color domain is omitted', () => {

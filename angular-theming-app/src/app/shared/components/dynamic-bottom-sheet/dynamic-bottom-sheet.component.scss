@@ -1,0 +1,113 @@
+.dynamic-sheet-container {
+  padding: 12px 20px 24px 20px;
+  color: var(--mat-sys-on-surface);
+  box-sizing: border-box;
+
+  .sheet-drag-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--mat-sys-outline, rgba(255, 255, 255, 0.3));
+    margin: 0 auto 14px auto;
+  }
+
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .header-icon {
+        color: var(--mat-sys-primary);
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      .sheet-title {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .sheet-subtitle {
+        margin: 2px 0 0;
+        font-size: 0.82rem;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .sheet-body {
+    .sheet-message {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: var(--mat-sys-on-surface-variant);
+      margin: 0 0 16px;
+    }
+
+    .sheet-preview {
+      background: var(--mat-sys-surface-container-lowest);
+      border: 1px dashed var(--mat-sys-outline-variant);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+
+      code {
+        font-family: monospace;
+        font-size: 0.82rem;
+        color: var(--mat-sys-primary);
+      }
+    }
+
+    .sheet-action-list {
+      padding: 0;
+      margin: 0 -8px;
+
+      button[mat-list-item] {
+        border-radius: 10px;
+        margin-bottom: 2px;
+
+        .item-sublabel {
+          font-size: 0.78rem;
+          opacity: 0.65;
+        }
+      }
+    }
+
+    .sheet-form-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+
+      .full-width {
+        width: 100%;
+      }
+    }
+
+    .sheet-toggle-group,
+    .sheet-checklist-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+  }
+
+  .sheet-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 12px;
+    border-top: 1px solid
+      var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.08));
+  }
+}

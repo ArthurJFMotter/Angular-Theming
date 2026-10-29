@@ -3,7 +3,6 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ModalBottomSheetComponent } from '../../shared/components/modal-bottom-sheet/modal-bottom-sheet.component';
 import { DynamicModalComponent } from '../../shared/components/dynamic-modal/dynamic-modal.component';
 import { ModalData } from '../models/modal.model';
 
@@ -98,10 +97,6 @@ export class ModalService {
   // =========================================================
   // APP-SPECIFIC IMPLEMENTATIONS
   // =========================================================
-
-  initModalBottomSheet(): void {
-    this.bottomSheet.open(ModalBottomSheetComponent);
-  }
 
   initModalDialog(): void {
     this.open({

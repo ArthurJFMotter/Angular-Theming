@@ -284,33 +284,59 @@
   }
 
   <!-- ================= 4. BOTTOM SHEET ================= -->
-  @if (selectedView() === "sheet") {
+  @if (selectedView() === 'sheet') {
     <div class="matrix-row cards-layout">
-      <!-- Launcher Card -->
+      <!-- Launchers Card (Mirrors Dialog Launchers setup) -->
       <mat-card appearance="outlined" class="overlay-card">
         <div class="card-title-header">
-          <span class="badge">Mobile & Desktop</span>
-          <h4>Modal Bottom Sheet</h4>
+          <span class="badge">Modal Overlays</span>
+          <h4>Bottom Sheet Launchers</h4>
         </div>
         <p class="section-desc">
-          Bottom sheets slide up from the bottom of the screen to reveal
-          contextual options, especially convenient for mobile layouts.
+          Material 3 bottom sheets slide up from the viewport edge to reveal quick actions, confirmation prompts, or embedded form controls.
         </p>
 
+        <!-- 4 Distinct Action Triggers matching the Dialog layout -->
         <div class="action-wrap-grid">
-          <button mat-flat-button (click)="openSheet()">
-            <mat-icon>vertical_align_top</mat-icon>
-            Launch Bottom Sheet
+          <button mat-stroked-button (click)="openActionSheet()">
+            <mat-icon>list</mat-icon>
+            Action List
+          </button>
+
+          <button mat-stroked-button (click)="openConfirmSheet()">
+            <mat-icon>help_outline</mat-icon>
+            Confirm
+          </button>
+
+          <button mat-stroked-button class="btn-error" (click)="openDangerSheet()">
+            <mat-icon>warning</mat-icon>
+            Danger
+          </button>
+
+          <button mat-flat-button (click)="openWithControlsSheet()">
+            <mat-icon>tune</mat-icon>
+            With Controls
           </button>
         </div>
+
+        <!-- Displays the outcome returned by the bottom sheet -->
+        @if (lastSheetResult()) {
+          <div class="sheet-result-badge">
+            <mat-icon>info</mat-icon>
+            <span>Result: <strong>{{ lastSheetResult() }}</strong></span>
+          </div>
+        }
       </mat-card>
 
-      <!-- Mock Sheet Preview -->
+      <!-- Mock Preview Card -->
       <mat-card appearance="outlined" class="overlay-card mock-preview-card">
         <div class="card-title-header">
-          <span class="badge">Preview</span>
-          <h4>Anatomy Preview</h4>
+          <span class="badge">Structure</span>
+          <h4>M3 Bottom Sheet Anatomy</h4>
         </div>
+        <p class="section-desc">
+          Designed for ergonomics on mobile and large touch surfaces, featuring drag anchors and contextual actions.
+        </p>
 
         <div class="mock-sheet">
           <div class="sheet-drag-handle"></div>

@@ -14,10 +14,12 @@ import { PreferencesService, CustomColors } from 'ng-material-preferences';
   selector: 'app-modal-bottom-sheet',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, FormsModule],
-  templateUrl: './modal-bottom-sheet.component.html',
-  styleUrl: './modal-bottom-sheet.component.scss'
+  templateUrl: './color-profile-share.component.html',
+  styleUrl: './color-profile-share.component.scss'
 })
-export class ModalBottomSheetComponent {
+export class ColorProfileShareComponent {
+  // --- SCRAPPED FOR FUTURE USE ---
+  /*
   private sheetRef = inject(MatBottomSheetRef);
   private notify = inject(NotificationService);
   readonly prefs = inject(PreferencesService);
@@ -72,4 +74,5 @@ export class ModalBottomSheetComponent {
   close(): void {
     this.sheetRef.dismiss();
   }
+    */
 }
