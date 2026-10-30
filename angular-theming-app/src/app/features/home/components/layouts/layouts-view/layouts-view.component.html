@@ -1,18 +1,21 @@
 @for (section of visibleSections(); track section.id; let last = $last) {
   <section [id]="section.id" #spyTarget class="canvas-section">
     <div class="section-header-row">
-      <h2 class="section-title">{{ section.title }}</h2>
-      <!-- Placeholder for future granular actions (e.g. "View Code" button) -->
+      <div class="section-meta">
+        <h2 class="section-title">{{ section.title }}</h2>
+        @if (section.description) {
+          <p class="section-desc">{{ section.description }}</p>
+        }
+      </div>
+
       @if (section.actionTemplate) {
-        <ng-container
-          *ngComponentOutlet="section.actionTemplate"
-        ></ng-container>
+        <div class="section-action">
+          <ng-container
+            *ngComponentOutlet="section.actionTemplate"
+          ></ng-container>
+        </div>
       }
     </div>
-
-    @if (section.description) {
-      <p class="section-desc">{{ section.description }}</p>
-    }
 
     <!-- Dynamic Component Render -->
     <ng-container *ngComponentOutlet="section.component"></ng-container>

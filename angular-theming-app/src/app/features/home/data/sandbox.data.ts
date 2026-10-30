@@ -10,6 +10,7 @@ import { DashboardLayoutComponent } from '../components/layouts/dashboard-layout
 import { DocsLayoutComponent } from '../components/layouts/docs-layout/docs-layout.component';
 import { KanbanLayoutComponent } from '../components/layouts/kanban-layout/kanban-layout.component';
 import { MobileFrameLayoutComponent } from '../components/layouts/mobile-frame-layout/mobile-frame-layout.component';
+import { MobileRotateActionComponent } from '../components/layouts/mobile-frame-layout/mobile-rotate-action/mobile-rotate-action.component';
 import { TableLayoutComponent } from '../components/layouts/table-layout/table-layout.component';
 
 import { SandboxSection } from '../models/sandbox.model';
@@ -61,12 +62,13 @@ export const LAYOUT_SECTIONS: SandboxSection[] = [
     description: 'Tests surface hierarchy, elevation, and card corner radii.',
     component: KanbanLayoutComponent,
   },
-  {
+   {
     id: 'mobile',
     title: 'Mobile Frame',
     description:
       'Tests constrained small-screen density, bottom sheets, and FABs.',
     component: MobileFrameLayoutComponent,
+    actionTemplate: MobileRotateActionComponent,
     hideOnMobile: true,
   },
 ];

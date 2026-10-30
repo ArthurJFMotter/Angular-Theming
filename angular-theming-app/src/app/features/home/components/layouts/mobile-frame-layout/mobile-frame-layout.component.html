@@ -1,31 +1,20 @@
 <!-- Mobile Frame -->
 @if (!isRealMobile()) {
-  <div class="frame-controls">
-    <button
-      mat-stroked-button
-      [disabled]="isRotating()"
-      (click)="toggleOrientation()"
-    >
-      <mat-icon>screen_rotation</mat-icon>
-      Rotate Device
-    </button>
-  </div>
-
   <div class="mobile-frame-wrapper">
     <div
       class="mobile-device"
-      [class.is-landscape]="isHorizontal()"
-      [class.is-rotating]="isRotating()"
+      [class.is-landscape]="state.isHorizontal()"
+      [class.is-rotating]="state.isRotating()"
     >
       <!-- Spinner overlay while rotating -->
-      @if (isRotating()) {
+      @if (state.isRotating()) {
         <div class="rotate-spinner">
           <mat-spinner diameter="48"></mat-spinner>
         </div>
       }
 
       <!-- Mobile screen content -->
-      <div class="device-content" [attr.aria-hidden]="isRotating()">
+      <div class="device-content" [attr.aria-hidden]="state.isRotating()">
         <!-- Header -->
         <mat-toolbar color="primary" class="mobile-toolbar">
           <button mat-icon-button (click)="mobileDrawer.toggle()">
@@ -39,7 +28,6 @@
           class="mobile-sidenav-container"
           [hasBackdrop]="true"
         >
-          <!-- Hidden Side Menu -->
           <mat-sidenav #mobileDrawer mode="over" class="mobile-drawer">
             <div class="drawer-header">
               <div
@@ -67,7 +55,6 @@
             </mat-nav-list>
           </mat-sidenav>
 
-          <!-- Main Mobile Content -->
           <mat-sidenav-content class="mobile-content">
             <div class="mock-list-item">
               <div
@@ -119,8 +106,8 @@
         </div>
       </div>
 
-      <!-- DYNAMIC BOTTOM SHEET (CONFINED INSIDE PHONE FRAME) -->
-      @if (!isRotating()) {
+      <!-- DYNAMIC BOTTOM SHEET -->
+      @if (!state.isRotating()) {
         @if (sheetOpen()) {
           <div class="device-backdrop" (click)="sheetOpen.set(false)"></div>
         }

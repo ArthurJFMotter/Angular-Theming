@@ -4,27 +4,42 @@
 .canvas-section {
   padding-bottom: 48px;
   scroll-margin-top: 100px;
-  // Border removed here: <mat-divider> in the template handles section separation cleanly.
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: var(--mat-sys-on-background);
-}
-
-.section-desc {
-  font-size: 0.9rem;
-  color: var(--mat-sys-on-surface-variant);
-  margin: 0 0 24px;
-  line-height: 1.45;
 }
 
 .section-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end; // Aligns the action button with the description text
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .section-meta {
+    flex: 1;
+    min-width: 0;
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      color: var(--mat-sys-on-background);
+    }
+
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--mat-sys-on-surface-variant);
+      margin: 0;
+      line-height: 1.45;
+    }
+  }
+
+  .section-action {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .section-divider {

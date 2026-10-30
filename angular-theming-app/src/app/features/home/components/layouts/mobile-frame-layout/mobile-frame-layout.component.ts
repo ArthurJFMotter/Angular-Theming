@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnDestroy, inject } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { BottomSheetData } from '../../../../../core/models/bottom-sheet.model';
 import { BottomSheetService } from '../../../../../core/services/bottom-sheet.service';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { DynamicBottomSheetComponent } from '../../../../../shared/components/dynamic-bottom-sheet/dynamic-bottom-sheet.component';
+import { MobileFrameStateService } from './services/mobile-frame-state.service';
 
 @Component({
   selector: 'app-mobile-frame-layout',
@@ -32,26 +33,23 @@ import { DynamicBottomSheetComponent } from '../../../../../shared/components/dy
   templateUrl: './mobile-frame-layout.component.html',
   styleUrl: './mobile-frame-layout.component.scss',
 })
-export class MobileFrameLayoutComponent implements OnDestroy {
+export class MobileFrameLayoutComponent {
+  readonly state = inject(MobileFrameStateService);
   private readonly bottomSheet = inject(BottomSheetService);
   private readonly notify = inject(NotificationService, { optional: true });
   private readonly breakpointObserver = inject(BreakpointObserver);
 
   readonly sheetOpen = signal(false);
-  readonly isHorizontal = signal(false);
-  readonly isRotating = signal(false);
-  private rotateTimer?: ReturnType<typeof setTimeout>;
 
   private readonly bp = toSignal(
     this.breakpointObserver
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .pipe(map((r) => r.matches)),
-    { initialValue: false }
+    { initialValue: false },
   );
 
   readonly isRealMobile = computed(() => this.bp());
 
-  // Configuration for the dynamic bottom sheet
   readonly composeSheetData: BottomSheetData = {
     title: 'Compose',
     showCloseButton: false,
@@ -74,34 +72,9 @@ export class MobileFrameLayoutComponent implements OnDestroy {
     }
   }
 
-  // Triggered on actual mobile devices
   openRealMobileSheet(): void {
     this.bottomSheet
       .open(this.composeSheetData)
       .subscribe((choice) => this.handleSheetAction(choice));
-  }
-
-  toggleOrientation(): void {
-    if (this.isRotating()) return;
-    this.sheetOpen.set(false);
-    this.isRotating.set(true);
-
-    const scale =
-      parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue(
-          '--theme-motion-scale'
-        ) || '1'
-      ) || 1;
-
-    const duration = 600 * scale;
-
-    this.rotateTimer = setTimeout(() => {
-      this.isHorizontal.update((v) => !v);
-      this.isRotating.set(false);
-    }, duration);
-  }
-
-  ngOnDestroy(): void {
-    if (this.rotateTimer) clearTimeout(this.rotateTimer);
   }
 }
