@@ -29,20 +29,3 @@
     overflow-x: clip;
   }
 }
-
-.canvas-section {
-  padding-bottom: 64px;
-  padding-top: 48px;
-  
-  /* Keeps the scroll-spy accurate when navigating */
-  scroll-margin-top: calc(
-    var(--app-navbar-offset, 64px) + var(--sandbox-nav-offset, 0px) + 24px
-  );
-
-  /* Remove the border-top and margin-top here, 
-     because the <mat-divider> in the HTML will handle the line */
-  
-  &:first-child {
-    padding-top: 0; /* No top padding for the very first section */
-  }
-}

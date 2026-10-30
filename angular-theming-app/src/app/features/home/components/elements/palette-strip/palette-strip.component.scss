@@ -1,9 +1,11 @@
+@use "../../sandbox-shared.scss";
+
 .palette-groups {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin-bottom: 48px;
 }
+
 .group-label {
   font-size: 0.75rem;
   font-weight: 600;
@@ -12,11 +14,13 @@
   color: var(--mat-sys-outline);
   margin: 0 0 12px;
 }
+
 .swatch-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
 }
+
 .palette-swatch {
   height: 60px;
   border-radius: var(--mat-sys-corner-medium, 12px);
@@ -26,25 +30,34 @@
   font-size: 0.75rem;
   font-weight: 600;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-  transition: all calc(0.2s * var(--theme-motion-scale, 1)) ease;
+  transition: transform calc(0.2s * var(--theme-motion-scale, 1)) ease,
+              box-shadow calc(0.2s * var(--theme-motion-scale, 1)) ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
 }
+
 .surface-tiers {
   display: flex;
   height: 60px;
   border-radius: var(--mat-sys-corner-medium, 12px);
   overflow: hidden;
   border: 1px solid var(--mat-sys-outline-variant);
-}
-.tier {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  padding: 12px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--mat-sys-on-surface);
-  border-right: 1px solid var(--mat-sys-outline-variant);
-}
-.tier:last-child {
-  border-right: none;
+
+  .tier {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface);
+    border-right: 1px solid var(--mat-sys-outline-variant);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
 }

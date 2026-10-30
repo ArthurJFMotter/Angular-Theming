@@ -1,4 +1,4 @@
-@use "../layouts-shared.scss";
+@use "../../sandbox-shared.scss";
 
 .kanban-board {
   display: grid;
@@ -29,6 +29,7 @@
 
 .kanban-card {
   background-color: var(--mat-sys-surface-container);
+  border-radius: var(--mat-card-container-shape, var(--mat-sys-corner-medium));
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -55,9 +56,6 @@
   }
 }
 
-/* --- CDK DRAG & DROP CUSTOMIZATION --- */
-
-/* placeholder */
 .cdk-drag-placeholder {
   opacity: 0.3;
   border: 2px dashed var(--mat-sys-outline);
@@ -65,14 +63,12 @@
   box-shadow: none !important;
 }
 
-/* drag condition */
 .cdk-drag-preview {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2) !important;
   border-radius: var(--mat-sys-corner-medium);
   background: var(--mat-sys-surface-container-highest);
 }
 
-/* drag animation */
 .cdk-drag-animating,
 .kanban-drop-list.cdk-drop-list-dragging
   .kanban-card:not(.cdk-drag-placeholder) {

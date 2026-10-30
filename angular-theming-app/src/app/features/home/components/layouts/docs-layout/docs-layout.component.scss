@@ -1,4 +1,4 @@
-@use "../layouts-shared.scss";
+@use "../../sandbox-shared.scss";
 
 .docs-container {
   display: flex;
@@ -24,7 +24,6 @@
   }
 }
 
-/* Target the tree nodes */
 mat-tree {
   background: transparent;
 }
@@ -46,7 +45,6 @@ mat-tree-node {
   color: var(--mat-sys-on-surface);
 }
 
-/* Elegant rotation for the chevron icon that respects the motion scale! */
 .mat-tree-node-toggle-icon {
   transition: transform calc(0.2s * var(--theme-motion-scale, 1)) ease;
   &.expanded {
@@ -65,11 +63,11 @@ mat-tree-node {
     margin-top: 16px;
     margin-bottom: 32px;
   }
+
   .mock-code-block {
-    background: var(--mat-sys-surface-container);
+    display: block;
     padding: 16px;
     border-radius: var(--mat-sys-corner-medium);
-    font-family: monospace;
     font-size: 0.85rem;
   }
 }

@@ -15,35 +15,6 @@
   flex-wrap: wrap;
 }
 
-.state-matrix {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.matrix-row {
-  display: flex;
-  gap: 16px;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-
-  &.full-width {
-    flex-direction: column;
-  }
-
-  &.cards-layout {
-    @media (max-width: 768px) {
-      flex-direction: column;
-    }
-  }
-}
-
 .overlay-card {
   flex: 1;
   display: flex;
