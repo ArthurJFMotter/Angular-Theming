@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -37,12 +37,25 @@ import { ModalAction } from '../../../core/models/modal.model';
   styleUrl: './dynamic-bottom-sheet.component.scss',
 })
 export class DynamicBottomSheetComponent {
-  private readonly sheetRef = inject(MatBottomSheetRef<DynamicBottomSheetComponent>);
-  readonly data: BottomSheetData = inject(MAT_BOTTOM_SHEET_DATA) || {};
+  private readonly sheetRef = inject(MatBottomSheetRef<DynamicBottomSheetComponent>, { optional: true });
+  private readonly injectedData = inject<BottomSheetData>(MAT_BOTTOM_SHEET_DATA, { optional: true });
+
+  private _data: BottomSheetData = this.injectedData ?? {};
+
+  @Input()
+  set data(value: BottomSheetData | undefined | null) {
+    this._data = value ?? this.injectedData ?? {};
+  }
+  get data(): BottomSheetData {
+    return this._data;
+  }
+
+  @Output() actionSelected = new EventEmitter<any>();
 
   selectItem(item: BottomSheetItem): void {
     if (item.disabled) return;
-    this.sheetRef.dismiss(item.value);
+    this.sheetRef?.dismiss(item.value);
+    this.actionSelected.emit(item.value);
   }
 
   isFormInvalid(): boolean {
@@ -64,20 +77,22 @@ export class DynamicBottomSheetComponent {
   }
 
   handleAction(action: ModalAction): void {
-    if (action.returnsPayload) {
-      this.sheetRef.dismiss({
-        action: action.value,
-        inputs: this.data.inputs,
-        selects: this.data.selects,
-        toggles: this.data.toggles,
-        checklist: this.data.checklist,
-      });
-    } else {
-      this.sheetRef.dismiss(action.value);
-    }
+    const payload = action.returnsPayload
+      ? {
+          action: action.value,
+          inputs: this.data.inputs,
+          selects: this.data.selects,
+          toggles: this.data.toggles,
+          checklist: this.data.checklist,
+        }
+      : action.value;
+
+    this.sheetRef?.dismiss(payload);
+    this.actionSelected.emit(payload);
   }
 
   close(): void {
-    this.sheetRef.dismiss();
+    this.sheetRef?.dismiss();
+    this.actionSelected.emit(undefined);
   }
 }

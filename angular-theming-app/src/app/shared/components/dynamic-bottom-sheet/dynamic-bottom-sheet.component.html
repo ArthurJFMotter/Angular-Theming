@@ -42,25 +42,21 @@
       </div>
     }
 
-    <!-- 1. Interactive Action List (Share, Select, Route) -->
-    @if (data.items && data.items.length > 0) {
+    <!-- 1. Interactive Action List -->
+    @if (data.items; as items) {
       <mat-action-list class="sheet-action-list">
-        @for (item of data.items; track item.label) {
+        @for (item of items; track item.label) {
           <button
             mat-list-item
             [disabled]="item.disabled"
             (click)="selectItem(item)"
           >
             @if (item.icon) {
-              <mat-icon matListItemIcon [color]="item.color || 'primary'">{{
-                item.icon
-              }}</mat-icon>
+              <mat-icon matListItemIcon [color]="item.color || 'primary'">{{ item.icon }}</mat-icon>
             }
             <span matListItemTitle>{{ item.label }}</span>
             @if (item.sublabel) {
-              <span matListItemLine class="item-sublabel">{{
-                item.sublabel
-              }}</span>
+              <span matListItemLine class="item-sublabel">{{ item.sublabel }}</span>
             }
           </button>
         }
@@ -68,9 +64,9 @@
     }
 
     <!-- 2. Text Inputs -->
-    @if (data.inputs && data.inputs.length > 0) {
+    @if (data.inputs; as inputs) {
       <div class="sheet-form-fields">
-        @for (input of data.inputs; track input.id) {
+        @for (input of inputs; track input.id) {
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ input.label }}</mat-label>
             <input
@@ -86,9 +82,9 @@
     }
 
     <!-- 3. Select Fields -->
-    @if (data.selects && data.selects.length > 0) {
+    @if (data.selects; as selects) {
       <div class="sheet-form-fields">
-        @for (select of data.selects; track select.id) {
+        @for (select of selects; track select.id) {
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ select.label }}</mat-label>
             <mat-select
@@ -96,9 +92,7 @@
               [(ngModel)]="select.value"
             >
               @for (option of select.options; track option.value) {
-                <mat-option [value]="option.value">{{
-                  option.label
-                }}</mat-option>
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -107,9 +101,9 @@
     }
 
     <!-- 4. Toggles -->
-    @if (data.toggles && data.toggles.length > 0) {
+    @if (data.toggles; as toggles) {
       <div class="sheet-toggle-group">
-        @for (toggle of data.toggles; track toggle.id) {
+        @for (toggle of toggles; track toggle.id) {
           <mat-slide-toggle [(ngModel)]="toggle.checked" color="primary">
             {{ toggle.label }}
           </mat-slide-toggle>
@@ -118,9 +112,9 @@
     }
 
     <!-- 5. Checklist -->
-    @if (data.checklist && data.checklist.length > 0) {
+    @if (data.checklist; as checklist) {
       <div class="sheet-checklist-group">
-        @for (check of data.checklist; track check.id) {
+        @for (check of checklist; track check.id) {
           <mat-checkbox
             [(ngModel)]="check.checked"
             [disabled]="check.disabled || false"
@@ -134,9 +128,9 @@
   </div>
 
   <!-- Footer Actions -->
-  @if (data.actions && data.actions.length > 0) {
+  @if (data.actions; as actions) {
     <div class="sheet-actions">
-      @for (action of data.actions; track action.label) {
+      @for (action of actions; track action.label) {
         @if (action.isPrimary) {
           <button
             mat-flat-button

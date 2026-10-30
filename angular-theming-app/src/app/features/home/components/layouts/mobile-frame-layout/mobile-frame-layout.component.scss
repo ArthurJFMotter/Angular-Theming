@@ -15,18 +15,18 @@
   padding: 32px;
 }
 
+// Phone chassis
 .mobile-device {
   width: 375px;
   height: 667px;
   max-width: 100%;
   border: 8px solid #222;
-  border-radius: 36px;
-  overflow: hidden; /* Keeps the inner toolbar from poking out the top */
+  border-radius: 36px; // no deformity
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background: var(--mat-sys-background);
   position: relative;
-
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
 
   &.is-landscape {
@@ -41,15 +41,9 @@
 }
 
 @keyframes rotate-device {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    transform: rotate(45deg) scale(0.85);
-  }
-  100% {
-    transform: rotate(90deg) scale(1);
-  }
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(45deg) scale(0.85); }
+  100% { transform: rotate(90deg) scale(1); }
 }
 
 .device-content {
@@ -66,7 +60,6 @@
   pointer-events: none;
 }
 
-/* Spinner overlay shown during the rotate animation */
 .rotate-spinner {
   position: absolute;
   top: 50%;
@@ -77,12 +70,8 @@
 }
 
 @keyframes counter-rotate-device {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(-90deg);
-  }
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(-90deg); }
 }
 
 .mobile-toolbar {
@@ -103,7 +92,6 @@
   width: 280px;
   max-width: 80%;
   background: var(--mat-sys-surface-container-low);
-
   border-right: 1px solid var(--mat-sys-outline-variant);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
 
@@ -119,7 +107,12 @@
     }
   }
 
+  .avatar {
+    border-radius: var(--mat-sys-corner-full, 9999px);
+  }
+
   .active-route {
+    border-radius: var(--mat-sys-corner-full, 9999px);
     background: var(--mat-sys-secondary-container);
     color: var(--mat-sys-on-secondary-container);
     mat-icon {
@@ -141,6 +134,10 @@
   gap: 16px;
   padding: 16px;
   align-items: center;
+
+  .avatar {
+    border-radius: var(--mat-sys-corner-full, 9999px);
+  }
 }
 
 .text {
@@ -174,50 +171,45 @@
   }
 }
 
-.mock-backdrop {
+/* ========================================================
+   FRAME-CONFINED BOTTOM SHEET (USES M3 SHAPE TOKEN)
+   ======================================================== */
+.device-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.32);
-  z-index: 20;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 25;
   animation: fadeIn calc(0.2s * var(--theme-motion-scale, 1)) ease forwards;
 }
 
-.mock-bottom-sheet {
+.device-bottom-sheet {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--mat-sys-surface-container-low);
   z-index: 30;
-  padding: 16px 0;
-  border-top-left-radius: var(--mat-sys-corner-extra-large);
-  border-top-right-radius: var(--mat-sys-corner-extra-large);
+  background: var(--mat-sys-surface-container-low);
+  
+  // Inherits the active M3 bottom sheet token: 0px when slider is at 0%
+  border-radius: var(--mat-bottom-sheet-container-shape, var(--mat-sys-corner-extra-large, 28px)) 
+                 var(--mat-bottom-sheet-container-shape, var(--mat-sys-corner-extra-large, 28px)) 
+                 0 0;
+                 
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
   transform: translateY(100%);
-  transition: transform calc(0.3s * var(--theme-motion-scale, 1))
-    cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform calc(0.3s * var(--theme-motion-scale, 1)) cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 
   &.open {
     transform: translateY(0);
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
-  }
-
-  h3 {
-    margin: 0 24px 8px;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--mat-sys-on-surface);
   }
 }
 
-.sheet-handle {
-  width: 32px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--mat-sys-outline-variant);
-  margin: 0 auto 16px;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* ---- Real mobile device fallback ---- */
 .real-device-test {
   position: relative;
   display: flex;
@@ -236,23 +228,6 @@
     color: var(--mat-sys-on-surface-variant);
     text-align: center;
     margin: 0;
-  }
-
-  /* Sheet anchored to the viewport on real mobile */
-  .mock-bottom-sheet {
-    position: fixed;
-  }
-  .mock-backdrop {
-    position: fixed;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 

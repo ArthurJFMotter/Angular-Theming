@@ -6,7 +6,7 @@
   .sheet-drag-handle {
     width: 36px;
     height: 4px;
-    border-radius: 2px;
+    border-radius: var(--mat-sys-corner-full, 9999px);
     background: var(--mat-sys-outline, rgba(255, 255, 255, 0.3));
     margin: 0 auto 14px auto;
   }
@@ -54,7 +54,7 @@
     .sheet-preview {
       background: var(--mat-sys-surface-container-lowest);
       border: 1px dashed var(--mat-sys-outline-variant);
-      border-radius: 8px;
+      border-radius: var(--mat-sys-corner-small, 8px);
       padding: 12px 16px;
       margin-bottom: 16px;
       overflow-x: auto;
@@ -71,7 +71,7 @@
       margin: 0 -8px;
 
       button[mat-list-item] {
-        border-radius: 10px;
+        border-radius: var(--mat-sys-corner-full, 9999px);
         margin-bottom: 2px;
 
         .item-sublabel {

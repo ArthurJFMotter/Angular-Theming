@@ -36,7 +36,6 @@
     flex-direction: column;
   }
 
-  // Cards layout: stack on mobile, side-by-side on desktop
   &.cards-layout {
     @media (max-width: 768px) {
       flex-direction: column;
@@ -45,14 +44,14 @@
 }
 
 /* ========================================================
-   RICH CARD STYLING
+   RICH CARD STYLING (TOKENIZED RADII)
    ======================================================== */
 .showcase-card {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-radius: 16px;
+  border-radius: var(--mat-card-container-shape, var(--mat-sys-corner-large, 16px));
   padding: 8px 4px;
   min-width: 0;
   box-sizing: border-box;
@@ -63,7 +62,7 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: 12px;
+    border-radius: var(--mat-sys-corner-medium, 12px);
 
     &.outlined-avatar {
       background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.08));
@@ -96,7 +95,7 @@
         font-size: 0.72rem;
         font-weight: 500;
         padding: 3px 10px;
-        border-radius: 8px;
+        border-radius: var(--mat-sys-corner-small, 8px);
         background: var(--mat-sys-surface-container-highest, rgba(255, 255, 255, 0.08));
         opacity: 0.8;
 
@@ -114,7 +113,6 @@
   }
 }
 
-// Elevated card theme & contrast overrides
 .elevated-themed-card {
   --mat-card-subtitle-text-color: currentColor;
 
@@ -123,7 +121,6 @@
     opacity: 0.8;
   }
 
-  // Text button harmonizes with the container's text color
   .themed-sub-btn {
     color: currentColor !important;
     opacity: 0.85;
@@ -131,13 +128,13 @@
 }
 
 /* ========================================================
-   RICH ACCORDION / EXPANSION PANEL STYLING
+   RICH ACCORDION / EXPANSION PANEL
    ======================================================== */
 .showcase-accordion {
   width: 100%;
 
   mat-expansion-panel {
-    border-radius: 14px !important;
+    border-radius: var(--mat-expansion-container-shape, var(--mat-sys-corner-large, 16px)) !important;
     margin-bottom: 10px !important;
     background: var(--mat-sys-surface-container-low, rgba(255, 255, 255, 0.03));
     box-sizing: border-box;
@@ -173,7 +170,7 @@
         opacity: 0.65;
 
         @media (max-width: 600px) {
-          display: none; // Keep header clean on small phone screens
+          display: none;
         }
       }
     }
@@ -192,7 +189,7 @@
         font-family: monospace;
         font-size: 0.82rem;
         padding: 2px 6px;
-        border-radius: 6px;
+        border-radius: var(--mat-sys-corner-extra-small, 4px);
         background: var(--mat-sys-surface-container-highest, rgba(255, 255, 255, 0.08));
       }
 
@@ -204,7 +201,7 @@
 
         .token-mini-card {
           padding: 8px 12px;
-          border-radius: 10px;
+          border-radius: var(--mat-sys-corner-small, 8px);
           background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.05));
           display: flex;
           flex-direction: column;
@@ -237,6 +234,9 @@
   }
 }
 
+/* ========================================================
+   LIST GRID
+   ======================================================== */
 .surface-list-grid {
   display: flex;
   flex-direction: row;
@@ -252,18 +252,12 @@
   padding-bottom: 8px;
 
   scrollbar-width: thin;
-  scrollbar-color: var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.15))
-    transparent;
+  scrollbar-color: var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.15)) transparent;
 
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  &::-webkit-scrollbar { height: 6px; }
   &::-webkit-scrollbar-thumb {
     background: var(--mat-sys-outline-variant, rgba(255, 255, 255, 0.2));
-    border-radius: 4px;
+    border-radius: var(--mat-sys-corner-full, 9999px);
   }
 
   .list-card {
@@ -272,6 +266,7 @@
     min-width: 0;
     box-sizing: border-box;
     padding: 12px;
+    border-radius: var(--mat-card-container-shape, var(--mat-sys-corner-large, 16px));
     background: var(--mat-sys-surface-container-low, rgba(255, 255, 255, 0.04));
 
     --mat-list-list-item-one-line-container-height: 44px;
@@ -298,11 +293,9 @@
       .count-badge {
         font-size: 0.72rem;
         font-weight: 500;
-        background: var(
-          --mat-sys-surface-container-high,
-          rgba(255, 255, 255, 0.1)
-        );
+        background: var(--mat-sys-surface-container-high, rgba(255, 255, 255, 0.1));
         padding: 2px 8px;
+        border-radius: var(--mat-sys-corner-full, 9999px);
       }
 
       h4 {
@@ -328,9 +321,9 @@
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        border-radius: var(--mat-list-list-item-shape, var(--mat-sys-corner-full, 9999px));
         margin-bottom: 2px;
 
-        // Prevent any text content from causing card blowouts
         [matListItemTitle],
         [matListItemLine] {
           overflow: hidden;
@@ -339,7 +332,6 @@
         }
       }
 
-      // icons & avatars
       [matListItemIcon] {
         width: 32px;
         height: 32px;
@@ -381,19 +373,18 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
+  border-radius: var(--mat-sys-corner-full, 9999px);
   background: var(--mat-sys-primary-container);
   color: var(--mat-sys-on-primary-container);
   font-weight: 600;
   font-size: 0.75rem;
 }
 
-.color-themed,
-[matListItemIcon].color-themed {
-  color: var(--mat-sys-primary) !important;
-}
-
 .text-secondary {
   opacity: 0.65;
   font-size: 0.78rem !important;
+}
+
+.color-themed {
+  color: var(--mat-sys-primary, inherit);
 }
