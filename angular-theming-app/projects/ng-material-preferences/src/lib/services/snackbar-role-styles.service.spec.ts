@@ -62,7 +62,7 @@ describe('SnackbarRoleStylesService', () => {
 
     it('adds nothing for built-in or unsafe roles', () => {
       service.sync(['success', 'warning', 'info', 'error', 'default']);
-      service.sync(['x}</style>', 'bad role', '1x']);
+      service.sync(['x}</style>', 'bad role', 'a.b']);
       expect(document.adoptedStyleSheets.length).toBe(sheetsBefore);
     });
 

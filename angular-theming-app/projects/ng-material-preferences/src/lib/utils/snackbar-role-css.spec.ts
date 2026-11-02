@@ -60,12 +60,9 @@ describe('snackbar-role-css', () => {
   });
 
   describe('isSafeRoleName', () => {
-    const valid = ['brand', 'Brand', 'custom-role-2', 'custom_role', '_x', 'a1', 'a-b-c'];
+    const valid = ['brand', 'Brand', 'custom-role-2', 'custom_role', '_x', 'a1', 'a-b-c', '1a', '2024-promo', '-a', '---'];
     const invalid: [string, string][] = [
       ['', 'empty'],
-      ['1a', 'leading digit'],
-      ['-a', 'leading hyphen'],
-      ['--a', 'leading double hyphen'],
       ['my role', 'space'],
       ['a.b', 'dot'],
       ['a}', 'closing brace'],
@@ -96,7 +93,7 @@ describe('snackbar-role-css', () => {
     it('returns an empty string when there is nothing to emit', () => {
       expect(buildSnackbarRoleCss([])).toBe('');
       expect(buildSnackbarRoleCss(['success', 'default', 'error'])).toBe('');
-      expect(buildSnackbarRoleCss(['bad role', '1x'])).toBe('');
+      expect(buildSnackbarRoleCss(['bad role', 'a.b'])).toBe('');
     });
 
     it('emits one `.snackbar-<role>` rule per role', () => {
@@ -141,6 +138,11 @@ describe('snackbar-role-css', () => {
       expect(parseRules(css).map((r) => r.selector)).toEqual(['.snackbar-brand']);
     });
 
+    it('keeps ids the library generates itself, including a leading digit', () => {
+      const css = buildSnackbarRoleCss(['2024-promo', 'custom-role-1']);
+      expect(parseRules(css).map((r) => r.selector)).toEqual(['.snackbar-2024-promo', '.snackbar-custom-role-1']);
+    });
+
     it('de-duplicates roles', () => {
       const css = buildSnackbarRoleCss(['brand', 'brand', 'brand']);
       expect(parseRules(css).length).toBe(1);
@@ -151,7 +153,7 @@ describe('snackbar-role-css', () => {
     });
 
     it('drops unsafe names but keeps the safe ones from the same call', () => {
-      const css = buildSnackbarRoleCss(['brand', 'x}</style><img src=x onerror=alert(1)>', 'my role', '1x']);
+      const css = buildSnackbarRoleCss(['brand', 'x}</style><img src=x onerror=alert(1)>', 'my role', 'a.b']);
       expect(parseRules(css).map((r) => r.selector)).toEqual(['.snackbar-brand']);
     });
 

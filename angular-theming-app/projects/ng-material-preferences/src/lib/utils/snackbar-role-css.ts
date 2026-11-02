@@ -17,8 +17,14 @@ export const BUILT_IN_SNACKBAR_ROLES: ReadonlySet<string> = new Set([
   'error',
 ]);
 
-/** A safe CSS identifier: never place anything else into CSS or a class name. */
-const SAFE_ROLE = /^[A-Za-z_][A-Za-z0-9_-]*$/;
+/**
+ * Letters, digits, `_` and `-` only. The role is used as a class suffix
+ * (`.snackbar-<role>`) and inside custom-property names (`--mat-sys-<role>-container`),
+ * where every such string is valid, including `2024-promo`. The library's own
+ * extended-color ids (`label.toLowerCase().replace(/[^a-z0-9]/g, '-')`) always match.
+ * Anything else is never placed into CSS.
+ */
+const SAFE_ROLE = /^[A-Za-z0-9_-]+$/;
 
 export function isSafeRoleName(role: string): boolean {
   return SAFE_ROLE.test(role);

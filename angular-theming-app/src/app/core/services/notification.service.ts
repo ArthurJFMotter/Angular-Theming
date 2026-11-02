@@ -17,8 +17,11 @@ const BUILT_IN_TYPES: ReadonlySet<string> = new Set([
   'error',
 ]);
 
-/** A safe CSS identifier. Anything else is never placed into a class name. */
-const SAFE_ROLE = /^[A-Za-z_][A-Za-z0-9_-]*$/;
+/**
+ * Letters, digits, `_` and `-`: always valid in `.snackbar-<role>`. Same rule as the
+ * library's runtime stylesheet, so a role is never styled by one and rejected by the other.
+ */
+const SAFE_ROLE = /^[A-Za-z0-9_-]+$/;
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
