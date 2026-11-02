@@ -8,6 +8,7 @@ import { SurfacesSectionComponent } from '../components/elements/surfaces-sectio
 import { CheckoutLayoutComponent } from '../components/layouts/checkout-layout/checkout-layout.component';
 import { DashboardLayoutComponent } from '../components/layouts/dashboard-layout/dashboard-layout.component';
 import { DocsLayoutComponent } from '../components/layouts/docs-layout/docs-layout.component';
+import { KanbanActionsComponent } from '../components/layouts/kanban-layout/kanban-actions/kanban-actions.component';
 import { KanbanLayoutComponent } from '../components/layouts/kanban-layout/kanban-layout.component';
 import { MobileFrameLayoutComponent } from '../components/layouts/mobile-frame-layout/mobile-frame-layout.component';
 import { MobileRotateActionComponent } from '../components/layouts/mobile-frame-layout/mobile-rotate-action/mobile-rotate-action.component';
@@ -61,6 +62,7 @@ export const LAYOUT_SECTIONS: SandboxSection[] = [
     title: 'Kanban Project Board',
     description: 'Tests surface hierarchy, elevation, and card corner radii.',
     component: KanbanLayoutComponent,
+    actionTemplate: KanbanActionsComponent,
   },
    {
     id: 'mobile',

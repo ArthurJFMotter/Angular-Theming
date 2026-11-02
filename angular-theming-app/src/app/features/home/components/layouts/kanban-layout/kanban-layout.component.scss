@@ -54,6 +54,18 @@
   &:active {
     cursor: grabbing;
   }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    gap: 8px;
+
+    .avatar {
+      margin-left: auto;
+    }
+  }
 }
 
 .cdk-drag-placeholder {

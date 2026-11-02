@@ -1,5 +1,5 @@
 <div class="kanban-board" cdkDropListGroup>
-  @for (col of columns; track col.id) {
+  @for (col of kanbanState.columns(); track col.id) {
     <div class="kanban-col">
       <h4>{{ col.title }} ({{ col.tasks.length }})</h4>
 
@@ -8,25 +8,29 @@
         class="kanban-drop-list"
         cdkDropList
         [cdkDropListData]="col.tasks"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="kanbanState.drop($event)"
       >
         @for (task of col.tasks; track task.id) {
           <!-- Draggable Card -->
           <mat-card appearance="raised" class="kanban-card" cdkDrag>
             <p>{{ task.text }}</p>
 
-            @if (task.badge) {
-              <span class="badge" [ngClass]="task.badge.colorClass">{{
-                task.badge.text
-              }}</span>
-            }
-            @if (task.avatar) {
-              <div
-                class="avatar"
-                [style.background]="task.avatar.bgColor"
-                [style.color]="task.avatar.textColor"
-              >
-                {{ task.avatar.initials }}
+            @if (task.badge || task.avatar) {
+              <div class="card-footer">
+                @if (task.badge) {
+                  <span class="badge" [ngClass]="task.badge.colorClass">{{
+                    task.badge.text
+                  }}</span>
+                }
+                @if (task.avatar) {
+                  <div
+                    class="avatar"
+                    [style.background]="task.avatar.bgColor"
+                    [style.color]="task.avatar.textColor"
+                  >
+                    {{ task.avatar.initials }}
+                  </div>
+                }
               </div>
             }
           </mat-card>
