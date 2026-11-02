@@ -1,38 +1,77 @@
 <div class="docs-container">
-  <!-- TREE -->
+  <!-- Sidebar Tree Navigation -->
   <aside class="docs-sidebar">
-    <app-dynamic-tree [data]="treeData" (nodeSelected)="onNodeSelected($event)">
-    </app-dynamic-tree>
+    <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+      <!-- Leaf Node -->
+      <mat-nested-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <div
+          class="mat-tree-node leaf-node"
+          [class.active-node]="selectedNodeId() === node.id"
+          (click)="selectNode(node)"
+        >
+          <span class="spacer-icon"></span>
+          @if (node.icon) {
+            <mat-icon class="node-icon">{{ node.icon }}</mat-icon>
+          }
+          <span class="node-text">{{ node.name }}</span>
+        </div>
+      </mat-nested-tree-node>
+
+      <!-- Expandable Parent Node -->
+      <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+        <div
+          class="mat-tree-node parent-node"
+          [class.active-node]="selectedNodeId() === node.id"
+          (click)="selectNode(node)"
+        >
+          <button
+            mat-icon-button
+            matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.name"
+            (click)="$event.stopPropagation()"
+          >
+            <mat-icon
+              class="mat-tree-node-toggle-icon"
+              [class.expanded]="treeControl.isExpanded(node)"
+            >
+              chevron_right
+            </mat-icon>
+          </button>
+          @if (node.icon) {
+            <mat-icon class="node-icon">{{ node.icon }}</mat-icon>
+          }
+          <span class="node-text">{{ node.name }}</span>
+        </div>
+
+        <!-- Nested children container -->
+        <div [class.hidden]="!treeControl.isExpanded(node)" role="group">
+          <ng-container matTreeNodeOutlet></ng-container>
+        </div>
+      </mat-nested-tree-node>
+    </mat-tree>
   </aside>
 
-  <mat-divider vertical class="desktop-divider"></mat-divider>
+  <!-- Docs Content Body (Dynamically Rendered) -->
+  <main class="docs-content">
+    @if (currentArticle(); as article) {
+      <div class="article-header">
+        <span class="badge" [ngClass]="article.badgeType">{{
+          article.badge
+        }}</span>
+        <button mat-stroked-button class="copy-btn" (click)="copyCode()">
+          <mat-icon>content_copy</mat-icon>
+          Copy Code
+        </button>
+      </div>
 
-  <!-- CONTENT PANE -->
-  <article class="docs-content">
-    @if (activeDoc()) {
-      <span class="badge info">v1.1.0</span>
-      <h1 style="color: var(--mat-sys-primary)">{{ activeDoc()?.title }}</h1>
-      <p class="lead">{{ activeDoc()?.body }}</p>
+      <h2>{{ article.title }}</h2>
+      <p class="lead">{{ article.lead }}</p>
 
-      @if (activeDoc()?.code) {
-        <div class="mock-code-block">
-          <code>{{ activeDoc()?.code }}</code>
-        </div>
-      }
-    } @else {
-      <!-- Empty State -->
-      <div class="empty-state">
-        <mat-icon
-          style="
-            font-size: 48px;
-            width: 48px;
-            height: 48px;
-            color: var(--mat-sys-outline-variant);
-          "
-          >menu_book</mat-icon
-        >
-        <p>Select an item from the tree on the left to explore the guides.</p>
+      <div class="code-container">
+        <pre
+          class="mock-code-block"
+        ><code>{{ article.codeSnippet }}</code></pre>
       </div>
     }
-  </article>
+  </main>
 </div>

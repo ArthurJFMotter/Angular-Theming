@@ -1,154 +1,161 @@
-import { Component, signal } from '@angular/core';
-import { MatDividerModule } from '@angular/material/divider';
-import { TreeNode } from '../../../../../core/models/tree.model';
-import { DynamicTreeComponent } from '../../../../../shared/components/dynamic-tree/dynamic-tree.component';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatTreeModule, MatTreeNestedDataSource } from '@angular/material/tree';
+import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { NotificationService } from '../../../../../core/services/notification.service';
+import { DocsStateService } from './services/docs-state.service';
 
-// MOCK DATA + payload
-const DOCS_DATA: TreeNode[] = [
+export interface DocArticle {
+  id: string;
+  title: string;
+  badge: string;
+  badgeType: 'info' | 'success' | 'warning';
+  lead: string;
+  codeSnippet: string;
+}
+
+export interface DocNode {
+  id: string;
+  name: string;
+  icon?: string;
+  children?: DocNode[];
+  article?: DocArticle;
+}
+
+const TREE_DATA: DocNode[] = [
   {
     id: 'getting-started',
-    label: 'Getting Started',
+    name: 'Getting Started',
     icon: 'rocket_launch',
-    children: [
-      {
-        id: 'installation',
-        label: 'Installation',
-        data: {
-          title: 'Installation',
-          body: "Install the library and its peer dependency (Google's Material Color Utilities) via NPM. No additional Material components are bundled, keeping the footprint tiny.",
-          code: 'npm install ng-material-preferences @material/material-color-utilities',
-        },
-      },
-      {
-        id: 'configuration',
-        label: 'Configuration',
-        data: {
-          title: 'Zero-Config Setup',
-          body: "Simply call providePreferences() in your app.config.ts. This automatically registers the LocalStorage engine and hooks into Angular's ENVIRONMENT_INITIALIZER to boot the CSS engine.",
-          code: `import { providePreferences } from 'ng-material-preferences';\n\nexport const appConfig = {\n  providers: [\n    providePreferences()\n  ]\n};`,
-        },
-      },
-      {
-        id: 'architecture',
-        label: 'Architecture',
-        data: {
-          title: 'Headless & Tree-Shakeable',
-          body: 'The library is split into 5 distinct domains (Color, Typography, Layout, Notifications, Accessibility). You can omit entire domains to drastically reduce bundle size.',
-          code: `providePreferences({\n  accessibility: false, // Strips SVG filters\n  notifications: false  // Strips position logic\n})`,
-        },
-      },
-    ],
+    article: {
+      id: 'getting-started',
+      title: 'Installation & Setup',
+      badge: 'v1.0.0',
+      badgeType: 'info',
+      lead: 'Quick installation and zero-config root provider setup for Angular Material 3 applications.',
+      codeSnippet: `import { providePreferences } from 'ng-material-preferences';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    providePreferences({
+      disableRemoteFonts: false,
+      notifications: true,
+      defaultTheme: 'system',
+    }),
+  ],
+};`,
+    },
   },
   {
-    id: 'domains',
-    label: 'Theming Domains',
+    id: 'theming-domains',
+    name: 'Theming Domains',
     icon: 'palette',
     children: [
       {
-        id: 'color-domain',
-        label: 'Color & Appearance',
-        children: [
-          {
-            id: 'custom-profiles',
-            label: 'Custom Profiles',
-            data: {
-              title: 'Custom Profiles',
-              body: 'Generate full M3 tonal palettes dynamically from a single primary hex code. You can also lock in secondary, tertiary, or semantic colors explicitly.',
-              code: `prefs.setCustomColors({\n  primary: '#ff00aa',\n  warning: '#ffcc00'\n});`,
-            },
-          },
-          {
-            id: 'scheme-variants',
-            label: 'Scheme Variants',
-            data: {
-              title: 'Material 3 Scheme Variants',
-              body: 'Material Color Utilities (MCU) allows transforming a single hex color into vastly different emotional palettes. Variants include Vibrant, Monochrome, and Expressive.',
-              code: `prefs.setVariant('monochrome');`,
-            },
-          },
-        ],
+        id: 'color-appearance',
+        name: 'Color & Appearance',
+        article: {
+          id: 'color-appearance',
+          title: 'Dynamic M3 Palette Generation',
+          badge: 'M3 Sys',
+          badgeType: 'success',
+          lead: 'Runtime tonal palette generation using the Material 3 color algorithms and CSS variables.',
+          codeSnippet: `// Apply custom color roles at runtime
+prefs.setCustomColors({
+  primary: '#6750A4',
+  secondary: '#625B71',
+  tertiary: '#7D5260',
+});`,
+        },
       },
       {
-        id: 'typography-domain',
-        label: 'Typography',
+        id: 'typography',
+        name: 'Typography',
         children: [
           {
             id: 'font-families',
-            label: 'Font Families',
-            data: {
+            name: 'Font Families',
+            article: {
+              id: 'font-families',
               title: 'Dynamic Font Injection',
-              body: 'The library intercepts font family selections and automatically injects Google Fonts <link> tags into the document head, mapping them to the --mat-sys CSS variables.',
-              code: `prefs.setHeadingFontFamily('Montserrat');\nprefs.setBodyFontFamily('Inter');`,
+              badge: 'v1.1.0',
+              badgeType: 'info',
+              lead: 'The library intercepts font family selections and automatically injects Google Fonts <link> tags into the document head, mapping them to the --mat-sys CSS variables.',
+              codeSnippet: `prefs.setHeadingFontFamily('Montserrat');
+prefs.setBodyFontFamily('Inter');`,
             },
           },
           {
             id: 'size-scaling',
-            label: 'Size Scaling',
-            data: {
-              title: 'Fluid Typography Scaling',
-              body: 'Scale readability across the app. All Material typography tokens (font-size and line-height) are dynamically multiplied by the current fontScale.',
-              code: `prefs.setFontScale(1.15); // Large`,
+            name: 'Size Scaling',
+            article: {
+              id: 'size-scaling',
+              title: 'Dynamic Typography Scaling',
+              badge: 'A11y',
+              badgeType: 'info',
+              lead: 'Scales all Material 3 typography tokens relative to the root rem scale without breaking element layout boundaries.',
+              codeSnippet: `// Scale between 80% (0.8) and 130% (1.3)
+prefs.setFontScale(1.15);`,
             },
           },
         ],
       },
       {
-        id: 'layout-domain',
-        label: 'Interface Layout',
-        children: [
-          {
-            id: 'density',
-            label: 'Density',
-            data: {
-              title: 'Density Control',
-              body: "Changes the data-theme-density attribute on the HTML root. Angular Material's SCSS mixins react to this attribute, shrinking component heights and paddings.",
-              code: `prefs.setDensityScale(-3); // Maximum compact`,
-            },
-          },
-          {
-            id: 'corner-radius',
-            label: 'Corner Radius',
-            data: {
-              title: 'Shape Scaling',
-              body: 'Multiplies the base border-radius tokens (--mat-sys-corner-small, etc). Dragging it to 0 creates perfectly sharp corners. Standard buttons are mapped to the extra-large curve.',
-              code: `prefs.setShapeScale(0); // Sharp edges`,
-            },
-          },
-        ],
+        id: 'interface-layout',
+        name: 'Interface Layout',
+        article: {
+          id: 'interface-layout',
+          title: 'Corner Radius & Shape Tokens',
+          badge: 'Tokens',
+          badgeType: 'info',
+          lead: 'Global corner radius modifiers that proportionally scale all M3 shape containers from 0px (sharp) to full pill rounding.',
+          codeSnippet: `// Scale corner radius (0 to 1)
+prefs.setCornerRadiusScale(0); // Sharp corners across all components`,
+        },
       },
     ],
   },
   {
-    id: 'a11y',
-    label: 'Accessibility (A11y)',
+    id: 'accessibility',
+    name: 'Accessibility (A11y)',
     icon: 'accessibility_new',
     children: [
       {
         id: 'vision-simulator',
-        label: 'Vision Simulator',
-        data: {
-          title: 'Environmental Filters',
-          body: 'Apply real-time CSS and SVG filters to the entire application. Simulates Astigmatism (halation/bloom), Glare, Macular Degeneration, and Glaucoma.',
-          code: `prefs.setScreenFilter('astigmatism');\nprefs.setScreenFilterIntensity(80);`,
+        name: 'Vision Simulator',
+        article: {
+          id: 'vision-simulator',
+          title: 'Color Vision Deficiency Simulator',
+          badge: 'WCAG',
+          badgeType: 'warning',
+          lead: 'Real-time SVG matrix filters applied to document canvas for testing Protanopia, Deuteranopia, Tritanopia, and Achromatopsia.',
+          codeSnippet: `prefs.setColorDeficiency('deuteranopia');`,
         },
       },
       {
         id: 'daltonization',
-        label: 'Daltonization Math',
-        data: {
-          title: 'Colorblindness Compensation',
-          body: 'Not only can you simulate what a colorblind user sees, but the engine can mathematically shift missing hues into visible channels (Daltonization) to force contrast.',
-          code: `prefs.setCvdMode('protanopia');\nprefs.setCvdIntent('compensate');`,
+        name: 'Daltonization Math',
+        article: {
+          id: 'daltonization',
+          title: 'Color Correction (Daltonization)',
+          badge: 'Math',
+          badgeType: 'warning',
+          lead: 'Corrective shift matrices designed to restore lost contrast for specific color deficiency types.',
+          codeSnippet: `prefs.enableDaltonizationCorrection(true);`,
         },
       },
       {
         id: 'reduced-motion',
-        label: 'Reduced Motion',
-        data: {
-          title: 'Motion & Animation Killer',
-          body: "Respect vestibular disorders by disabling all CSS animations. Combine with Angular's [@.disabled] host binding to completely freeze all Material dialogs and ripples.",
-          code: `// App.component.ts\n@HostBinding('@.disabled')\nget animationsDisabled() {\n  return this.prefs.motionScale() === 0;\n}`,
+        name: 'Reduced Motion',
+        article: {
+          id: 'reduced-motion',
+          title: 'Reduced Motion & Scale Dampening',
+          badge: 'Motion',
+          badgeType: 'info',
+          lead: 'Coordinates with prefers-reduced-motion media query and sets --theme-motion-scale to 0 for instant, accessible transitions.',
+          codeSnippet: `prefs.setMotionScale(0); // Completely disables transition durations`,
         },
       },
     ],
@@ -158,18 +165,77 @@ const DOCS_DATA: TreeNode[] = [
 @Component({
   selector: 'app-docs-layout',
   standalone: true,
-  imports: [MatDividerModule, MatIconModule, DynamicTreeComponent],
+  imports: [CommonModule, MatTreeModule, MatIconModule, MatButtonModule],
   templateUrl: './docs-layout.component.html',
   styleUrl: './docs-layout.component.scss',
 })
-export class DocsLayoutComponent {
-  readonly treeData = DOCS_DATA;
-  readonly activeDoc = signal<any | null>(null);
+export class DocsLayoutComponent implements OnInit {
+  private readonly docsState = inject(DocsStateService);
+  private readonly notify = inject(NotificationService, { optional: true });
 
-  onNodeSelected(node: TreeNode) {
-    // Only update the view if the node actually has article payload data
-    if (node.data) {
-      this.activeDoc.set(node.data);
+  readonly treeControl = new NestedTreeControl<DocNode>(
+    (node) => node.children,
+  );
+  readonly dataSource = new MatTreeNestedDataSource<DocNode>();
+
+  readonly selectedNodeId = signal<string>('getting-started');
+
+  // Currently displayed article
+  readonly currentArticle = computed<DocArticle | null>(() => {
+    const id = this.selectedNodeId();
+    return this.findArticleById(TREE_DATA, id);
+  });
+
+  hasChild = (_: number, node: DocNode) =>
+    !!node.children && node.children.length > 0;
+
+  ngOnInit(): void {
+    this.dataSource.data = TREE_DATA;
+
+    this.docsState.registerTreeHandlers(
+      () => this.expandAllRecursive(this.dataSource.data),
+      () => this.treeControl.collapseAll(),
+    );
+
+  }
+
+  selectNode(node: DocNode): void {
+    if (node.article) {
+      this.selectedNodeId.set(node.id);
+    } else if (node.children?.length) {
+      // If clicking a category row without its own article, toggle its folder
+      this.treeControl.toggle(node);
     }
+  }
+
+  copyCode(): void {
+    const code = this.currentArticle()?.codeSnippet;
+    if (code) {
+      navigator.clipboard.writeText(code).then(() => {
+        this.notify?.show('success', 'Code snippet copied to clipboard!');
+      });
+    }
+  }
+
+  private expandAllRecursive(nodes: DocNode[]): void {
+    for (const node of nodes) {
+      if (node.children?.length) {
+        this.treeControl.expand(node);
+        this.expandAllRecursive(node.children);
+      }
+    }
+  }
+
+  private findArticleById(nodes: DocNode[], id: string): DocArticle | null {
+    for (const node of nodes) {
+      if (node.id === id && node.article) {
+        return node.article;
+      }
+      if (node.children?.length) {
+        const found = this.findArticleById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
   }
 }

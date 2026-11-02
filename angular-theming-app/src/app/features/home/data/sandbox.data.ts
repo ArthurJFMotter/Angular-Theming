@@ -8,6 +8,7 @@ import { SurfacesSectionComponent } from '../components/elements/surfaces-sectio
 import { CheckoutLayoutComponent } from '../components/layouts/checkout-layout/checkout-layout.component';
 import { DashboardLayoutComponent } from '../components/layouts/dashboard-layout/dashboard-layout.component';
 import { DocsLayoutComponent } from '../components/layouts/docs-layout/docs-layout.component';
+import { DocsTreeActionComponent } from '../components/layouts/docs-layout/docs-tree-action/docs-tree-action.component';
 import { KanbanActionsComponent } from '../components/layouts/kanban-layout/kanban-actions/kanban-actions.component';
 import { KanbanLayoutComponent } from '../components/layouts/kanban-layout/kanban-layout.component';
 import { MobileFrameLayoutComponent } from '../components/layouts/mobile-frame-layout/mobile-frame-layout.component';
@@ -56,6 +57,7 @@ export const LAYOUT_SECTIONS: SandboxSection[] = [
     description:
       'Tests nested MatTree integration, deep typography hierarchies, and surface contrasts.',
     component: DocsLayoutComponent,
+    actionTemplate: DocsTreeActionComponent,
   },
   {
     id: 'kanban',
@@ -64,7 +66,7 @@ export const LAYOUT_SECTIONS: SandboxSection[] = [
     component: KanbanLayoutComponent,
     actionTemplate: KanbanActionsComponent,
   },
-   {
+  {
     id: 'mobile',
     title: 'Mobile Frame',
     description:
