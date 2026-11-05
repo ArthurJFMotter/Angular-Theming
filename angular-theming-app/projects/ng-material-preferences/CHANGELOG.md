@@ -8,6 +8,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 *(Any new features, fixes, or breaking changes currently in development will be logged here).*
 
+## [1.3.0] - 2026-11-05
+
+### Added
+- `input-variants()` / `apply-input-theme()`: `.theme-<role>` classes that re-color the
+  primary-driven controls (checkbox, radio, slide toggle, slider, ripples), or a whole section.
+- `toggle-variants()` / `apply-toggle-theme()`: `.toggle-<role>` for `mat-button-toggle`.
+- `snackbar-variants()` / `apply-snackbar-theme()`: `.snackbar-<role>` classes built from role tokens.
+- Custom-role snackbars: the library now keeps one managed stylesheet with a `.snackbar-<id>`
+  rule for every extended color (constructable stylesheet, `<style>` fallback), so
+  `panelClass: 'snackbar-<id>'` needs no consumer CSS.
+- `.btn-*` variants now also color text buttons (`mat-button`): label, state layer and ripple.
+- `panel-shapes()`: the select panel follows the corner-radius control.
+- `npm run audit:tokens` (repository tooling, not shipped): fails when the SCSS sets a Material
+  token that Material no longer reads, or reads one nothing defines.
+
+### Changed
+- Shape overrides are set through Material's shape tokens inside `:where(:root)` (zero
+  specificity) instead of `border-radius !important`: buttons, chips, dialog, bottom sheet,
+  snackbar. Consumer overrides now win without `!important`.
+- **Visible:** button toggles use Material's own pill curve; the mini-FAB radius is Material's
+  default (12px, was 16px). `fab-shapes()` is now empty.
+- **Visible:** list rows keep Material's per-line height token as a floor and grow with their
+  content. Default row heights now match Material (48 / 64 / 88px; they were 32 / 62 / 84px) and
+  rows follow the density control.
+- Snackbar color wiring uses Material's snackbar tokens; `!important` remains only on `min-width`.
+- Removed pre-v20 Material token names (the peer range is already `^20.0.0`).
+
+### Fixed
+- Mini-FABs, and the icon and ripple of all FABs, did not follow `.btn-*`.
+- Tonal buttons ignored the corner-radius control.
+- Snackbar action buttons kept the default hover color instead of the role color.
+- List rows ignored the density control.
+- The select panel ignored the corner-radius control.
+- A snackbar panel class that defines no role colors no longer renders transparent.
+
+### Deprecated
+- `fab-shapes()` (empty, removal in `2.0.0`). The `src/styles/theming` import path and
+  `ContrastMode` deprecations are unchanged.
+
 ## [1.2.1] - 2026-10-13
 
 ### Fixed

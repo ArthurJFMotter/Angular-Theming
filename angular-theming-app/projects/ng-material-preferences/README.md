@@ -41,6 +41,8 @@ npm install ng-material-preferences
 | `@angular/cdk` | `OverlayContainer`, used to scope the motion kill-switch to overlay-attached components |
 | `@material/material-color-utilities` | M3 color science (HCT, tonal palettes, dynamic schemes) |
 
+**Supported versions:** Angular, the CDK and Angular Material `^20.0.0`. The SCSS is checked against Material's own component tokens (see [Verifying the SCSS against Material](#verifying-the-scss-against-material)), so a Material release that renames a token is caught in CI instead of by a user.
+
 No Angular Material **components** are required by the library itself — it never imports `MatButtonModule`, `MatSelectModule`, etc. You only need those in your own UI, if you build one.
 
 ---
@@ -184,6 +186,8 @@ Or compose only what you need:
 @include prefs.fallback-tokens();  // safe defaults for tokens the color engine or Material's own mixin might not supply
 @include prefs.cdk-overrides();    // wires snackbars/dialogs/bottom sheets to your tokens
 @include prefs.button-variants();  // .btn-* color-role classes for Material buttons and FABs
+@include prefs.input-variants();   // .theme-* role classes for checkboxes, radios, slide toggles and sliders (or whole sections)
+@include prefs.toggle-variants();  // .toggle-* role classes for mat-button-toggle
 @include prefs.apply-density();    // only needed if you use the layout domain's density feature
 @include prefs.apply-motion();     // only needed if you use the layout domain's motion feature
 ```
@@ -193,8 +197,10 @@ Or compose only what you need:
 | Mixin | What it does | When you need it |
 |---|---|---|
 | `fallback-tokens()` | Defines semantic color tokens (`--mat-sys-success`/`-warning`/`-info` and their `on-`/`-container` variants) plus the M3 state-layer opacity tokens (`--mat-sys-hover-state-layer-opacity` and friends) at safe default values | Always — even with the color domain active, this covers the moment before the first sync and guards against Angular Material builds that scope these tokens narrowly instead of emitting them at `:root` |
-| `cdk-overrides()` | Shapes snackbars/dialogs/bottom sheets using your corner-radius tokens; maps `snackbar-success`/`-warning`/`-info`/`-error` panel classes to your semantic color tokens — including the snackbar's surface, icon, action button, and dismiss button, so severity color reaches the whole toast, not just its background; also removes the fixed `min-width` Material applies to snackbars so short messages render at their natural width instead of an oversized fixed box | If you use notifications, dialogs, or bottom sheets |
-| `button-variants()` | Generates `.btn-secondary`, `.btn-tertiary`, `.btn-error`, `.btn-success`, `.btn-warning`, `.btn-info` and their `-container` variants, which recolor Material filled/outlined buttons and FABs from a role's tokens (see [Button color variants](#button-color-variants)) | If you want role-colored buttons |
+| `cdk-overrides()` | Overlay, control and panel shapes driven by your corner-radius tokens (dialogs, bottom sheets, snackbars, buttons, chips, the select panel), snackbar role colors (`snackbar-success` / `-warning` / `-info` / `-error`, plus the classes for custom roles — see [Snackbar roles](#snackbar-roles)), and list rows that follow density. Shapes go through Material's own tokens, not `!important` | Almost always |
+| `button-variants()` | Generates `.btn-secondary`, `.btn-tertiary`, `.btn-error`, `.btn-success`, `.btn-warning`, `.btn-info` and their `-container` variants, which recolor Material filled, outlined and **text** buttons and FABs from a role's tokens (see [Button color variants](#button-color-variants)) | If you want role-colored buttons |
+| `input-variants()` | Generates `.theme-secondary`, `.theme-tertiary`, `.theme-error`, `.theme-success`, `.theme-warning`, `.theme-info`, which re-color the primary-driven controls (checkbox, radio, slide toggle, slider, ripples) inside an element or a whole section (see [Control color variants](#control-color-variants)) | If you want role-colored controls |
+| `toggle-variants()` | Generates `.toggle-<role>` classes for the selected state of `mat-button-toggle` (see [Button toggle variants](#button-toggle-variants)) | If you use button toggles |
 | `apply-density()` | Generates the SCSS-time density variants (`-1` to `-3`) keyed to the `data-theme-density` attribute the library writes on `<html>`. **The range this generates must stay in sync with `DENSITY_SCALE.min` — see [§11](#11-convenience-constants-scale-definitions--i18n).** | Only if you use `layout` domain's `densityScale` |
 | `apply-motion()` | Blanket motion reset for the whole page and the CDK overlay container: near-zero transition/animation durations, a single animation iteration (so spinners and progress bars stop instead of looping), and no smooth scrolling. Keyed to `data-theme-motion` / `.theme-motion-off` | Only if you use `layout` domain's `motionScale` |
 
@@ -229,7 +235,7 @@ html {
 | `.btn-success`, `.btn-warning`, `.btn-info` | Semantic roles — see [§7](#7-the-css-custom-properties-contract) |
 | `.btn-success-container`, `.btn-warning-container`, `.btn-info-container`, `.btn-error-container` | Soft variants using the role's container / on-container pair |
 
-Base variants fill with the role color (and `on-` text); FABs use the role's container colors. The `-container` variants are designed for filled buttons and FABs — for outlined buttons prefer the base variants, since the container tone is intentionally light.
+Base variants fill filled buttons with the role color (and `on-` text), color the label, state layer and ripple of text buttons (`mat-button`), color outlined buttons' outline and label, and give FABs (large, mini and extended) the role's container colors. The `-container` variants are designed for filled buttons and FABs — for outlined buttons prefer the base variants, since the container tone is intentionally light.
 
 Classes are generated for the roles above only. For an extended color (or any role with a full token set), build your own class with the same helpers:
 
@@ -242,16 +248,81 @@ Classes are generated for the roles above only. For an extended color (or any ro
 
 Pass the **base** role name to both helpers; `-container` is appended internally.
 
+### Control color variants
+
+`input-variants()` (included by `setup-theming()`) generates `.theme-<role>` classes: `.theme-secondary`, `.theme-tertiary`, `.theme-error`, `.theme-success`, `.theme-warning`, `.theme-info`.
+
+```html
+<mat-checkbox class="theme-secondary">Secondary</mat-checkbox>
+<mat-slide-toggle class="theme-error" checked>Error</mat-slide-toggle>
+<mat-radio-button class="theme-tertiary" value="1">Tertiary</mat-radio-button>
+<mat-slider class="theme-success">…</mat-slider>
+```
+
+**How it works.** Material's controls read `--mat-sys-primary` (and its `on-` / container siblings) lazily, so re-declaring those system tokens on an element re-colors every primary-driven control inside it, ripples and state layers included. It is plain CSS inheritance, so it also themes a whole section:
+
+```html
+<section class="theme-tertiary"> …every control in here is tertiary… </section>
+```
+
+The classes also set the element's text `color` to the role color. For a large section, build the class yourself without it:
+
+```scss
+@use 'ng-material-preferences/styles/theming' as prefs;
+
+.section-tertiary { @include prefs.apply-input-theme('tertiary', $colorize-text: false); }
+.theme-brand      { @include prefs.apply-input-theme('brand'); }   // any role with a full token set
+// or generate several at once:
+@include prefs.input-variants((brand, accent));
+```
+
+`apply-input-theme('primary')` is a build error (it would map `--mat-sys-primary` to itself); primary is the default, so just omit the class.
+
+**Limitation.** It cannot reach component tokens your app has already resolved on `:root`, for example `mat.checkbox-overrides((selected-icon-color: var(--mat-sys-primary)))` included at the root. Those values are fixed before the class applies.
+
+### Button toggle variants
+
+Material paints a selected `mat-button-toggle` with the secondary container, not primary, so `.theme-*` cannot reach it. `toggle-variants()` generates `.toggle-primary`, `.toggle-secondary`, `.toggle-tertiary`, `.toggle-error`, `.toggle-success`, `.toggle-warning` and `.toggle-info`, which set the selected background and text to the role's container pair:
+
+```html
+<mat-button-toggle-group class="toggle-tertiary"> … </mat-button-toggle-group>
+```
+
+`.toggle-secondary` resets a toggle inside a themed section. For a custom role use `apply-toggle-theme('brand')` or `toggle-variants((brand))`. The legacy appearance (`appearance="legacy"`) is not themed by Material 3 and is not supported here.
+
+### Snackbar roles
+
+Built-in roles are SCSS classes: `panelClass: 'snackbar-success'` (also `-warning`, `-info`, `-error`). For custom roles, the library also writes a `.snackbar-<id>` rule for **every extended color** (the id is the color's lower-case slug, `Custom Role 1` → `custom-role-1`), so a snackbar for a custom role only needs:
+
+```ts
+snackBar.open('Saved', 'Undo', { panelClass: 'snackbar-custom-role-1' });
+```
+
+No consumer CSS. The colors use the role's container pair, matching the built-in roles, and follow edits to the role while the snackbar is open. A panel class that no rule defines keeps the default snackbar look. See [§7](#7-the-css-custom-properties-contract) for how the runtime stylesheet is managed. In SCSS, `snackbar-variants((brand))` / `apply-snackbar-theme('brand')` generate a build-time class for a role instead.
+
+### How shape defaults work
+
+Shape overrides are set through Material's shape tokens (`--mat-button-*-container-shape`, `--mat-chip-container-shape-radius`, `--mat-dialog-container-shape`, `--mat-bottom-sheet-container-shape`, `--mat-snack-bar-container-shape`) inside `:where(:root)`. That selector has zero specificity, so anything you write wins, wherever you write it, with no `!important`:
+
+```scss
+html       { --mat-button-filled-container-shape: 8px; }   // all filled buttons
+.my-dialog { --mat-dialog-container-shape: 0; }            // one dialog (via panelClass)
+```
+
+The defaults point at the `--mat-sys-corner-*` scale the corner-radius control writes, so they follow it live. Button toggles keep Material's own pill curve (the same token family as buttons). `fab-shapes()` is empty: Material's FAB defaults already follow the scale. The select panel has no shape token in Material, so `panel-shapes()` handles it with a plain rule. One caveat: the tokens resolve at `:root`, so scoping `--mat-sys-corner-*` to a subtree does not re-shape controls inside it.
+
 ### Granular mixins
 
 `cdk-overrides()` is composed of smaller mixins you can include individually if you only want part of the set:
 
 | Mixin | Covers |
 |---|---|
-| `snackbar-overrides()` | Snackbar shape and the `snackbar-success` / `-warning` / `-info` / `-error` color mapping |
-| `overlay-overrides()` | Dialog and bottom-sheet corner radius |
-| `shape-overrides()` | Corner-radius curve for buttons, FABs, chips and button-toggle groups (composed of `button-shapes()`, `fab-shapes()`, `chip-shapes()`, `toggle-group-shapes()`) |
-| `list-overrides()` | List-item sizing so density changes never clip text |
+| `snackbar-overrides()` | Snackbar shape (through its token) and the role classes: `snackbar-variants()` plus the wiring that makes custom content (icon, text, buttons) follow the role colors |
+| `snackbar-variants($roles)` / `apply-snackbar-theme($role)` | Generate / build `.snackbar-<role>` classes for built-in or custom roles (see [Snackbar roles](#snackbar-roles)) |
+| `overlay-overrides()` | Dialog and bottom-sheet corner radius, through `--mat-dialog-container-shape` / `--mat-bottom-sheet-container-shape` |
+| `shape-overrides()` | Corner-radius curve for buttons and chips; toggles follow Material's pill; composed of `button-shapes()`, `fab-shapes()` (deprecated, empty), `chip-shapes()`, `toggle-group-shapes()` and `panel-shapes()` |
+| `panel-shapes()` | Makes the select panel follow the corner-radius control (Material hard-codes its radius) |
+| `list-overrides()` | List rows keep Material's per-line height token as a floor and grow with their content: density is respected and text never clips |
 | `kill-motion()` | Emits the motion-reset declarations used by `apply-motion()`. Advanced: include it inside your own selector to scope the motion-off behavior to a custom container |
 
 ### How the SCSS is organized
@@ -264,6 +335,8 @@ styles/
 └── theming/
     ├── _fallback-tokens.scss
     ├── _button-variants.scss
+    ├── _input-variants.scss
+    ├── _toggle-variants.scss
     ├── _density.scss          ← @for range must match DENSITY_SCALE.min
     ├── _motion.scss
     └── cdk/
@@ -275,6 +348,22 @@ styles/
 ```
 
 Everything is re-exported from `_theming.scss`, so you only ever import the one path shown above.
+
+### Verifying the SCSS against Material
+
+Most overrides are Material component tokens (`--mat-*`). A token that Material renames silently becomes a no-op, so the repo ships an audit:
+
+```bash
+npm run audit:tokens
+```
+
+It compiles `setup-theming()` and fails when (a) the library sets a `--mat-*` / `--mdc-*` token that the installed Material never reads, or (b) the library's own CSS reads a token that nothing defines. Intentional exceptions (the library's own variables) are listed with a reason in `scripts/material-token-allowlist.json`. In CI, run it against the minimum supported Material as well as the one you develop on:
+
+```bash
+npm i --no-save @angular/material@20.0.0 @angular/cdk@20.0.0 && npm run audit:tokens
+```
+
+The audit checks token **names**, not values or class names; the demo app's Elements view is where values get checked by eye.
 
 ---
 
@@ -347,6 +436,9 @@ Per role (`display-large`, `headline-medium`, `body-small`, etc.): `--mat-sys-{r
 
 ### Motion token (`layout` domain — motion)
 `--theme-motion-scale` — a plain multiplier (`0`, `0.5`, `1`) exposed for your own CSS transitions. See [§8](#8-the-motion-engine) for the full motion picture; this variable is only *part* of how motion preference is enforced.
+
+### Snackbar role classes (`color` domain)
+For each extended color the library keeps **one managed stylesheet** with a `.snackbar-<id>` rule (the id is the color's slug), rewritten whenever the extended-color list changes and removed when it empties. Each rule maps the role's container pair onto Material's snackbar tokens, so it follows live edits to `--mat-sys-<id>-container`. It uses a constructable stylesheet (`adoptedStyleSheets`), which works under a strict CSP `style-src`, and falls back to a single `<style data-ngmp="snackbar-roles">` on older browsers. Only active while the `color` domain is registered. See [Snackbar roles](#snackbar-roles).
 
 ### Data attributes
 `data-theme-mode` (`light`/`dark`), `data-theme-scheme`, `data-theme-contrast` (`high`, or absent), `data-theme-density` (`0` to `-3`), `data-theme-motion` (`off`, or absent).
@@ -535,6 +627,8 @@ Because the library is headless — it renders no markup and no strings of its o
 - **Semantic and extended color tokens ignore `SchemeVariant` by design.** See [§7](#7-the-css-custom-properties-contract) — only `primary`/`secondary`/`tertiary` shift with the selected variant.
 - **`ContrastMode` and `CONTRAST_MODES` are deprecated** as of `1.1.0` and will be removed in `2.0.0`. They describe the old flat `'normal' | 'auto' | 'high'` contrast model; the live state uses the independent `autoContrast` boolean plus numeric `contrastLevel`, matched by `CONTRAST_SCALE` (see [§11](#11-convenience-constants-scale-definitions--i18n)). If you're on `1.x`, migrate off these before the next major version.
 - **The SCSS import path `ng-material-preferences/src/styles/theming` is deprecated** as of `1.2.0` and will be removed in `2.0.0`. It still resolves through a compatibility alias on `1.x`. Use `ng-material-preferences/styles/theming` (see [§4](#4-scss-setup)).
+- **Custom-role snackbar styles are one managed stylesheet per page**, like the other global DOM writes. It exists only while the `color` domain has extended colors.
+- **`fab-shapes()` is deprecated** and empty (Material's FAB defaults already follow the corner scale). It will be removed in `2.0.0`.
 - **This package ships pure state/logic + one optional SCSS entry point (`styles/theming`, backed by internal partials) — no Angular Material UI components.** You (or the demo app in this repo) own the actual settings interface.
 
 ---
@@ -558,6 +652,12 @@ You need to explicitly opt each transition in via `calc(... * var(--theme-motion
 
 **Motion is Off and a spinner or progress bar looks frozen**
 Expected. With motion off every animation jumps to its final keyframe and stops, so indeterminate loaders show a static frame. See [§8](#8-the-motion-engine).
+
+**A custom-role snackbar looks like the default one**
+The `.snackbar-<id>` rule exists for each extended color while the `color` domain is registered. Check that `panelClass` uses the color's **id**, the lower-case hyphenated slug of its label (`Custom Role 1` → `snackbar-custom-role-1`), and that the color domain is provided. A class that no rule defines keeps the default look by design.
+
+**A control ignores `.theme-<role>`**
+The component's own tokens were probably already resolved on `:root`, for example through `mat.checkbox-overrides((selected-icon-color: var(--mat-sys-primary)))`. A local class cannot reach values that are fixed at the root; remove the root-level override or set the token on the element itself. See [Control color variants](#control-color-variants).
 
 **Success/Warning/Info look identical (or all gray) when Theme Variant is set to Monochrome**
 Fixed as of `1.0.1`. If you're still seeing this, confirm you're on `1.0.1` or later — earlier versions derived semantic tokens through the selected `SchemeVariant`, which flattened them under Monochrome. See [§7](#7-the-css-custom-properties-contract) for why semantic tokens are now variant-independent by design.
@@ -628,12 +728,16 @@ This is almost always a hand-authored range that's drifted from another one, rat
 
 | Mixin | Purpose |
 |---|---|
-| `setup-theming()` | Convenience: includes all five mixins below (`fallback-tokens`, `cdk-overrides`, `button-variants`, `apply-density`, `apply-motion`) |
+| `setup-theming()` | Convenience: includes everything below (`fallback-tokens`, `cdk-overrides`, `button-variants`, `input-variants`, `toggle-variants`, `apply-density`, `apply-motion`) |
 | `fallback-tokens()` | Semantic color + state-layer opacity token defaults |
-| `cdk-overrides()` | Snackbar/dialog/bottom-sheet shape and color wiring, including action/dismiss button color and natural-width sizing |
-| `snackbar-overrides()`, `overlay-overrides()`, `shape-overrides()`, `list-overrides()` | The parts `cdk-overrides()` is composed of, includable individually (`shape-overrides()` is itself `button-shapes()`, `fab-shapes()`, `chip-shapes()`, `toggle-group-shapes()`) |
-| `button-variants()` | Generates `.btn-*` role color classes for Material buttons and FABs — see [§4](#button-color-variants) |
+| `cdk-overrides()` | Overlay, control and panel shapes, snackbar role colors, and list rows that follow density |
+| `snackbar-overrides()`, `overlay-overrides()`, `shape-overrides()`, `list-overrides()` | The parts `cdk-overrides()` is composed of, includable individually (`shape-overrides()` is itself `button-shapes()`, `fab-shapes()` (deprecated, empty), `chip-shapes()`, `toggle-group-shapes()` and `panel-shapes()`) |
+| `button-variants()` | Generates `.btn-*` role color classes for Material filled, outlined and text buttons and FABs — see [§4](#button-color-variants) |
 | `apply-button-theme($role)` / `apply-container-button-theme($role)` | Helpers for building your own `.btn-*` class for any role with a full token set (e.g. an extended color). Pass the base role name |
+| `input-variants($roles)` / `apply-input-theme($role, $colorize-text)` | Generate / build `.theme-<role>` classes that re-color primary-driven controls — see [§4](#control-color-variants) |
+| `toggle-variants($roles)` / `apply-toggle-theme($role)` | Generate / build `.toggle-<role>` classes for `mat-button-toggle` — see [§4](#button-toggle-variants) |
+| `snackbar-variants($roles)` / `apply-snackbar-theme($role)` | Generate / build `.snackbar-<role>` classes — see [§4](#snackbar-roles) |
+| `panel-shapes()` | Makes the select panel follow the corner-radius control |
 | `apply-density()` | SCSS-time density variant generation. Range must stay in sync with `DENSITY_SCALE.min` |
 | `apply-motion()` | Blanket motion reset (near-zero durations, single iteration, no smooth scroll) for the page and the CDK overlay container |
 | `kill-motion()` | Emits the reset declarations used by `apply-motion()`; include inside your own selector to scope motion-off to a custom container |
